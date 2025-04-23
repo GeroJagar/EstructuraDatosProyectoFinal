@@ -24,7 +24,7 @@ Plataforma académica que simula una red social educativa donde los estudiantes 
 - `SolicitudAyuda`: Modela una petición de apoyo académico con urgencia.
 - `TEMA` (enum): Enumera categorías de estudio disponibles.
 
-### 🔧 Estructuras de Datos Personalizadas (por desarrollar)
+### 🔧 Estructuras de Datos Personalizadas
 
 - Árbol Binario de Búsqueda (ABB) para organización de contenidos.
 - Grafo no dirigido para relaciones de afinidad entre estudiantes.
@@ -46,5 +46,5 @@ Plataforma académica que simula una red social educativa donde los estudiantes 
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/tuusuario/actually.git
-   cd actually
+   git clone https://github.com/GeroJagar/EstructuraDatosProyectoFinal.git
+   cd EstructuraDatosProyectoFinal
