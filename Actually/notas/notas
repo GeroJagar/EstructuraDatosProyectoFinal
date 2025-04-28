@@ -1,0 +1,7 @@
+Perdi 5 horas porque el intellij en el linux se daño y no tenia el maven instalado
+en la particion de windows para hacer los poms en cada src y el proyecto entero
+
+1) poner poms en cada src
+2) Leer el proyecto para ver si la priorityQueue solo es para las solicitudes de ayuda o como se llame esa vaina
+3) Investigar como se crea un grafo usando JgraphT y como hacer para que persista
+4)
