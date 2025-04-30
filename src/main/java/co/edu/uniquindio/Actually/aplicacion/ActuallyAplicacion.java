@@ -1,6 +1,6 @@
 package co.edu.uniquindio.Actually.aplicacion;
 
-import co.edu.uniquindio.Actually.modelo.Actually;
+import co.edu.uniquindio.Actually.Actually;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,7 +23,7 @@ public class ActuallyAplicacion extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/inicio.fxml"));
+        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/login.fxml"));
         Parent parent = loader.load();
 
         Scene scene = new Scene(parent);

@@ -11,7 +11,6 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class GrupoEstudio implements Serializable {
     private String nombre;
     private TEMA tema;

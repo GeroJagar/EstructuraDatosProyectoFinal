@@ -1,7 +1,12 @@
 package co.edu.uniquindio.Actually.modelo;
 
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +16,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class Estudiante extends Usuario {
     private List<GrupoEstudio> gruposEstudio = new ArrayList<>();
     private List<Estudiante> amigos = new ArrayList<>();
