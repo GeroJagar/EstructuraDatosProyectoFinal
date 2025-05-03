@@ -42,7 +42,7 @@ public class RegistroControlador {
 
     @FXML
     public void volverAlLogin(ActionEvent event) {
-        Actually.getInstance().loadStage("/ventanas/login.fxml", event);
+        Actually.getInstance().loadStage("/ventanas/common/login.fxml", event);
     }
 
     private void limpiarCampos() {

@@ -10,7 +10,7 @@ public class PrincipalControlador {
 
     @FXML
     public void salirAlLogin(ActionEvent event) {
-        actually.loadStage("/ventanas/login.fxml", event);
+        actually.loadStage("/ventanas/common/login.fxml", event);
     }
 
 }

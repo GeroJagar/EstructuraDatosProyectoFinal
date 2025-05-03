@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="co.edu.uniquindio.Actually.controladores.RegistroControlador"
+            prefHeight="450.0" prefWidth="600.0" styleClass="root" stylesheets="@../../style.css">
+
+    <VBox alignment="CENTER" spacing="15.0" layoutX="150.0" layoutY="30.0" styleClass="form-container">
+        <Label text="Registro de Estudiante" styleClass="form-title"/>
+        <TextField fx:id="nombreField" promptText="Nombre" styleClass="input-field"/>
+        <TextField fx:id="idField" promptText="ID" styleClass="input-field"/>
+        <TextField fx:id="correoField" promptText="Correo" styleClass="input-field"/>
+        <PasswordField fx:id="contrasenaField" promptText="Contraseña" styleClass="input-field"/>
+        <Button text="Registrarse" onAction="#registrarse" styleClass="submit-button"/>
+        <Label fx:id="mensajeLabel" textFill="red" styleClass="error-message"/>
+        <Button text="Volver" onAction="#volverAlLogin" styleClass="back-button"/>
+    </VBox>
+</AnchorPane>

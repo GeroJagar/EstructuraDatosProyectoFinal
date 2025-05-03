@@ -32,6 +32,6 @@ public class LoginControlador {
 
     @FXML
     public void irARegistro(ActionEvent event) {
-        actually.loadStage("/ventanas/registro.fxml", event);
+        actually.loadStage("/ventanas/students/registro.fxml", event);
     }
 }
