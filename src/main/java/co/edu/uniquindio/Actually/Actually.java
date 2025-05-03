@@ -109,6 +109,7 @@ public class Actually {
             }
             Parent root = FXMLLoader.load(Objects.requireNonNull(Actually.class.getResource(url)));
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());
             Stage newStage = new Stage();
             newStage.setScene(scene);
             newStage.setTitle("Actually");

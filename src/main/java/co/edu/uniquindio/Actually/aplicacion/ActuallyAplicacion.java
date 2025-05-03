@@ -24,6 +24,7 @@ public class ActuallyAplicacion extends Application {
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ventanas/common/login.fxml"));
         Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());
         stage.setTitle("Inicio de Sesión");
         stage.setScene(scene);
         stage.show();
