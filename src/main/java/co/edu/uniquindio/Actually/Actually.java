@@ -24,6 +24,7 @@ public class Actually {
     private Map<String, Usuario> usuarios = new HashMap<>();
     private final String RUTA_USUARIOS = "src/main/resources/serializacion/usuarios.data"; // Ruta donde se almacenan los usuarios serializados
 
+    // Método para obtener la instancia única de la clase Actually (Singleton)
     public static Actually getInstance() {
         if (actually == null) {
             actually = new Actually();
@@ -31,6 +32,7 @@ public class Actually {
         return actually;
     }
 
+    // Método para inicializar la carga de usuarios desde el archivo serializado
     public void inicializar() {
         try {
             // Intentamos cargar los usuarios serializados al inicio
@@ -44,9 +46,11 @@ public class Actually {
         }
     }
 
+    // Método para registrar un estudiante
     public void registrarEstudiante(String nombre, String id, String correo, String contrasena)
             throws CampoObligatorioException, CampoVacioException, CampoRepetidoException {
 
+        // Validación de campos obligatorios
         if (nombre == null || nombre.isBlank()) {
             throw new CampoObligatorioException("El nombre es obligatorio");
         }
@@ -73,12 +77,13 @@ public class Actually {
         }
 
         // Creamos el estudiante y lo agregamos al mapa usando el ID como clave
-        Estudiante estudiante = Estudiante.builder()
-                .nombre(nombre)
-                .id(id)
-                .correo(correo)
-                .contrasena(contrasena)
-                .build();
+        Estudiante estudiante = new Estudiante();  // Instanciamos el objeto Estudiante
+
+        // Asignamos los valores usando los setters
+        estudiante.setNombre(nombre);
+        estudiante.setId(id);
+        estudiante.setCorreo(correo);
+        estudiante.setContrasena(contrasena);
 
         usuarios.put(id, estudiante); // Usamos el ID como clave en el mapa
 
@@ -93,6 +98,7 @@ public class Actually {
         mostrarMensaje(Alert.AlertType.INFORMATION, "Registro exitoso");
     }
 
+    // Método para obtener un usuario por su ID
     public Usuario obtenerUsuarioPorId(String id) {
         for (Usuario usuario : usuarios.values()) {
             if (usuario.getId().equals(id)) {
@@ -102,6 +108,7 @@ public class Actually {
         return null;
     }
 
+    // Método para cargar una nueva ventana
     public void loadStage(String url, Event event) {
         try {
             if (event != null) {
@@ -119,6 +126,7 @@ public class Actually {
         }
     }
 
+    // Método para mostrar un mensaje de alerta
     public void mostrarMensaje(Alert.AlertType tipo, String mensaje) {
         Alert alert = new Alert(tipo);
         alert.setContentText(mensaje);
