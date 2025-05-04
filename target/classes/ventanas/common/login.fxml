@@ -93,7 +93,13 @@
 
             <!-- Columna izquierda (VBox) -->
             <VBox alignment="CENTER" prefHeight="500" prefWidth="300" spacing="50" styleClass="backgroundAquamarine" HBox.hgrow="ALWAYS">
-
+                <Label text="¿Aún no estás registrado ☹? ¡No te preocupes! Eres bienvenido en cualquier momento. ❤" textFill="WHITE" wrapText="true">
+               <font>
+                  <Font name="SansSerif Regular" size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </VBox.margin></Label>
             </VBox>
         </HBox>
     </center>
