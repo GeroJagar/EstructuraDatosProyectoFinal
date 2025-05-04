@@ -23,7 +23,8 @@ public class LoginControlador {
 
         if (usuario != null && usuario.getContrasena().equals(contrasena)) {
             mensajeLabel.setText("Ingreso exitoso");
-            actually.loadStage("/ventanas/principal.fxml", event);
+            actually.setUsuarioActivo(usuario);
+            actually.loadStage("/ventanas/panelEstudiante.fxml", event);
         } else {
             mensajeLabel.setText("ID o contraseña incorrectos");
             actually.mostrarMensaje(Alert.AlertType.ERROR, "ID o contraseña incorrectos");

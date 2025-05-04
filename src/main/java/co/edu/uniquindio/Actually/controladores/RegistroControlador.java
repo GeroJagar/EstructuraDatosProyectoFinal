@@ -27,7 +27,6 @@ public class RegistroControlador {
                     contrasenaField.getText()
             );
             mensajeLabel.setText("Registro exitoso");
-            //actually.loadStage("/ventanas/login.fxml", null); // Si quieres redirigir al login después del registro
 
         } catch (CampoVacioException | CampoObligatorioException | CampoRepetidoException e) {
             mensajeLabel.setText(e.getMessage());

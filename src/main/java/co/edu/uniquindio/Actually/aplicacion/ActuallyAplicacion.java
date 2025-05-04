@@ -23,7 +23,7 @@ public class ActuallyAplicacion extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/login.fxml"));
+        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/inicio.fxml"));
         Parent parent = loader.load();
 
         Scene scene = new Scene(parent);

@@ -1,28 +1,51 @@
 package co.edu.uniquindio.Actually.modelo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class ContenidoAcademico implements Serializable {
-    private String titulo;
-    private TEMA tema;
-    private String autor;
-    private int puntuacion;
-    private String id;
 
-    // Constructor sin argumentos
+    private static final long serialVersionUID = 1L;
+
+    protected String titulo;
+    protected TEMA tema;
+    protected String autor;
+    protected String contenido;
+    protected String id;
+    protected List<Valoracion> valoraciones;
+
     public ContenidoAcademico() {
+        this.valoraciones = new ArrayList<>();
     }
 
-    // Constructor con todos los parámetros
-    public ContenidoAcademico(String titulo, TEMA tema, String autor, int puntuacion, String id) {
+    public ContenidoAcademico(String titulo, TEMA tema, String autor, String contenido, String id) {
+        this();
         this.titulo = titulo;
         this.tema = tema;
         this.autor = autor;
-        this.puntuacion = puntuacion;
+        this.contenido = contenido;
         this.id = id;
     }
 
-    // Getters y setters
+    public void agregarValoracion(Valoracion valoracion) {
+        if (valoracion != null) {
+            valoraciones.add(valoracion);
+        }
+    }
+
+    public double calcularPuntuacion() {
+        if (valoraciones.isEmpty()) {
+            return 0;
+        }
+        return valoraciones.stream()
+                .mapToInt(Valoracion::getPuntaje)
+                .average()
+                .orElse(0);
+    }
+
+    // Getters y Setters
     public String getTitulo() {
         return titulo;
     }
@@ -47,12 +70,12 @@ public class ContenidoAcademico implements Serializable {
         this.autor = autor;
     }
 
-    public int getPuntuacion() {
-        return puntuacion;
+    public String getContenido() {
+        return contenido;
     }
 
-    public void setPuntuacion(int puntuacion) {
-        this.puntuacion = puntuacion;
+    public void setContenido(String contenido) {
+        this.contenido = contenido;
     }
 
     public String getId() {
@@ -63,15 +86,31 @@ public class ContenidoAcademico implements Serializable {
         this.id = id;
     }
 
-    // Método toString
+    public List<Valoracion> getValoraciones() {
+        return valoraciones;
+    }
+
     @Override
     public String toString() {
         return "ContenidoAcademico{" +
                 "titulo='" + titulo + '\'' +
                 ", tema=" + tema +
                 ", autor='" + autor + '\'' +
-                ", puntuacion=" + puntuacion +
                 ", id='" + id + '\'' +
+                ", puntuacion=" + String.format("%.2f", calcularPuntuacion()) +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ContenidoAcademico)) return false;
+        ContenidoAcademico that = (ContenidoAcademico) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
