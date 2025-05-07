@@ -4,6 +4,7 @@ import co.edu.uniquindio.Actually.excepciones.*;
 import co.edu.uniquindio.Actually.modelo.*;
 import co.edu.uniquindio.Actually.utilidades.ArchivoUtilidades;
 
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -141,7 +142,7 @@ public class Actually {
 
     }
 
-    public void valorarContenido(String estudianteId, String contenidoId, int puntaje, String comentario) throws Exception {
+    public void valorarContenido(String estudianteId, String contenidoId, int puntaje) throws Exception {
         if (!contenidos.containsKey(contenidoId)) {
             throw new Exception("El contenido no existe");
         }
@@ -155,13 +156,28 @@ public class Actually {
         }
 
         ContenidoAcademico contenido = contenidos.get(contenidoId);
-        Valoracion valoracion = new Valoracion(estudianteId, puntaje, comentario);
+        Estudiante estudiante = (Estudiante) usuarios.get(estudianteId);
+
+        // Validar que no sea su propio contenido
+        if (estudiante.getContenidosSubidos().stream().anyMatch(c -> c.getId().equals(contenidoId))) {
+            throw new Exception("No puedes valorar tu propio contenido");
+        }
+
+        // Validar que no haya valorado antes
+        for (Valoracion v : contenido.getValoraciones()) {
+            if (v.getEstudianteId().equals(estudianteId)) {
+                throw new Exception("Ya has valorado este contenido");
+            }
+        }
+
+        Valoracion valoracion = new Valoracion(estudianteId, puntaje);
         contenido.agregarValoracion(valoracion);
 
+        // Persistencia
         ArchivoUtilidades.serializarObjeto(RUTA_CONTENIDOS, contenidos);
 
-        mostrarMensaje(Alert.AlertType.INFORMATION, "Contenido valorado exitosamente");
     }
+
 
     public Map<String, ContenidoAcademico> getContenidos() {
         return contenidos;
@@ -184,12 +200,12 @@ public class Actually {
         }
     }
 
-    public void cerrarSesion() {
+    public void cerrarSesion(ActionEvent event) {
         // Limpiar el usuario activo
         usuarioActivo = null;
 
         // Aquí llamamos a loadStage para abrir la pantalla de inicio
-        loadStage("/ventanas/inicio.fxml", null); // Modifica esta ruta por la del login real
+        loadStage("/ventanas/inicio.fxml", event); // Modifica esta ruta por la del login real
     }
 
     public void mostrarMensaje(Alert.AlertType tipo, String mensaje) {

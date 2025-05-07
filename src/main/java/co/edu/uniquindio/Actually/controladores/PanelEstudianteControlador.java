@@ -7,13 +7,10 @@ import co.edu.uniquindio.Actually.utilidades.ArchivoUtilidades;
 import co.edu.uniquindio.Actually.utilidades.FileUploader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.input.MouseEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,29 +28,44 @@ public class PanelEstudianteControlador {
     private VBox contenedorContenido;
 
     @FXML
-    private ScrollPane scrollContenidos; // Nueva referencia al scroll para visibilidad
+    private ScrollPane scrollContenidos;
 
     @FXML
     public void initialize() {
-        mostrarContenidoEstudiante(null); // Por defecto carga los contenidos
+        mostrarTodoElContenido(null);
     }
 
     @FXML
     public void mostrarSubirContenido(MouseEvent event) {
         contenidoPanel.setVisible(true);
+        contenidoPanel.setManaged(true);
         scrollContenidos.setVisible(false);
+        scrollContenidos.setManaged(false);
     }
 
     @FXML
     public void mostrarContenidoEstudiante(MouseEvent event) {
         contenidoPanel.setVisible(false);
+        contenidoPanel.setManaged(false);
         scrollContenidos.setVisible(true);
+        scrollContenidos.setManaged(true);
+
         cargarContenidosDelEstudiante();
     }
 
     @FXML
+    public void mostrarTodoElContenido(MouseEvent event) {
+        contenidoPanel.setVisible(false);
+        contenidoPanel.setManaged(false);
+        scrollContenidos.setVisible(true);
+        scrollContenidos.setManaged(true);
+
+        cargarTodosLosContenidos();
+    }
+
+    @FXML
     public void cerrarSesion(ActionEvent event) {
-        actually.cerrarSesion();
+        actually.cerrarSesion(event); // Pasa el evento al método loadStage
     }
 
     @FXML
@@ -67,7 +79,7 @@ public class PanelEstudianteControlador {
                 actually.subirContenidoAcademico(contenido);
                 mostrarMensaje(Alert.AlertType.INFORMATION, "Contenido subido correctamente");
 
-                mostrarContenidoEstudiante(null); // Volver a mostrar la lista actualizada
+                mostrarTodoElContenido(null);
 
             } catch (IOException e) {
                 mostrarMensaje(Alert.AlertType.ERROR, "Error al leer el archivo: " + e.getMessage());
@@ -93,13 +105,79 @@ public class PanelEstudianteControlador {
         }
 
         for (ContenidoAcademico contenido : estudiante.getContenidosSubidos()) {
-            Label label = new Label("Título: " + contenido.getTitulo()
-                    + "\nTema: " + contenido.getTema()
-                    + "\nAutor: " + contenido.getAutor()
-                    + "\n" + contenido.getContenido() + "\n");
-            label.setStyle("-fx-padding: 10; -fx-background-color: #f0f0f0; -fx-border-color: #ccc;");
-            contenedorContenido.getChildren().add(label);
+            agregarVistaDeContenido(contenido);
         }
+    }
+
+    private void cargarTodosLosContenidos() {
+        contenedorContenido.getChildren().clear();
+
+        if (actually.getContenidos().isEmpty()) {
+            Label vacio = new Label("No hay contenidos disponibles.");
+            vacio.setStyle("-fx-text-fill: gray; -fx-font-size: 14px;");
+            contenedorContenido.getChildren().add(vacio);
+            return;
+        }
+
+        for (ContenidoAcademico contenido : actually.getContenidos().values()) {
+            agregarVistaDeContenido(contenido);
+        }
+    }
+
+    private void agregarVistaDeContenido(ContenidoAcademico contenido) {
+        VBox card = new VBox(5);
+        card.setStyle("-fx-padding: 10; -fx-background-color: #f0f0f0; -fx-border-color: #ccc;");
+
+        Label label = new Label("Título: " + contenido.getTitulo()
+                + "\nTema: " + contenido.getTema()
+                + "\nAutor: " + contenido.getAutor()
+                + "\nPuntuación promedio: " + String.format("%.2f", contenido.calcularPuntuacion()));
+        TextArea area = new TextArea(contenido.getContenido());
+        area.setWrapText(true);
+        area.setEditable(false);
+        area.setPrefRowCount(5);
+
+        Button btnValorar = new Button("Valorar contenido");
+        btnValorar.setOnAction(e -> mostrarDialogoValoracion(contenido));
+
+        String estudianteId = actually.getUsuarioActivo().getId();
+        boolean yaValorado = contenido.getValoraciones().stream()
+                .anyMatch(v -> v.getEstudianteId().equals(estudianteId));
+
+        boolean esAutor = false;
+        if (actually.getUsuarioActivo() instanceof Estudiante estudiante) {
+            esAutor = estudiante.getContenidosSubidos().stream()
+                    .anyMatch(c -> c.getId().equals(contenido.getId()));
+        }
+
+        if (yaValorado || esAutor) {
+            btnValorar.setDisable(true);
+            btnValorar.setText(esAutor ? "Este contenido es tuyo" : "Ya valorado");
+        }
+
+        card.getChildren().addAll(label, area, btnValorar);
+        contenedorContenido.getChildren().add(card);
+    }
+
+    private void mostrarDialogoValoracion(ContenidoAcademico contenido) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Valorar Contenido");
+        dialog.setHeaderText("Ingresa un puntaje del 1 al 5");
+        dialog.setContentText("Puntaje:");
+
+        dialog.showAndWait().ifPresent(input -> {
+            try {
+                int puntaje = Integer.parseInt(input);
+                String estudianteId = actually.getUsuarioActivo().getId();
+                actually.valorarContenido(estudianteId, contenido.getId(), puntaje);
+                mostrarMensaje(Alert.AlertType.INFORMATION, "Valoración registrada con éxito");
+                mostrarTodoElContenido(null);
+            } catch (NumberFormatException e) {
+                mostrarMensaje(Alert.AlertType.ERROR, "Ingresa un número válido entre 1 y 5");
+            } catch (Exception e) {
+                mostrarMensaje(Alert.AlertType.ERROR, e.getMessage());
+            }
+        });
     }
 
     private void mostrarMensaje(Alert.AlertType tipo, String mensaje) {
@@ -107,5 +185,4 @@ public class PanelEstudianteControlador {
         alert.setContentText(mensaje);
         alert.show();
     }
-
 }
