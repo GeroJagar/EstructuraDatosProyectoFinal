@@ -13,19 +13,20 @@
 
         <!-- HEADER DE NAVEGACIÓN -->
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" styleClass="header-bar" spacing="20" prefHeight="60">
-            <Label text="📚 Mi Contenido Académico" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand;" onMouseClicked="#mostrarContenidoEstudiante"/>
+            <Label text="🌐 Todo el Contenido" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand;" onMouseClicked="#mostrarTodoElContenido"/>
+            <Label text="📚 Mi Contenido" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand;" onMouseClicked="#mostrarContenidoEstudiante"/>
             <Label text="📤 Subir Contenido" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand;" onMouseClicked="#mostrarSubirContenido"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="Cerrar sesión" onAction="#cerrarSesion" styleClass="header-button" style="-fx-font-size: 14px;"/>
         </HBox>
 
         <!-- PANEL DE SUBIR CONTENIDO -->
-        <VBox fx:id="contenidoPanel" alignment="CENTER" spacing="20" visible="false">
+        <VBox fx:id="contenidoPanel" alignment="CENTER" spacing="20" visible="false" managed="false">
             <Label text="Selecciona un archivo para subir" style="-fx-font-size: 14px;"/>
             <Button text="Subir Contenido Académico" onAction="#subirContenido" styleClass="submit-button"/>
         </VBox>
 
-        <!-- CONTENEDOR DE CONTENIDO DEL ESTUDIANTE -->
+        <!-- CONTENEDOR DE CONTENIDO -->
         <ScrollPane fx:id="scrollContenidos" fitToWidth="true" prefHeight="300.0" VBox.vgrow="ALWAYS" visible="true">
             <VBox fx:id="contenedorContenido" spacing="10.0">
                 <padding>

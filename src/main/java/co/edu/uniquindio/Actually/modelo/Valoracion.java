@@ -6,15 +6,13 @@ public class Valoracion implements Serializable {
 
     private String estudianteId;
     private int puntaje; // de 1 a 5
-    private String comentario;
 
     public Valoracion() {
     }
 
-    public Valoracion(String estudianteId, int puntaje, String comentario) {
+    public Valoracion(String estudianteId, int puntaje) {
         this.estudianteId = estudianteId;
         this.puntaje = puntaje;
-        this.comentario = comentario;
     }
 
     public String getEstudianteId() {
@@ -33,20 +31,11 @@ public class Valoracion implements Serializable {
         this.puntaje = puntaje;
     }
 
-    public String getComentario() {
-        return comentario;
-    }
-
-    public void setComentario(String comentario) {
-        this.comentario = comentario;
-    }
-
     @Override
     public String toString() {
         return "Valoracion{" +
                 "estudianteId='" + estudianteId + '\'' +
                 ", puntaje=" + puntaje +
-                ", comentario='" + comentario + '\'' +
                 '}';
     }
 }
