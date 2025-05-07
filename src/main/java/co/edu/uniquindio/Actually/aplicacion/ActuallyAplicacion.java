@@ -3,6 +3,7 @@ package co.edu.uniquindio.Actually.aplicacion;
 import co.edu.uniquindio.Actually.Actually;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -22,11 +23,12 @@ public class ActuallyAplicacion extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ventanas/common/login.fxml"));
-        Scene scene = new Scene(loader.load());
-        scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());
-        stage.setTitle("Inicio de Sesión");
+        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/inicio.fxml"));
+        Parent parent = loader.load();
+
+        Scene scene = new Scene(parent);
         stage.setScene(scene);
+        stage.setTitle("Actually Aplicacion");
         stage.show();
     }
 
@@ -38,7 +40,7 @@ public class ActuallyAplicacion extends Application {
      * @param args Los argumentos de la línea de comandos.
      */
     public static void main(String[] args) {
-        // Inicializar la instancia.
+        // Inicializar la instancia de Storify
         Actually.getInstance().inicializar();
 
         // Lanzar la aplicación JavaFX

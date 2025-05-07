@@ -1,8 +1,7 @@
 package co.edu.uniquindio.Actually;
 
-import co.edu.uniquindio.Actually.modelo.Estudiante;
-import co.edu.uniquindio.Actually.modelo.Usuario;
 import co.edu.uniquindio.Actually.excepciones.*;
+import co.edu.uniquindio.Actually.modelo.*;
 import co.edu.uniquindio.Actually.utilidades.ArchivoUtilidades;
 
 import javafx.event.Event;
@@ -21,8 +20,13 @@ import java.util.Objects;
 public class Actually {
 
     private static Actually actually;
+    private Usuario usuarioActivo;
+
     private Map<String, Usuario> usuarios = new HashMap<>();
-    private final String RUTA_USUARIOS = "src/main/resources/serializacion/usuarios.data"; // Ruta donde se almacenan los usuarios serializados
+    private Map<String, ContenidoAcademico> contenidos = new HashMap<>();
+
+    private final String RUTA_USUARIOS = "src/main/resources/serializacion/usuarios.data";
+    private final String RUTA_CONTENIDOS = "src/main/resources/serializacion/contenidos.data";
 
     public static Actually getInstance() {
         if (actually == null) {
@@ -33,15 +37,31 @@ public class Actually {
 
     public void inicializar() {
         try {
-            // Intentamos cargar los usuarios serializados al inicio
             this.usuarios = (Map<String, Usuario>) ArchivoUtilidades.deserializarObjeto(RUTA_USUARIOS);
             for (Usuario usuario : this.usuarios.values()) {
                 System.out.println(usuario);
             }
         } catch (IOException | ClassNotFoundException e) {
-            // Si no se encuentran los usuarios, manejamos la excepción (puedes agregar un log si lo deseas)
             System.out.println("No se encontraron usuarios serializados, iniciando con una lista vacía.");
         }
+
+        try {
+            this.contenidos = (Map<String, ContenidoAcademico>) ArchivoUtilidades.deserializarObjeto(RUTA_CONTENIDOS);
+            for (ContenidoAcademico contenido : this.contenidos.values()) {
+                System.out.println(contenido);
+            }
+            System.out.println("Contenidos cargados: " + contenidos.size());
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("No se encontraron contenidos serializados, iniciando con una lista vacía.");
+        }
+    }
+
+    public Usuario getUsuarioActivo() {
+        return usuarioActivo;
+    }
+
+    public void setUsuarioActivo(Usuario usuarioActivo) {
+        this.usuarioActivo = usuarioActivo;
     }
 
     public void registrarEstudiante(String nombre, String id, String correo, String contrasena)
@@ -60,29 +80,24 @@ public class Actually {
             throw new CampoVacioException("La contraseña es obligatoria");
         }
 
-        // Verificamos si ya existe un usuario con este correo
         for (Usuario usuario : usuarios.values()) {
             if (usuario.getCorreo().equals(correo)) {
                 throw new CampoRepetidoException("Ya existe un usuario con este correo");
             }
         }
 
-        // Verificamos si ya existe un usuario con este ID
         if (usuarios.containsKey(id)) {
             throw new CampoRepetidoException("Ya existe un usuario con este ID");
         }
 
-        // Creamos el estudiante y lo agregamos al mapa usando el ID como clave
-        Estudiante estudiante = Estudiante.builder()
-                .nombre(nombre)
-                .id(id)
-                .correo(correo)
-                .contrasena(contrasena)
-                .build();
+        Estudiante estudiante = new Estudiante();
+        estudiante.setNombre(nombre);
+        estudiante.setId(id);
+        estudiante.setCorreo(correo);
+        estudiante.setContrasena(contrasena);
 
-        usuarios.put(id, estudiante); // Usamos el ID como clave en el mapa
+        usuarios.put(id, estudiante);
 
-        // Guardamos el archivo con la nueva lista de usuarios
         try {
             ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
         } catch (IOException e) {
@@ -94,18 +109,68 @@ public class Actually {
     }
 
     public Usuario obtenerUsuarioPorId(String id) {
-        for (Usuario usuario : usuarios.values()) {
-            if (usuario.getId().equals(id)) {
-                return usuario;
-            }
+        return usuarios.get(id);
+    }
+
+    public void subirContenidoAcademico(ContenidoAcademico contenido) throws Exception {
+        if (!(usuarioActivo instanceof Estudiante)) {
+            throw new Exception("El usuario activo no es un estudiante válido.");
         }
-        return null;
+
+        Estudiante estudiante = (Estudiante) usuarioActivo;
+
+        if (contenido == null || contenido.getId() == null || contenido.getId().isBlank()) {
+            throw new Exception("Contenido inválido");
+        }
+
+        if (contenidos.containsKey(contenido.getId())) {
+            throw new Exception("Ya existe contenido con ese ID");
+        }
+
+        // Asignar el autor si está vacío
+        if (contenido.getAutor() == null || contenido.getAutor().isBlank()) {
+            contenido.setAutor(estudiante.getId());  // Usar el ID del estudiante que está subiendo el contenido
+        }
+
+        estudiante.subirContenido(contenido);
+        contenidos.put(contenido.getId(), contenido);
+
+        // Persistencia
+        ArchivoUtilidades.serializarObjeto(RUTA_CONTENIDOS, contenidos);
+        ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
+
+    }
+
+    public void valorarContenido(String estudianteId, String contenidoId, int puntaje, String comentario) throws Exception {
+        if (!contenidos.containsKey(contenidoId)) {
+            throw new Exception("El contenido no existe");
+        }
+
+        if (!usuarios.containsKey(estudianteId)) {
+            throw new Exception("El estudiante no existe");
+        }
+
+        if (puntaje < 1 || puntaje > 5) {
+            throw new Exception("La puntuación debe estar entre 1 y 5");
+        }
+
+        ContenidoAcademico contenido = contenidos.get(contenidoId);
+        Valoracion valoracion = new Valoracion(estudianteId, puntaje, comentario);
+        contenido.agregarValoracion(valoracion);
+
+        ArchivoUtilidades.serializarObjeto(RUTA_CONTENIDOS, contenidos);
+
+        mostrarMensaje(Alert.AlertType.INFORMATION, "Contenido valorado exitosamente");
+    }
+
+    public Map<String, ContenidoAcademico> getContenidos() {
+        return contenidos;
     }
 
     public void loadStage(String url, Event event) {
         try {
             if (event != null) {
-                ((Node) (event.getSource())).getScene().getWindow().hide(); // Cerrar la ventana actual
+                ((Node) (event.getSource())).getScene().getWindow().hide();
             }
             Parent root = FXMLLoader.load(Objects.requireNonNull(Actually.class.getResource(url)));
             Scene scene = new Scene(root);
@@ -118,6 +183,14 @@ public class Actually {
             ex.printStackTrace();
             mostrarMensaje(Alert.AlertType.ERROR, "Error al cargar la ventana: " + ex.getMessage());
         }
+    }
+
+    public void cerrarSesion() {
+        // Limpiar el usuario activo
+        usuarioActivo = null;
+
+        // Aquí llamamos a loadStage para abrir la pantalla de inicio
+        loadStage("/ventanas/inicio.fxml", null); // Modifica esta ruta por la del login real
     }
 
     public void mostrarMensaje(Alert.AlertType tipo, String mensaje) {
