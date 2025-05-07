@@ -23,12 +23,11 @@ public class ActuallyAplicacion extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/inicio.fxml"));
-        Parent parent = loader.load();
-
-        Scene scene = new Scene(parent);
+        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/common/login.fxml"));
+        Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());
         stage.setScene(scene);
-        stage.setTitle("Actually Aplicacion");
+        stage.setTitle("Actually Application");
         stage.show();
     }
 

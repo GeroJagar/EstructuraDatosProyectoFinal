@@ -12,7 +12,6 @@ public class LoginControlador {
 
     @FXML private TextField idField;
     @FXML private PasswordField contrasenaField;
-    @FXML private Label mensajeLabel;
 
     @FXML
     public void ingresar(ActionEvent event) {
@@ -22,17 +21,15 @@ public class LoginControlador {
         Usuario usuario = actually.obtenerUsuarioPorId(id);
 
         if (usuario != null && usuario.getContrasena().equals(contrasena)) {
-            mensajeLabel.setText("Ingreso exitoso");
             actually.setUsuarioActivo(usuario);
-            actually.loadStage("/ventanas/panelEstudiante.fxml", event);
+            actually.loadStage("/ventanas/students/panelEstudiante.fxml", event);
         } else {
-            mensajeLabel.setText("ID o contraseña incorrectos");
             actually.mostrarMensaje(Alert.AlertType.ERROR, "ID o contraseña incorrectos");
         }
     }
 
     @FXML
     public void irARegistro(ActionEvent event) {
-        actually.loadStage("/ventanas/registro.fxml", event);
+        actually.loadStage("/ventanas/students/registro.fxml", event);
     }
 }
