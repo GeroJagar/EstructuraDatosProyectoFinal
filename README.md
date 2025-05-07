@@ -24,12 +24,10 @@
  - `SolicitudAyuda`: Modela una petición de apoyo académico con urgencia.
  - `TEMA` (enum): Enumera categorías de estudio disponibles.
  
- ### 🔧 Estructuras de Datos Personalizadas (por desarrollar)
  ### 🔧 Estructuras de Datos Personalizadas
  
  - Árbol Binario de Búsqueda (ABB) para organización de contenidos.
  - Grafo no dirigido para relaciones de afinidad entre estudiantes.
- @@ -46,5 +46,5 @@
  
  1. Clona el repositorio:
     ```bash
