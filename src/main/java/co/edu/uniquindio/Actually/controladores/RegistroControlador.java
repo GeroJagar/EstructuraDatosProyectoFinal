@@ -15,7 +15,6 @@ public class RegistroControlador {
     @FXML private TextField idField;
     @FXML private TextField correoField;
     @FXML private PasswordField contrasenaField;
-    @FXML private Label mensajeLabel;
 
     @FXML
     public void registrarse() {
@@ -26,13 +25,10 @@ public class RegistroControlador {
                     correoField.getText(),
                     contrasenaField.getText()
             );
-            mensajeLabel.setText("Registro exitoso");
 
         } catch (CampoVacioException | CampoObligatorioException | CampoRepetidoException e) {
-            mensajeLabel.setText(e.getMessage());
             actually.mostrarMensaje(Alert.AlertType.ERROR, e.getMessage());  // Mostrar alerta de error
         } catch (Exception e) {
-            mensajeLabel.setText("Error inesperado: " + e.getMessage());
             actually.mostrarMensaje(Alert.AlertType.ERROR, "Error inesperado: " + e.getMessage());  // Mostrar alerta de error inesperado
         } finally {
             limpiarCampos();

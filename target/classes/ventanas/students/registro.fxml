@@ -1,20 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="co.edu.uniquindio.Actually.controladores.RegistroControlador"
-            prefHeight="450.0" prefWidth="600.0" styleClass="root" stylesheets="@../../style.css">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-    <VBox alignment="CENTER" spacing="15.0" layoutX="150.0" layoutY="30.0" styleClass="form-container">
-        <Label text="Registro de Estudiante" styleClass="form-title"/>
-        <TextField fx:id="nombreField" promptText="Nombre" styleClass="input-field"/>
-        <TextField fx:id="idField" promptText="ID" styleClass="input-field"/>
-        <TextField fx:id="correoField" promptText="Correo" styleClass="input-field"/>
-        <PasswordField fx:id="contrasenaField" promptText="Contraseña" styleClass="input-field"/>
-        <Button text="Registrarse" onAction="#registrarse" styleClass="submit-button"/>
-        <Label fx:id="mensajeLabel" textFill="red" styleClass="error-message"/>
-        <Button text="Volver" onAction="#volverAlLogin" styleClass="back-button"/>
-    </VBox>
+<AnchorPane prefHeight="700" prefWidth="1100" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.Actually.controladores.RegistroControlador">
+    <children>
+        <HBox alignment="CENTER" prefHeight="700.0" prefWidth="1100.0">
+            <children>
+                <VBox alignment="CENTER_RIGHT" prefHeight="700.0" prefWidth="350.0" styleClass="backgroundGradient">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#volverAlLogin" prefHeight="39.0" prefWidth="242.0" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="INICIAR SESIÓN" textFill="WHITE">
+                            <font>
+                                <Font name="SansSerif Bold" size="20.0" />
+                            </font>
+                            <effect>
+                                <Reflection />
+                            </effect>
+                            <VBox.margin>
+                                <Insets right="-130.0" />
+                            </VBox.margin>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                        <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="275.0" style="-fx-background-radius: 60;" styleClass="backgroundWhitesmoke" text="REGISTRARSE">
+                            <font>
+                                <Font name="SansSerif Regular" size="20.0" />
+                            </font>
+                            <effect>
+                                <Reflection />
+                            </effect>
+                            <VBox.margin>
+                                <Insets right="-130.0" top="50.0" />
+                            </VBox.margin>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </children>
+                </VBox>
+                <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="750.0" styleClass="backgroundWhitesmoke">
+                    <children>
+                        <ImageView fitHeight="434.0" fitWidth="449.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="/images/ActuallyIcon.png" />
+                            </image>
+                            <VBox.margin>
+                                <Insets top="-80.0" />
+                            </VBox.margin>
+                        </ImageView>
+                        <HBox alignment="CENTER" spacing="10.0">
+                            <ImageView fx:id="iconoUsuario" fitHeight="41.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="/images/userIcon.png" />
+                                </image>
+                            </ImageView>
+                            <TextField fx:id="nombreField" prefHeight="33.0" prefWidth="639.0" promptText="Ingresa tu nombre completo" styleClass="inputModerno">
+                                <font>
+                                    <Font name="SansSerif Regular" size="18.0" />
+                                </font></TextField>
+                            <VBox.margin>
+                                <Insets top="-50.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="10">
+                            <children>
+                                <ImageView fx:id="iconoUsuario1" fitHeight="47.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="/images/idUserIcon.png" />
+                                    </image>
+                                    <HBox.margin>
+                                        <Insets left="-10.0" />
+                                    </HBox.margin>
+                                </ImageView>
+                                <TextField fx:id="idField" prefHeight="25.0" prefWidth="635.0" promptText="Ingresa tu número de identificación" styleClass="inputModerno">
+                                    <font>
+                                        <Font name="SansSerif Regular" size="18.0" />
+                                    </font>
+                                </TextField>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="10">
+                            <children>
+                                <ImageView fx:id="iconoUsuario11" fitHeight="47.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="/images/emailIcon.png" />
+                                    </image>
+                                    <HBox.margin>
+                                        <Insets left="-10.0" />
+                                    </HBox.margin>
+                                </ImageView>
+                                <TextField fx:id="correoField" prefHeight="25.0" prefWidth="635.0" promptText="Ingresa tu correo institucional" styleClass="inputModerno">
+                                    <font>
+                                        <Font name="SansSerif Regular" size="18.0" />
+                                    </font>
+                                </TextField>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="10">
+                            <children>
+                                <ImageView fx:id="iconoUsuario111" fitHeight="47.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="/images/passwordIcon.png" />
+                                    </image>
+                                    <HBox.margin>
+                                        <Insets left="-10.0" />
+                                    </HBox.margin>
+                                </ImageView>
+                                <PasswordField fx:id="contrasenaField" prefHeight="25.0" prefWidth="635.0" promptText="Ingresa tu contraseña" styleClass="inputModerno">
+                                    <font>
+                                        <Font name="SansSerif Regular" size="18.0" />
+                                    </font>
+                                </PasswordField>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <Button mnemonicParsing="false" onAction="#registrarse" prefHeight="37.0" prefWidth="204.0" style="-fx-background-radius: 20;" styleClass="login-button" text="Registrarse" textFill="WHITE">
+                            <font>
+                                <Font name="SansSerif Bold" size="20.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                            <effect>
+                                <Reflection />
+                            </effect>
+                            <VBox.margin>
+                                <Insets top="30.0" />
+                            </VBox.margin>
+                        </Button>
+                    </children></VBox>
+            </children>
+        </HBox>
+    </children>
 </AnchorPane>

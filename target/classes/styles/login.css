@@ -46,7 +46,10 @@
 }
 
 .login-button:focused {
-    -fx-background-color: #A5C3CD;
+    -fx-background-color: linear-gradient(to bottom right, #2C4A59, #A5C3CD);
+    -fx-padding: 60px 20px;
+    -fx-alignment: center;
+    -fx-spacing: 20px;
     -fx-background-insets: 0;
     -fx-background-radius: 40;
     -fx-padding: 10 15;
