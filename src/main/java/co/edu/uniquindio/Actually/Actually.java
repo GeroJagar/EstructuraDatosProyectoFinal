@@ -142,6 +142,15 @@ public class Actually {
 
     }
 
+    public void changePassword(String estudianteId, String newPassword) throws Exception{
+        if (!usuarios.containsKey(estudianteId)) {
+            throw new Exception("El estudiante no existe");
+        }
+        Estudiante estudiante = (Estudiante) usuarios.get(estudianteId);
+        estudiante.setContrasena(newPassword);
+        ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
+    }
+
     public void valorarContenido(String estudianteId, String contenidoId, int puntaje) throws Exception {
         if (!contenidos.containsKey(contenidoId)) {
             throw new Exception("El contenido no existe");

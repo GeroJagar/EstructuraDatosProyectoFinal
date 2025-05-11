@@ -93,7 +93,7 @@
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                             <children>
-                                <Hyperlink text="¿Olvidaste Tu Contraseña?" textFill="#20485b" underline="true">
+                                <Hyperlink text="¿Olvidaste Tu Contraseña?" textFill="#20485b" underline="true" onAction="#forgotPassword">
                                     <font>
                                         <Font name="SansSerif Regular" size="18.0" />
                                     </font>

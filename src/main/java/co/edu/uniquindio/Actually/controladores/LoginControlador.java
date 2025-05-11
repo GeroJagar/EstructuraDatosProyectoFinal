@@ -29,6 +29,11 @@ public class LoginControlador {
     }
 
     @FXML
+    public void forgotPassword(ActionEvent event){
+        actually.loadStage("/ventanas/common/changePassword.fxml", event);
+    }
+
+    @FXML
     public void irARegistro(ActionEvent event) {
         actually.loadStage("/ventanas/students/registro.fxml", event);
     }

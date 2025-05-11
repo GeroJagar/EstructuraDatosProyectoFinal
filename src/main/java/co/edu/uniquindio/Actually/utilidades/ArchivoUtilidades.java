@@ -11,33 +11,25 @@ import java.util.*;
 public class ArchivoUtilidades {
 
     public static ArrayList<String> leerArchivoScanner(String ruta) throws IOException {
-
         ArrayList<String> lista = new ArrayList<>();
         Scanner sc = new Scanner(new File(ruta));
-
         while (sc.hasNextLine()) {
             lista.add(sc.nextLine());
         }
-
         sc.close();
-
         return lista;
     }
 
     public static ArrayList<String> leerArchivoBufferedReader(String ruta) throws IOException {
-
         ArrayList<String> lista = new ArrayList<>();
         FileReader fr = new FileReader(ruta);
         BufferedReader br = new BufferedReader(fr);
         String linea;
-
         while ((linea = br.readLine()) != null) {
             lista.add(linea);
         }
-
         br.close();
         fr.close();
-
         return lista;
     }
 
