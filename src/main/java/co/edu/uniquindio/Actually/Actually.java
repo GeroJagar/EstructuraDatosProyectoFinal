@@ -223,4 +223,31 @@ public class Actually {
         alert.setContentText(mensaje);
         alert.show();
     }
+
+    public ContenidoAcademico buscarContenido(String criterio, String clave) throws Exception {
+        if (criterio == null || clave == null || criterio.isBlank() || clave.isBlank()) {
+            throw new Exception("El criterio y la clave no pueden estar vacíos.");
+        }
+        ABBContenido arbolContenido = new ABBContenido();
+        for (ContenidoAcademico contenido : contenidos.values()) {
+            String valorClave;
+            switch (criterio.toLowerCase()) {
+                case "titulo":
+                    valorClave = contenido.getTitulo();
+                    break;
+                case "autor":
+                    valorClave = contenido.getAutor();
+                    break;
+                case "tema":
+                    valorClave = contenido.getTema().name();
+                    break;
+                default:
+                    throw new Exception("Criterio no válido.");
+            }
+            arbolContenido.insertar(contenido, valorClave);
+        }
+        ContenidoAcademico resultado = arbolContenido.buscar(clave);
+        if (resultado == null) throw new Exception("No se encontró contenido.");
+        return resultado;
+    }
 }

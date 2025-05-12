@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -31,7 +32,17 @@ public class PanelEstudianteControlador {
     private ScrollPane scrollContenidos;
 
     @FXML
+    private TextField txtClaveBusqueda;
+
+    @FXML
+    private ComboBox<String> cbCriterioBusqueda;
+
+    @FXML
+    private HBox contenedorBusqueda;
+
+    @FXML
     public void initialize() {
+        cbCriterioBusqueda.getItems().addAll("titulo", "autor", "tema");
         mostrarTodoElContenido(null);
     }
 
@@ -41,6 +52,8 @@ public class PanelEstudianteControlador {
         contenidoPanel.setManaged(true);
         scrollContenidos.setVisible(false);
         scrollContenidos.setManaged(false);
+        contenedorBusqueda.setVisible(false);
+        contenedorBusqueda.setManaged(false);
     }
 
     @FXML
@@ -49,6 +62,8 @@ public class PanelEstudianteControlador {
         contenidoPanel.setManaged(false);
         scrollContenidos.setVisible(true);
         scrollContenidos.setManaged(true);
+        contenedorBusqueda.setVisible(true);
+        contenedorBusqueda.setManaged(true);
 
         cargarContenidosDelEstudiante();
     }
@@ -59,9 +74,12 @@ public class PanelEstudianteControlador {
         contenidoPanel.setManaged(false);
         scrollContenidos.setVisible(true);
         scrollContenidos.setManaged(true);
+        contenedorBusqueda.setVisible(true);
+        contenedorBusqueda.setManaged(true);
 
         cargarTodosLosContenidos();
     }
+
 
     @FXML
     public void cerrarSesion(ActionEvent event) {
@@ -179,6 +197,24 @@ public class PanelEstudianteControlador {
             }
         });
     }
+
+    @FXML
+    public void buscarContenido(ActionEvent event) {
+        String criterio = cbCriterioBusqueda.getValue();
+        String clave = txtClaveBusqueda.getText();
+        contenedorContenido.getChildren().clear();
+        try {
+            ContenidoAcademico resultado = actually.buscarContenido(criterio, clave);
+            if (resultado != null) {
+                agregarVistaDeContenido(resultado);
+            } else {
+                mostrarMensaje(Alert.AlertType.WARNING, "No se encontraron resultados.");
+            }
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error en la búsqueda: " + e.getMessage());
+        }
+    }
+
 
     private void mostrarMensaje(Alert.AlertType tipo, String mensaje) {
         Alert alert = new Alert(tipo);

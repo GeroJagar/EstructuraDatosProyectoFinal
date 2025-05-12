@@ -1,6 +1,8 @@
+co\edu\uniquindio\Actually\modelo\ABBContenido.class
 co\edu\uniquindio\Actually\utilidades\ArchivoUtilidades.class
 co\edu\uniquindio\Actually\utilidades\FileUploader.class
 co\edu\uniquindio\Actually\modelo\Moderador.class
+co\edu\uniquindio\Actually\modelo\NodoContenido.class
 co\edu\uniquindio\Actually\excepciones\CampoObligatorioException.class
 co\edu\uniquindio\Actually\controladores\InicioControlador.class
 co\edu\uniquindio\Actually\excepciones\CampoVacioException.class

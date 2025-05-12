@@ -26,6 +26,12 @@
             <Button text="Subir Contenido Académico" onAction="#subirContenido" styleClass="submit-button"/>
         </VBox>
 
+        <HBox fx:id="contenedorBusqueda" spacing="10" alignment="CENTER" style="-fx-padding: 5;">
+            <ComboBox fx:id="cbCriterioBusqueda" promptText="Criterio"/>
+            <TextField fx:id="txtClaveBusqueda" promptText="Buscar..."/>
+            <Button text="Buscar" onAction="#buscarContenido"/>
+        </HBox>
+
         <!-- CONTENEDOR DE CONTENIDO -->
         <ScrollPane fx:id="scrollContenidos" fitToWidth="true" prefHeight="300.0" VBox.vgrow="ALWAYS" visible="true">
             <VBox fx:id="contenedorContenido" spacing="10.0">
