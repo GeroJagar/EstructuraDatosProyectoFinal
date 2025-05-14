@@ -14,9 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Actually {
 
@@ -249,5 +247,31 @@ public class Actually {
         ContenidoAcademico resultado = arbolContenido.buscar(clave);
         if (resultado == null) throw new Exception("No se encontró contenido.");
         return resultado;
+    }
+
+    public List<ContenidoAcademico> buscarContenido(String clave) throws Exception {
+        if (clave == null || clave.isBlank()) {
+            throw new Exception("La clave no puede estar vacía.");
+        }
+
+        List<ContenidoAcademico> resultados = new ArrayList<>();
+        String claveLower = clave.toLowerCase();
+
+        for (ContenidoAcademico contenido : contenidos.values()) {
+            // Convertimos los campos a minúsculas para búsqueda insensible a mayúsculas
+            String titulo = contenido.getTitulo().toLowerCase();
+            String autor = contenido.getAutor().toLowerCase();
+            String tema = contenido.getTema().name().toLowerCase();
+
+            if (titulo.contains(claveLower) || autor.contains(claveLower) || tema.contains(claveLower)) {
+                resultados.add(contenido);
+            }
+        }
+
+        if (resultados.isEmpty()) {
+            throw new Exception("No se encontró contenido que coincida con la clave.");
+        }
+
+        return resultados;
     }
 }

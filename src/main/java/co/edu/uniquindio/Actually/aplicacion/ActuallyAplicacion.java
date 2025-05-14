@@ -23,7 +23,7 @@ public class ActuallyAplicacion extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/common/login.fxml"));
+        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/common/homepage.fxml"));
         Scene scene = new Scene(loader.load());
         scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());
         stage.setScene(scene);

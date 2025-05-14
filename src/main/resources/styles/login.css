@@ -55,3 +55,80 @@
     -fx-padding: 10 15;
     -fx-text-fill: #000000;
 }
+
+.loginLightVer {
+    -fx-background-color: #F5F5F5;
+    -fx-background-insets: 0;
+    -fx-background-radius: 40;
+    -fx-padding: 10 15;
+    -fx-text-fill: #9E9E9E;
+}
+
+.loginLightVer:focused {
+    -fx-background-color: linear-gradient(to bottom right, #C5D7E0, #F5F5F5);
+    -fx-padding: 60px 20px;
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+    -fx-background-insets: 0;
+    -fx-background-radius: 40;
+    -fx-padding: 10 15;
+    -fx-text-fill: #05242F;
+}
+
+.searchModerno{
+    -fx-background-color: #ffffff;
+    -fx-border-color: #2C4A59;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(44, 74, 89, 0.25), 6, 0, 0, 3);
+}
+
+.searchModerno:focused{
+    -fx-background-color: #ffffff;
+    -fx-border-color: #2C4A59;
+    -fx-border-radius: 10;
+    -fx-prompt-text-fill: #4B4B4B;
+    -fx-effect: dropshadow(gaussian, rgba(44, 74, 89, 0.25), 6, 0, 0, 3);
+}
+
+.combo-box {
+    -fx-font-family: "Franklin Gothic Book";
+    -fx-font-size: 20px;
+    -fx-background-radius: 60;
+    -fx-border-radius: 60;
+    -fx-text-fill: #05242F;
+    -fx-background-color: #F5F5F5;
+}
+
+.combo-box .arrow-button {
+    -fx-background-radius: 60;
+}
+
+.combo-box .list-cell {
+    -fx-font-family: "Franklin Gothic Book";
+    -fx-font-size: 20px;
+}
+
+.scroll-pane {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: transparent;
+    -fx-padding: 10;
+    -fx-background-radius: 15;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #2C4A59; /* color azul oscuro */
+    -fx-background-radius: 10;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #dcdcdc;
+    -fx-background-radius: 10;
+}
