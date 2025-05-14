@@ -1,6 +1,7 @@
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\Actually.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\aplicacion\ActuallyAplicacion.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\controladores\ChangePasswordController.java
+C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\controladores\HomepageController.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\controladores\InicioControlador.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\controladores\LoginControlador.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\controladores\PanelEstudianteControlador.java
@@ -16,6 +17,7 @@ C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\un
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\NodoContenido.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\SolicitudAyuda.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\TEMA.java
+C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\TIPOCONTENIDO.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\Usuario.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\Valoracion.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\utilidades\ArchivoUtilidades.java

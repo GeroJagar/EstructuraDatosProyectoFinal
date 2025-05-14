@@ -15,6 +15,7 @@ public class ContenidoAcademico implements Serializable {
     protected String contenido;
     protected String id;
     protected List<Valoracion> valoraciones;
+    protected TIPOCONTENIDO tipoContenido;
 
     public ContenidoAcademico() {
         this.valoraciones = new ArrayList<>();
@@ -45,7 +46,6 @@ public class ContenidoAcademico implements Serializable {
                 .orElse(0);
     }
 
-    // Getters y Setters
     public String getTitulo() {
         return titulo;
     }
@@ -88,6 +88,18 @@ public class ContenidoAcademico implements Serializable {
 
     public List<Valoracion> getValoraciones() {
         return valoraciones;
+    }
+
+    public void setValoraciones(List<Valoracion> valoraciones) {
+        this.valoraciones = valoraciones;
+    }
+
+    public TIPOCONTENIDO getTipoContenido() {
+        return tipoContenido;
+    }
+
+    public void setTipoContenido(TIPOCONTENIDO tipoContenido) {
+        this.tipoContenido = tipoContenido;
     }
 
     @Override
