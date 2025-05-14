@@ -17,12 +17,14 @@ public class LoginControlador {
     public void ingresar(ActionEvent event) {
         String id = idField.getText();
         String contrasena = contrasenaField.getText();
-
         Usuario usuario = actually.obtenerUsuarioPorId(id);
-
+        if(usuario != null && usuario.getNombre().equals("Administrador") && usuario.getContrasena().equals(contrasena)){
+            actually.loadStage("/ventanas/admin/adminPage.fxml", event);
+            return;
+        }
         if (usuario != null && usuario.getContrasena().equals(contrasena)) {
             actually.setUsuarioActivo(usuario);
-            actually.loadStage("/ventanas/students/panelEstudiante.fxml", event);
+            actually.loadStage("/ventanas/students/studentPage.fxml", event);
         } else {
             actually.mostrarMensaje(Alert.AlertType.ERROR, "ID o contraseña incorrectos");
         }
