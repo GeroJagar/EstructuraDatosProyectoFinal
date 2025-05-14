@@ -78,7 +78,7 @@
                   <Insets left="10.0" top="-10.0" />
                </HBox.margin>
             </ImageView>
-            <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="250.0" style="-fx-background-radius: 60;" styleClass="loginLightVer" text="Iniciar Sesión" textFill="#05242f">
+            <Button mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="35.0" prefWidth="250.0" style="-fx-background-radius: 60;" styleClass="loginLightVer" text="Iniciar Sesión" textFill="#05242f">
                <font>
                   <Font name="Franklin Gothic Book" size="22.0" />
                </font>
@@ -92,7 +92,7 @@
                   <Insets bottom="-70.0" left="50.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="250.0" style="-fx-background-radius: 60;" styleClass="loginLightVer" text="Registrarse" textFill="#05242f">
+            <Button mnemonicParsing="false" onAction="#onRegisterButtonClick" prefHeight="35.0" prefWidth="250.0" style="-fx-background-radius: 60;" styleClass="loginLightVer" text="Registrarse" textFill="#05242f">
                <font>
                   <Font name="Franklin Gothic Book" size="22.0" />
                </font>
