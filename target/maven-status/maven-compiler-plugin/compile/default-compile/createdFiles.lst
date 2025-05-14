@@ -7,7 +7,9 @@ co\edu\uniquindio\Actually\excepciones\CampoObligatorioException.class
 co\edu\uniquindio\Actually\controladores\InicioControlador.class
 co\edu\uniquindio\Actually\excepciones\CampoVacioException.class
 co\edu\uniquindio\Actually\Actually.class
+co\edu\uniquindio\Actually\controladores\PanelEstudianteControlador$1.class
 co\edu\uniquindio\Actually\modelo\SolicitudAyuda.class
+co\edu\uniquindio\Actually\modelo\TIPOCONTENIDO.class
 co\edu\uniquindio\Actually\modelo\Estudiante.class
 co\edu\uniquindio\Actually\controladores\PanelEstudianteControlador.class
 co\edu\uniquindio\Actually\modelo\Usuario.class

@@ -60,6 +60,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Para manejar PDF -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.27</version>
+        </dependency>
+
+        <!-- Para reproducir video -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>17</version>
+        </dependency>
+
     </dependencies>
 
 </project>
