@@ -5,6 +5,7 @@ import co.edu.uniquindio.Actually.modelo.ContenidoAcademico;
 import co.edu.uniquindio.Actually.modelo.Estudiante;
 import co.edu.uniquindio.Actually.modelo.TEMA;
 import co.edu.uniquindio.Actually.modelo.TIPOCONTENIDO;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -27,6 +28,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.List;
 
 public class StudentPageController {
 
@@ -34,8 +36,17 @@ public class StudentPageController {
     @FXML public TextField txtClaveBusqueda;
     @FXML public ScrollPane scrollContenidos;
     @FXML public VBox contenedorContenido;
+    @FXML public VBox contenidoPanel;
+    @FXML public HBox searchHBox;
+
+    // Campos del formulario de metadatos
+    @FXML private TextField txtTitulo;
+    @FXML private ComboBox<TEMA> cbTema;
+    @FXML private ComboBox<TIPOCONTENIDO> cbTipoContenido;
+    @FXML private TextField txtAutor;
 
     private final Actually actually = Actually.getInstance();
+    private File archivoSeleccionado;
 
     @FXML
     public void initialize() {
@@ -216,6 +227,50 @@ public class StudentPageController {
         alert.show();
     }
 
-    public void buscarContenido(KeyEvent keyEvent) {
+    @FXML
+    public void buscarContenido(ActionEvent event) {
+        String criterio = cbCriterioBusqueda.getValue();
+        String clave = txtClaveBusqueda.getText();
+        contenedorContenido.getChildren().clear();
+        try {
+            if (criterio == null || criterio.isEmpty()) {
+                List<ContenidoAcademico> resultados = actually.buscarContenido(clave);
+                for (ContenidoAcademico contenido : resultados) {
+                    agregarVistaDeContenido(contenido);
+                }
+            } else {
+                ContenidoAcademico resultado = actually.buscarContenido(criterio, clave);
+                if (resultado != null) {
+                    agregarVistaDeContenido(resultado);
+                } else {
+                    mostrarMensaje(Alert.AlertType.WARNING, "No se encontraron resultados.");
+                }
+            }
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error en la búsqueda: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void mostrarSubirContenido(MouseEvent event) {
+        searchHBox.setVisible(false);
+        searchHBox.setManaged(false);
+        contenidoPanel.setVisible(true);
+        contenidoPanel.setManaged(true);
+        scrollContenidos.setVisible(false);
+        scrollContenidos.setManaged(false);
+
+        // Limpiar formulario al mostrar
+        limpiarFormulario();
+    }
+
+    private void limpiarFormulario() {
+        txtTitulo.clear();
+        cbTema.getSelectionModel().clearSelection();
+        cbTipoContenido.getSelectionModel().clearSelection();
+        archivoSeleccionado = null;
+    }
+
+    public void seleccionarArchivo(ActionEvent event) {
     }
 }

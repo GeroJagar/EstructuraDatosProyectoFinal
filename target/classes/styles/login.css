@@ -132,3 +132,47 @@
     -fx-background-color: #dcdcdc;
     -fx-background-radius: 10;
 }
+
+/* Estilo base del VBox */
+#contenidoPanel {
+    -fx-border-color: #F5F5F5;
+    -fx-border-width: 5px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+}
+
+/* Etiquetas (Labels) */
+.form-label {
+    -fx-font-family: "Franklin Gothic Book";
+    -fx-text-fill: #05242F;
+    -fx-font-size: 16px;
+    -fx-font-weight: regular;
+}
+
+/* Campos de texto y ComboBox */
+.form-field {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 5px;
+    -fx-border-color: #1E88E5;
+    -fx-border-radius: 5px;
+    -fx-pref-height: 35px;
+    -fx-font-size: 14px;
+}
+
+/* Botón principal */
+.submit-button {
+    -fx-background-color: #F5F5F5;
+    -fx-text-fill: A4A4A4;
+    -fx-font-family: "Franklin Gothic Book";
+    -fx-font-weight: regular;
+    -fx-font-size: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-cursor: hand;
+}
+
+.submit-button:hover {
+    -fx-background-color: #A4A4A4;
+    -fx-text-fill: black;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 0);
+}
