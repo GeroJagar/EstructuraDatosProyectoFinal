@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.Reflection?>
 <?import javafx.scene.image.Image?>
@@ -24,7 +25,7 @@
     <top>
         <HBox alignment="CENTER" prefHeight="109.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
             <children>
-                <ComboBox prefHeight="25.0" prefWidth="199.0" promptText="Filtrar">
+                <ComboBox fx:id="cbCriterioBusqueda" prefHeight="25.0" prefWidth="199.0" promptText="Filtrar">
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>
@@ -32,7 +33,7 @@
                         <Reflection />
                     </effect>
                 </ComboBox>
-                <TextField prefHeight="37.0" prefWidth="627.0" promptText="Buscar..." style="-fx-background-radius: 40;" styleClass="searchModerno">
+                <TextField fx:id="txtClaveBusqueda" onKeyPressed="#buscarContenido" prefHeight="37.0" prefWidth="627.0" promptText="Buscar..." style="-fx-background-radius: 40;" styleClass="searchModerno">
                     <font>
                         <Font name="SansSerif Regular" size="20.0" />
                     </font>
@@ -50,7 +51,7 @@
                     <graphic>
                         <ImageView fitHeight="40.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="/images/seachIcon.png" />
+                                <Image url="@../../images/seachIcon.png" />
                             </image>
                             <cursor>
                                 <Cursor fx:constant="HAND" />
@@ -77,7 +78,7 @@
                     <children>
                         <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="/images/userIcon1.png" />
+                                <Image url="@../../images/userIcon1.png" />
                             </image>
                         </ImageView>
                         <Hyperlink text="Mi Perfil" textFill="WHITESMOKE">
@@ -90,10 +91,9 @@
                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                     <children>
                         <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="/images/teamIcon.png" />
-                            </image>
-                        </ImageView>
+                     <image>
+                        <Image url="@../../images/teamIcon.png" />
+                     </image></ImageView>
                         <Hyperlink text="Mis Grupos" textFill="WHITESMOKE">
                             <VBox.margin>
                                 <Insets />
@@ -108,7 +108,7 @@
                     <children>
                         <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="/images/uploadIcon.png" />
+                                <Image url="@../../images/uploadIcon.png" />
                             </image>
                         </ImageView>
                         <Hyperlink text="Publicar Contenido" textFill="WHITESMOKE">
@@ -122,7 +122,7 @@
                     <children>
                         <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="/images/chatIcon.png" />
+                                <Image url="@../../images/chatIcon.png" />
                             </image>
                         </ImageView>
                         <Hyperlink text="Mis Chats" textFill="WHITESMOKE">
@@ -136,7 +136,7 @@
                     <children>
                         <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="/images/helpIcon.png" />
+                                <Image url="@../../images/helpIcon.png" />
                             </image>
                         </ImageView>
                         <Hyperlink text="Ayuda" textFill="WHITESMOKE">
@@ -149,5 +149,14 @@
             </children>
         </HBox>
     </bottom>
+   <center>
+      <ScrollPane fx:id="scrollContenidos" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets left="75.0" right="75.0" />
+         </BorderPane.margin>
+         <content>
+            <VBox fx:id="contenedorContenido" prefHeight="355.0" prefWidth="842.0" />
+         </content>
+      </ScrollPane>
+   </center>
 </BorderPane>
-

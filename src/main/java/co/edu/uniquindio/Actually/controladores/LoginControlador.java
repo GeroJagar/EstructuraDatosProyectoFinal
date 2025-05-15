@@ -39,4 +39,8 @@ public class LoginControlador {
     public void irARegistro(ActionEvent event) {
         actually.loadStage("/ventanas/students/registro.fxml", event);
     }
+
+    public void onBackButtonClick(ActionEvent event) {
+        actually.loadStage("/ventanas/common/homepage.fxml", event);
+    }
 }

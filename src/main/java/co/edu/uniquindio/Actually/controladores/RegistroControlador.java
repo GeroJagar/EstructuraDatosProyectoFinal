@@ -40,6 +40,10 @@ public class RegistroControlador {
         Actually.getInstance().loadStage("/ventanas/common/login.fxml", event);
     }
 
+    public void onBackButtonClick(ActionEvent event) {
+        actually.loadStage("/ventanas/common/homepage.fxml", event);
+    }
+
     private void limpiarCampos() {
         nombreField.clear();
         idField.clear();
