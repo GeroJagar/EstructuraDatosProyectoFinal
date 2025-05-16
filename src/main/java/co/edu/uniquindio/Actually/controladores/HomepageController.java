@@ -2,6 +2,7 @@ package co.edu.uniquindio.Actually.controladores;
 
 import co.edu.uniquindio.Actually.Actually;
 import co.edu.uniquindio.Actually.modelo.ContenidoAcademico;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -72,10 +73,14 @@ public class HomepageController {
         }
     }
 
-    private void mostrarMensaje(Alert.AlertType tipo, String mensaje) {
-        Alert alert = new Alert(tipo);
-        alert.setContentText(mensaje);
-        alert.show();
+    @FXML
+    public void onLoginButtonClick(ActionEvent event){
+        actually.loadStage("/ventanas/common/login.fxml", event);
+    }
+
+    @FXML
+    public void onRegisterButtonClick(ActionEvent event){
+        actually.loadStage("/ventanas/students/registro.fxml", event);
     }
 
 }

@@ -7,14 +7,14 @@
 }
 
 .backgroundGradient {
-    -fx-background-color: linear-gradient(to bottom right, #2C4A59, #F5F5F5);
+    -fx-background-color: linear-gradient(to bottom right, #05242F, #9BB4BD);
     -fx-padding: 60px 20px;
     -fx-alignment: center;
     -fx-spacing: 20px;
 }
 
 .panel-izquierdo {
-    -fx-background-color: linear-gradient(to bottom right, #2C4A59, #9FBDCB);
+    -fx-background-color: linear-gradient(to bottom right, #05242F, #9BB4BD);
     -fx-padding: 60px 20px;
 }
 
@@ -38,41 +38,33 @@
 }
 
 .login-button {
-    -fx-background-color: #2C4A59;
+    -fx-background-color: #05242F;
     -fx-background-insets: 0;
     -fx-background-radius: 40;
-    -fx-padding: 10 15;
     -fx-text-fill: #f5f5f5;
 }
 
-.login-button:focused {
-    -fx-background-color: linear-gradient(to bottom right, #2C4A59, #A5C3CD);
-    -fx-padding: 60px 20px;
+.login-button:hover {
+    -fx-background-color: #5C7881;
     -fx-alignment: center;
-    -fx-spacing: 20px;
     -fx-background-insets: 0;
     -fx-background-radius: 40;
-    -fx-padding: 10 15;
     -fx-text-fill: #000000;
 }
 
 .loginLightVer {
-    -fx-background-color: #F5F5F5;
+    -fx-background-color: #BBD2DA;
     -fx-background-insets: 0;
     -fx-background-radius: 40;
-    -fx-padding: 10 15;
-    -fx-text-fill: #9E9E9E;
+    -fx-text-fill: #000000;
 }
 
-.loginLightVer:focused {
-    -fx-background-color: linear-gradient(to bottom right, #C5D7E0, #F5F5F5);
-    -fx-padding: 60px 20px;
+.loginLightVer:hover {
+    -fx-background-color: #5C7881;
     -fx-alignment: center;
-    -fx-spacing: 20px;
     -fx-background-insets: 0;
     -fx-background-radius: 40;
-    -fx-padding: 10 15;
-    -fx-text-fill: #05242F;
+    -fx-text-fill: #000000;
 }
 
 .searchModerno{
@@ -91,7 +83,7 @@
 }
 
 .combo-box {
-    -fx-font-family: "Franklin Gothic Book";
+    -fx-font-family: "SansSerif";
     -fx-font-size: 20px;
     -fx-background-radius: 60;
     -fx-border-radius: 60;
@@ -104,7 +96,7 @@
 }
 
 .combo-box .list-cell {
-    -fx-font-family: "Franklin Gothic Book";
+    -fx-font-family: "SansSerif";
     -fx-font-size: 20px;
 }
 
@@ -131,4 +123,62 @@
 .scroll-bar .track {
     -fx-background-color: #dcdcdc;
     -fx-background-radius: 10;
+}
+
+/* Estilo base del VBox */
+#contenidoPanel {
+    -fx-border-color: #F5F5F5;
+    -fx-border-width: 5px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+}
+
+/* Etiquetas (Labels) */
+.form-label {
+    -fx-font-family: "SansSerif";
+    -fx-text-fill: #05242F;
+    -fx-font-size: 16px;
+}
+
+/* Campos de texto y ComboBox */
+.form-field {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 5px;
+    -fx-border-color: #1E88E5;
+    -fx-border-radius: 5px;
+    -fx-pref-height: 35px;
+    -fx-font-size: 14px;
+}
+
+/* Botón principal */
+.submit-button {
+    -fx-background-color: #F5F5F5;
+    -fx-text-fill: #A4A4A4;
+    -fx-font-family: "SansSerif";
+    -fx-font-size: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-cursor: hand;
+}
+
+.submit-button:hover {
+    -fx-background-color: #A4B97F;
+    -fx-text-fill: black;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 0);
+}
+
+.cancel-button{
+    -fx-background-color: #F5F5F5;
+    -fx-text-fill: #A4A4A4;
+    -fx-font-family: "SansSerif";
+    -fx-font-size: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-cursor: hand;
+}
+
+.cancel-button:hover{
+    -fx-background-color: #B97F92;
+    -fx-text-fill: #000000;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 0);
 }

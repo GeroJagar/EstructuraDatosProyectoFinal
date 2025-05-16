@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #05242F;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.Actually.controladores.PanelEstudianteControlador">
+    <top>
+
+    </top>
+    <top>
+        <HBox fx:id="searchHBox" alignment="CENTER" prefHeight="109.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+            <children>
+                <ComboBox fx:id="cbCriterioBusqueda" prefHeight="25.0" prefWidth="199.0" promptText="Filtrar">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <effect>
+                        <Reflection />
+                    </effect>
+                </ComboBox>
+                <TextField fx:id="txtClaveBusqueda" prefHeight="37.0" prefWidth="627.0" promptText="Buscar..." style="-fx-background-radius: 40;" styleClass="searchModerno">
+                    <font>
+                        <Font name="SansSerif Regular" size="20.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="TEXT" />
+                    </cursor>
+                    <effect>
+                        <Reflection />
+                    </effect>
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </TextField>
+                <Button mnemonicParsing="false" onAction="#buscarContenido" prefHeight="37.0" prefWidth="45.0" style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                    <graphic>
+                        <ImageView fitHeight="40.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/seachIcon.png" />
+                            </image>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </ImageView>
+                    </graphic>
+                    <effect>
+                        <Reflection />
+                    </effect>
+                    <HBox.margin>
+                        <Insets left="-48.0" />
+                    </HBox.margin>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </children>
+        </HBox>
+    </top>
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="117.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+            <children>
+                <VBox alignment="CENTER" prefHeight="117.0" prefWidth="130.0">
+                    <children>
+                        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/userIcon1.png" />
+                            </image>
+                        </ImageView>
+                        <Hyperlink text="Mi Perfil" textFill="WHITESMOKE">
+                            <font>
+                                <Font name="SansSerif Regular" size="16.0" />
+                            </font>
+                        </Hyperlink>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
+                    <children>
+                        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/teamIcon.png" />
+                     </image></ImageView>
+                        <Hyperlink text="Mis Grupos" textFill="WHITESMOKE">
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
+                            <font>
+                                <Font name="SansSerif Regular" size="16.0" />
+                            </font>
+                        </Hyperlink>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" prefHeight="117.0" prefWidth="150.0">
+                    <children>
+                        <ImageView fitHeight="60.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/uploadIcon.png" />
+                            </image>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                        </ImageView>
+                        <Hyperlink onMouseClicked="#mostrarSubirContenido" text="Publicar Contenido" textFill="WHITESMOKE">
+                            <font>
+                                <Font name="SansSerif Regular" size="16.0" />
+                            </font>
+                     <VBox.margin>
+                        <Insets bottom="-10.0" />
+                     </VBox.margin>
+                        </Hyperlink>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
+                    <children>
+                        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/chatIcon.png" />
+                            </image>
+                        </ImageView>
+                        <Hyperlink text="Mis Chats" textFill="WHITESMOKE">
+                            <font>
+                                <Font name="SansSerif Regular" size="16.0" />
+                            </font>
+                        </Hyperlink>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" prefHeight="117.0" prefWidth="105.0">
+                    <children>
+                        <ImageView fitHeight="60.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/helpIcon.png" />
+                            </image>
+                        </ImageView>
+                        <Hyperlink text="Ayuda" textFill="WHITESMOKE">
+                            <font>
+                                <Font name="SansSerif Regular" size="16.0" />
+                            </font>
+                        </Hyperlink>
+                    </children>
+                </VBox>
+            <VBox alignment="CENTER" prefHeight="117.0" prefWidth="150.0">
+               <children>
+                  <ImageView fitHeight="55.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/getOutIcon.png" />
+                     </image>
+                  </ImageView>
+                  <Hyperlink onAction="#cerrarSesion" text="Cerrar Sesión" textFill="WHITESMOKE">
+                     <font>
+                        <Font name="SansSerif Regular" size="16.0" />
+                     </font>
+                  </Hyperlink>
+               </children>
+            </VBox>
+            </children>
+        </HBox>
+    </bottom>
+    <center>
+        <StackPane fx:id="stackPrincipal" BorderPane.alignment="CENTER">
+            <!-- ScrollPane del contenido principal (FYP) -->
+            <ScrollPane fx:id="scrollContenidos" fitToWidth="true">
+                <VBox fx:id="contenedorContenido" prefHeight="355.0" prefWidth="842.0">
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding></VBox>
+            <StackPane.margin>
+               <Insets left="20.0" right="20.0" />
+            </StackPane.margin>
+            </ScrollPane>
+
+            <!-- Panel de Publicación (inicialmente oculto) -->
+            <VBox fx:id="contenidoPanel" alignment="CENTER" managed="false" prefWidth="600" spacing="20" style="-fx-background-color: #05242F; -fx-border-color: #F5F5F5; -fx-border-radius: 10;" visible="false" BorderPane.alignment="CENTER">
+                <padding>
+                    <Insets bottom="40" left="40" right="40" top="40" />
+                </padding>
+
+                <GridPane alignment="CENTER" hgap="15" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="LEFT" minWidth="350" />
+                    </columnConstraints>
+
+                    <!-- Título con Icono -->
+                    <HBox alignment="CENTER_LEFT" spacing="10" GridPane.rowIndex="0">
+                        <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/TitleIcon.png" />
+                            </image>
+                        </ImageView>
+                        <TextField fx:id="txtTitulo" prefWidth="300" promptText="Título..." styleClass="inputModerno">
+                            <font>
+                                <Font name="SansSerif Regular" size="16.0" />
+                            </font>
+                        </TextField>
+                    </HBox>
+
+                    <!-- Tema con Icono -->
+                    <HBox alignment="CENTER_LEFT" spacing="10" GridPane.rowIndex="1">
+                        <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/ThemeIcon.png" />
+                            </image>
+                        </ImageView>
+                        <ComboBox fx:id="cbTema" prefWidth="300" promptText="Tema" styleClass="form-field">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </ComboBox>
+                    </HBox>
+
+                    <!-- Tipo con Icono -->
+                    <HBox alignment="CENTER_LEFT" spacing="10" GridPane.rowIndex="2">
+                        <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/TopicIcon.png" />
+                            </image>
+                        </ImageView>
+                        <ComboBox fx:id="cbTipoContenido" prefWidth="300" promptText="Tipo de Archivo" styleClass="form-field">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </ComboBox>
+                    </HBox>
+
+                    <!-- Autor con Icono -->
+                    <HBox alignment="CENTER_LEFT" spacing="10" GridPane.rowIndex="3">
+                        <ImageView fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/AutorIcon.png" />
+                            </image>
+                        </ImageView>
+                        <TextField fx:id="txtAutor" prefWidth="300" promptText="Autor..." styleClass="inputModerno">
+                            <font>
+                                <Font name="SansSerif Regular" size="16.0" />
+                            </font>
+                        </TextField>
+                    </HBox>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+                </GridPane>
+
+                <Button onAction="#seleccionarArchivo" prefHeight="40" prefWidth="250" styleClass="submit-button" text="Seleccionar Archivo">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button onAction="#onCancelarButtonClick" prefHeight="40" prefWidth="200" styleClass="cancel-button" text="Cancelar">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </VBox>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+        </StackPane>
+    </center>
+</BorderPane>

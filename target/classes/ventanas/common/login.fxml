@@ -14,8 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="co.edu.uniquindio.Actually.controladores.LoginControlador">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.Actually.controladores.LoginControlador">
     <children>
         <HBox alignment="CENTER" prefHeight="700.0" prefWidth="1100.0">
             <children>
@@ -56,19 +55,18 @@
                 <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="750.0" styleClass="backgroundWhitesmoke">
                     <children>
                         <ImageView fitHeight="521.0" fitWidth="526.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
-                            <image>
-                                <Image url="/images/ActuallyIcon.png" />
-                            </image>
                             <VBox.margin>
                                 <Insets top="-100.0" />
                             </VBox.margin>
+                     <image>
+                        <Image url="@../../images/ActuallyIcon.png" />
+                     </image>
                         </ImageView>
                         <HBox alignment="CENTER" spacing="10">
                             <ImageView fx:id="iconoUsuario" fitHeight="41.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
-                                <image>
-                                    <Image url="/images/userIcon.png" />
-                                </image>
-                            </ImageView>
+                        <image>
+                           <Image url="@../../images/userIcon.png" />
+                        </image></ImageView>
                             <TextField fx:id="idField" prefHeight="25.0" prefWidth="635.0" promptText="Identificación..." styleClass="inputModerno">
                                 <font>
                                     <Font name="SansSerif Regular" size="18.0" />
@@ -79,10 +77,9 @@
                         </HBox>
                         <HBox alignment="CENTER" spacing="10">
                             <ImageView fx:id="iconoCandado" fitHeight="51.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                <image>
-                                    <Image url="/images/passwordIcon.png" />
-                                </image>
-                            </ImageView>
+                        <image>
+                           <Image url="@../../images/passwordIcon.png" />
+                        </image></ImageView>
                             <PasswordField fx:id="contrasenaField" prefWidth="635.0" promptText="Contraseña" styleClass="inputModerno">
                                 <font>
                                     <Font name="SansSerif Regular" size="18.0" />
@@ -93,9 +90,9 @@
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                             <children>
-                                <Hyperlink text="¿Olvidaste Tu Contraseña?" textFill="#20485b" underline="true" onAction="#forgotPassword">
+                                <Hyperlink onAction="#forgotPassword" text="¿Olvidaste Tu Contraseña?" textFill="#20485b" underline="true">
                                     <font>
-                                        <Font name="SansSerif Regular" size="18.0" />
+                                        <Font name="SansSerif Regular" size="20.0" />
                                     </font>
                                     <effect>
                                         <Reflection />
@@ -103,7 +100,7 @@
                                 </Hyperlink>
                                 <Button fx:id="Ingresar" mnemonicParsing="false" onAction="#ingresar" prefHeight="37.0" prefWidth="209.0" styleClass="login-button" text="Ingresar">
                                     <font>
-                                        <Font name="SansSerif Bold" size="20.0" />
+                                        <Font name="SansSerif Regular" size="20.0" />
                                     </font>
                                     <HBox.margin>
                                         <Insets left="80.0" />
@@ -116,6 +113,19 @@
                                     </effect></Button>
                             </children>
                         </HBox>
+                        <Button fx:id="volver" mnemonicParsing="false" onAction="#onBackButtonClick" prefHeight="37.0" prefWidth="209.0" styleClass="login-button" text="Volver">
+                            <font>
+                                <Font name="SansSerif Regular" size="20.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets left="500.0" top="50.0" />
+                            </VBox.margin>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                            <effect>
+                                <Reflection />
+                            </effect></Button>
                     </children></VBox>
             </children>
         </HBox>
