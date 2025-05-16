@@ -134,7 +134,7 @@
                         </HBox>
                         <Button mnemonicParsing="false" onAction="#registrarse" prefHeight="37.0" prefWidth="204.0" style="-fx-background-radius: 20;" styleClass="login-button" text="Registrarse" textFill="WHITE">
                             <font>
-                                <Font name="SansSerif Bold" size="20.0" />
+                                <Font name="SansSerif Regular" size="20.0" />
                             </font>
                             <cursor>
                                 <Cursor fx:constant="HAND" />
@@ -148,7 +148,7 @@
                         </Button>
                         <Button fx:id="volver" mnemonicParsing="false" onAction="#onBackButtonClick" prefHeight="37.0" prefWidth="209.0" styleClass="login-button" text="Volver">
                             <font>
-                                <Font name="SansSerif Bold" size="20.0" />
+                                <Font name="SansSerif Regular" size="20.0" />
                             </font>
                             <VBox.margin>
                                 <Insets left="500.0" top="50.0" />

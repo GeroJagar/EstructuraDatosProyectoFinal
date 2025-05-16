@@ -40,7 +40,7 @@ public class PanelEstudianteControlador {
     @FXML private ScrollPane scrollContenidos;
     @FXML private TextField txtClaveBusqueda;
     @FXML private ComboBox<String> cbCriterioBusqueda;
-    @FXML private HBox contenedorBusqueda;
+    @FXML private HBox searchHBox;
 
     // Campos del formulario de metadatos
     @FXML private TextField txtTitulo;
@@ -66,8 +66,8 @@ public class PanelEstudianteControlador {
         contenidoPanel.setManaged(true);
         scrollContenidos.setVisible(false);
         scrollContenidos.setManaged(false);
-        contenedorBusqueda.setVisible(false);
-        contenedorBusqueda.setManaged(false);
+        searchHBox.setVisible(false);
+        searchHBox.setManaged(false);
 
         // Limpiar formulario al mostrar
         limpiarFormulario();
@@ -79,8 +79,8 @@ public class PanelEstudianteControlador {
         contenidoPanel.setManaged(false);
         scrollContenidos.setVisible(true);
         scrollContenidos.setManaged(true);
-        contenedorBusqueda.setVisible(true);
-        contenedorBusqueda.setManaged(true);
+        searchHBox.setVisible(true);
+        searchHBox.setManaged(true);
         cargarContenidosDelEstudiante();
     }
 
@@ -90,8 +90,8 @@ public class PanelEstudianteControlador {
         contenidoPanel.setManaged(false);
         scrollContenidos.setVisible(true);
         scrollContenidos.setManaged(true);
-        contenedorBusqueda.setVisible(true);
-        contenedorBusqueda.setManaged(true);
+        searchHBox.setVisible(true);
+        searchHBox.setManaged(true);
         cargarTodosLosContenidos();
     }
 
@@ -350,7 +350,7 @@ public class PanelEstudianteControlador {
     }
 
     @FXML
-    public void buscarContenido(KeyEvent event) {
+    public void buscarContenido(ActionEvent event) {
         String criterio = cbCriterioBusqueda.getValue();
         String clave = txtClaveBusqueda.getText();
         contenedorContenido.getChildren().clear();
@@ -377,5 +377,22 @@ public class PanelEstudianteControlador {
         Alert alert = new Alert(tipo);
         alert.setContentText(mensaje);
         alert.show();
+    }
+
+    public void onCancelarButtonClick(ActionEvent event) {
+        goBack();
+    }
+
+    private void goBack(){
+        searchHBox.setVisible(true);
+        searchHBox.setManaged(true);
+        contenedorContenido.setVisible(true);
+        contenedorContenido.setManaged(true);
+        scrollContenidos.setVisible(true);
+        scrollContenidos.setManaged(true);
+        contenidoPanel.setVisible(false);
+        contenidoPanel.setManaged(false);
+
+        mostrarTodoElContenido(null);
     }
 }

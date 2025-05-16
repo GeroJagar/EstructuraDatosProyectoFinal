@@ -92,7 +92,7 @@
                             <children>
                                 <Hyperlink onAction="#forgotPassword" text="¿Olvidaste Tu Contraseña?" textFill="#20485b" underline="true">
                                     <font>
-                                        <Font name="SansSerif Regular" size="18.0" />
+                                        <Font name="SansSerif Regular" size="20.0" />
                                     </font>
                                     <effect>
                                         <Reflection />
@@ -100,7 +100,7 @@
                                 </Hyperlink>
                                 <Button fx:id="Ingresar" mnemonicParsing="false" onAction="#ingresar" prefHeight="37.0" prefWidth="209.0" styleClass="login-button" text="Ingresar">
                                     <font>
-                                        <Font name="SansSerif Bold" size="20.0" />
+                                        <Font name="SansSerif Regular" size="20.0" />
                                     </font>
                                     <HBox.margin>
                                         <Insets left="80.0" />
@@ -115,7 +115,7 @@
                         </HBox>
                         <Button fx:id="volver" mnemonicParsing="false" onAction="#onBackButtonClick" prefHeight="37.0" prefWidth="209.0" styleClass="login-button" text="Volver">
                             <font>
-                                <Font name="SansSerif Bold" size="20.0" />
+                                <Font name="SansSerif Regular" size="20.0" />
                             </font>
                             <VBox.margin>
                                 <Insets left="500.0" top="50.0" />

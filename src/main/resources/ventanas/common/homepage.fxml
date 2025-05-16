@@ -78,9 +78,9 @@
                   <Insets left="10.0" top="-10.0" />
                </HBox.margin>
             </ImageView>
-            <Button mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="35.0" prefWidth="250.0" style="-fx-background-radius: 60;" styleClass="loginLightVer" text="Iniciar Sesión" textFill="#05242f">
+            <Button mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="20.0" prefWidth="250.0" style="-fx-background-radius: 60;" styleClass="loginLightVer" text="Iniciar Sesión" textFill="#05242f">
                <font>
-                  <Font name="Franklin Gothic Book" size="22.0" />
+                  <Font name="SansSerif Regular" size="22.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />

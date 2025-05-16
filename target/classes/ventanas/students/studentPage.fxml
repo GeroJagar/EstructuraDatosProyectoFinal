@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #05242F;" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.Actually.controladores.StudentPageController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #05242F;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.Actually.controladores.PanelEstudianteControlador">
     <top>
 
     </top>
@@ -100,11 +111,17 @@
                             <image>
                                 <Image url="@../../images/uploadIcon.png" />
                             </image>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
                         </ImageView>
                         <Hyperlink onMouseClicked="#mostrarSubirContenido" text="Publicar Contenido" textFill="WHITESMOKE">
                             <font>
                                 <Font name="SansSerif Regular" size="16.0" />
                             </font>
+                     <VBox.margin>
+                        <Insets bottom="-10.0" />
+                     </VBox.margin>
                         </Hyperlink>
                     </children>
                 </VBox>
@@ -143,7 +160,7 @@
                         <Image url="@../../images/getOutIcon.png" />
                      </image>
                   </ImageView>
-                  <Hyperlink text="Cerrar Sesión" textFill="WHITESMOKE">
+                  <Hyperlink onAction="#cerrarSesion" text="Cerrar Sesión" textFill="WHITESMOKE">
                      <font>
                         <Font name="SansSerif Regular" size="16.0" />
                      </font>
@@ -198,7 +215,11 @@
                                 <Image url="@../../images/ThemeIcon.png" />
                             </image>
                         </ImageView>
-                        <ComboBox fx:id="cbTema" prefWidth="300" promptText="Tema" styleClass="form-field" />
+                        <ComboBox fx:id="cbTema" prefWidth="300" promptText="Tema" styleClass="form-field">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </ComboBox>
                     </HBox>
 
                     <!-- Tipo con Icono -->
@@ -208,7 +229,11 @@
                                 <Image url="@../../images/TopicIcon.png" />
                             </image>
                         </ImageView>
-                        <ComboBox fx:id="cbTipoContenido" prefWidth="300" promptText="Tipo de Archivo" styleClass="form-field" />
+                        <ComboBox fx:id="cbTipoContenido" prefWidth="300" promptText="Tipo de Archivo" styleClass="form-field">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </ComboBox>
                     </HBox>
 
                     <!-- Autor con Icono -->
@@ -232,8 +257,16 @@
                </rowConstraints>
                 </GridPane>
 
-                <Button onAction="#seleccionarArchivo" prefHeight="40" prefWidth="200" styleClass="submit-button" text="Seleccionar Archivo" />
-                <Button prefHeight="40" prefWidth="200" styleClass="submit-button" text="Cancelar" />
+                <Button onAction="#seleccionarArchivo" prefHeight="40" prefWidth="250" styleClass="submit-button" text="Seleccionar Archivo">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button onAction="#onCancelarButtonClick" prefHeight="40" prefWidth="200" styleClass="cancel-button" text="Cancelar">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
             </VBox>
          <BorderPane.margin>
             <Insets />
