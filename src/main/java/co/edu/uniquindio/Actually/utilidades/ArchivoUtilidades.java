@@ -36,7 +36,7 @@ public class ArchivoUtilidades {
         Files.copy(origen.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
-    public String generarId() {
+    public static String generarId() {
         return "contenido-" + System.currentTimeMillis();
     }
 }

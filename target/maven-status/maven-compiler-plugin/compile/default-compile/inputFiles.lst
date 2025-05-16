@@ -1,5 +1,6 @@
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\Actually.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\aplicacion\ActuallyAplicacion.java
+C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\controladores\AdminPageController.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\controladores\ChangePasswordController.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\controladores\HomepageController.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\controladores\InicioControlador.java
@@ -10,10 +11,12 @@ C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\un
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\excepciones\CampoRepetidoException.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\excepciones\CampoVacioException.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\ABBContenido.java
+C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\ColaPrioridad.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\ContenidoAcademico.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\Estudiante.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\GrupoEstudio.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\Moderador.java
+C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\Nodo.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\NodoContenido.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\SolicitudAyuda.java
 C:\Users\hulbe\IdeaProjects\EstructuraDatosProyectoFinal\src\main\java\co\edu\uniquindio\Actually\modelo\TEMA.java
