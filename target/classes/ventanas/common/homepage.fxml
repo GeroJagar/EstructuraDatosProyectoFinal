@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.Reflection?>
@@ -19,7 +20,18 @@
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <TextField fx:id="searchField" onKeyPressed="#buscarContenido" prefHeight="37.0" prefWidth="900.0" promptText="Buscar..." style="-fx-background-radius: 40;" styleClass="searchModerno">
+                  <ComboBox fx:id="cbCriterioBusqueda" prefHeight="25.0" prefWidth="150.0" promptText="Filtro">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <effect>
+                        <Reflection />
+                     </effect>
+                     <HBox.margin>
+                        <Insets right="50.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <TextField fx:id="searchField" prefHeight="37.0" prefWidth="694.0" promptText="Buscar..." style="-fx-background-radius: 40;" styleClass="searchModerno">
                      <font>
                         <Font name="SansSerif Regular" size="20.0" />
                      </font>
@@ -33,7 +45,7 @@
                         <Insets />
                      </HBox.margin>
                   </TextField>
-                  <Button mnemonicParsing="false" style="-fx-background-color: Transparent; -fx-border-color: Transparent;">
+                  <Button mnemonicParsing="false" onAction="#buscarContenido" style="-fx-background-color: Transparent; -fx-border-color: Transparent;">
                      <graphic>
                         <ImageView fitHeight="40.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                            <image>
