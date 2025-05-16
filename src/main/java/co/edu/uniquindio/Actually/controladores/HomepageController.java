@@ -165,22 +165,23 @@ public class HomepageController {
         String criterio = cbCriterioBusqueda.getValue();
         String clave = searchField.getText();
         contenedorContenido.getChildren().clear();
+
         try {
             if (criterio == null || criterio.isEmpty()) {
+                // Búsqueda general
                 List<ContenidoAcademico> resultados = actually.buscarContenido(clave);
                 for (ContenidoAcademico contenido : resultados) {
                     agregarVistaDeContenido(contenido);
                 }
             } else {
-                ContenidoAcademico resultado = actually.buscarContenido(criterio, clave);
-                if (resultado != null) {
-                    agregarVistaDeContenido(resultado);
-                } else {
-                    mostrarMensaje(Alert.AlertType.WARNING, "No se encontraron resultados.");
+                // Búsqueda por criterio específico
+                List<ContenidoAcademico> resultados = actually.buscarContenido(criterio, clave);
+                for (ContenidoAcademico contenido : resultados) {
+                    agregarVistaDeContenido(contenido);
                 }
             }
         } catch (Exception e) {
-            mostrarMensaje(Alert.AlertType.ERROR, "Error en la búsqueda: " + e.getMessage());
+            mostrarMensaje(Alert.AlertType.WARNING, e.getMessage());
         }
     }
 
