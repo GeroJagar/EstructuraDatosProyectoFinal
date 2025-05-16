@@ -4,17 +4,21 @@ import co.edu.uniquindio.Actually.Actually;
 import co.edu.uniquindio.Actually.modelo.*;
 import co.edu.uniquindio.Actually.utilidades.ArchivoUtilidades;
 import co.edu.uniquindio.Actually.utilidades.FileUploader;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -22,12 +26,14 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.geometry.Insets;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Optional;
 
 public class PanelEstudianteControlador {
 
@@ -48,6 +54,13 @@ public class PanelEstudianteControlador {
     @FXML private ComboBox<TIPOCONTENIDO> cbTipoContenido;
     @FXML private TextField txtAutor;
 
+    @FXML private VBox panelAyuda;
+    @FXML private ComboBox<TEMA> cbTemaAyuda;
+    @FXML private ComboBox<Integer> cbUrgencia;
+    @FXML private TextArea txtDescripcionAyuda;
+    @FXML private ScrollPane scrollSolicitudes;
+    @FXML private VBox contenedorSolicitudes;
+
     private File archivoSeleccionado;
 
     @FXML
@@ -56,6 +69,14 @@ public class PanelEstudianteControlador {
         cbCriterioBusqueda.getItems().addAll("titulo", "autor", "tema");
         cbTema.getItems().setAll(TEMA.values());
         cbTipoContenido.getItems().setAll(TIPOCONTENIDO.values());
+
+        // Configurar combobox de ayuda
+        cbTemaAyuda.getItems().setAll(TEMA.values());
+        cbUrgencia.getItems().addAll(1, 2, 3, 4, 5);
+
+        // Ocultar panel de ayuda al inicio
+        panelAyuda.setVisible(false);
+        scrollSolicitudes.setVisible(false);
 
         mostrarTodoElContenido(null);
     }
@@ -354,22 +375,23 @@ public class PanelEstudianteControlador {
         String criterio = cbCriterioBusqueda.getValue();
         String clave = txtClaveBusqueda.getText();
         contenedorContenido.getChildren().clear();
+
         try {
             if (criterio == null || criterio.isEmpty()) {
+                // Búsqueda general
                 List<ContenidoAcademico> resultados = actually.buscarContenido(clave);
                 for (ContenidoAcademico contenido : resultados) {
                     agregarVistaDeContenido(contenido);
                 }
             } else {
-                ContenidoAcademico resultado = actually.buscarContenido(criterio, clave);
-                if (resultado != null) {
-                    agregarVistaDeContenido(resultado);
-                } else {
-                    mostrarMensaje(Alert.AlertType.WARNING, "No se encontraron resultados.");
+                // Búsqueda por criterio específico
+                List<ContenidoAcademico> resultados = actually.buscarContenido(criterio, clave);
+                for (ContenidoAcademico contenido : resultados) {
+                    agregarVistaDeContenido(contenido);
                 }
             }
         } catch (Exception e) {
-            mostrarMensaje(Alert.AlertType.ERROR, "Error en la búsqueda: " + e.getMessage());
+            mostrarMensaje(Alert.AlertType.WARNING, e.getMessage());
         }
     }
 
@@ -383,16 +405,262 @@ public class PanelEstudianteControlador {
         goBack();
     }
 
-    private void goBack(){
-        searchHBox.setVisible(true);
-        searchHBox.setManaged(true);
-        contenedorContenido.setVisible(true);
-        contenedorContenido.setManaged(true);
-        scrollContenidos.setVisible(true);
-        scrollContenidos.setManaged(true);
+    @FXML
+    private void goBack() {
+        // Ocultar todos los paneles especiales
+        panelAyuda.setVisible(false);
+        panelAyuda.setManaged(false);
+        scrollSolicitudes.setVisible(false);
+        scrollSolicitudes.setManaged(false);
         contenidoPanel.setVisible(false);
         contenidoPanel.setManaged(false);
 
+        // Mostrar la vista principal
+        searchHBox.setVisible(true);
+        searchHBox.setManaged(true);
+        scrollContenidos.setVisible(true);
+        scrollContenidos.setManaged(true);
+
+        // Actualizar contenido
         mostrarTodoElContenido(null);
+    }
+
+    @FXML
+    public void mostrarPanelAyuda(MouseEvent event) {
+        contenidoPanel.setVisible(false);
+        scrollContenidos.setVisible(false);
+        scrollSolicitudes.setVisible(false);
+
+        panelAyuda.setVisible(true);
+        panelAyuda.setManaged(true);
+        searchHBox.setVisible(false);
+    }
+
+    @FXML
+    public void enviarSolicitudAyuda(ActionEvent event) {
+        try {
+            TEMA tema = cbTemaAyuda.getValue();
+            Integer urgencia = cbUrgencia.getValue();
+            String descripcion = txtDescripcionAyuda.getText();
+
+            if (tema == null || urgencia == null || descripcion == null || descripcion.isBlank()) {
+                mostrarMensaje(Alert.AlertType.WARNING, "Por favor complete todos los campos");
+                return;
+            }
+
+            actually.crearSolicitudAyuda(tema, urgencia, descripcion);
+            mostrarMensaje(Alert.AlertType.INFORMATION, "Solicitud enviada correctamente");
+
+            // Limpiar campos
+            cbTemaAyuda.getSelectionModel().clearSelection();
+            cbUrgencia.getSelectionModel().clearSelection();
+            txtDescripcionAyuda.clear();
+
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error al enviar solicitud: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void mostrarSolicitudesPendientes(ActionEvent event) {
+        panelAyuda.setVisible(false);
+        scrollContenidos.setVisible(false);
+
+        scrollSolicitudes.setVisible(true);
+        scrollSolicitudes.setManaged(true);
+        contenedorSolicitudes.getChildren().clear();
+
+        try {
+            List<SolicitudAyuda> solicitudes = actually.listarSolicitudesPendientes();
+
+            if (solicitudes.isEmpty()) {
+                Label vacio = new Label("No hay solicitudes pendientes.");
+                vacio.setStyle("-fx-text-fill: gray; -fx-font-size: 14px;");
+                contenedorSolicitudes.getChildren().add(vacio);
+                return;
+            }
+
+            for (SolicitudAyuda solicitud : solicitudes) {
+                agregarVistaSolicitud(solicitud);
+            }
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error al cargar solicitudes: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void agregarVistaSolicitud(SolicitudAyuda solicitud) {
+        VBox card = new VBox(10);
+        card.setStyle("-fx-padding: 15; -fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 5;");
+
+        // Mostrar información de la solicitud con urgencia
+        Label labelInfo = new Label(String.format(
+                "Tema: %s\nUrgencia: %d (Prioridad %s)\nSolicitante: %s",
+                solicitud.getTema(),
+                solicitud.getUrgencia(),
+                obtenerPrioridadTexto(solicitud.getUrgencia()),
+                solicitud.getSolicitante().getNombre()
+        ));
+        labelInfo.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+        // Área de texto para la descripción
+        TextArea areaDescripcion = new TextArea(solicitud.getDescripcion());
+        areaDescripcion.setEditable(false);
+        areaDescripcion.setWrapText(true);
+        areaDescripcion.setStyle("-fx-font-size: 13px;");
+
+        // Botón para atender la solicitud
+        Button btnAtender = new Button("Resolver Solicitud");
+        btnAtender.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;");
+        btnAtender.setOnAction(e -> mostrarDialogoResolverSolicitud(solicitud.getId()));
+
+        card.getChildren().addAll(labelInfo, areaDescripcion, btnAtender);
+        contenedorSolicitudes.getChildren().add(card);
+    }
+
+    private void mostrarDialogoResolverSolicitud(String idSolicitud) {
+        // Crear un diálogo personalizado para resolver la solicitud
+        Dialog<ContenidoAcademico> dialog = new Dialog<>();
+        dialog.setTitle("Resolver Solicitud");
+        dialog.setHeaderText("Sube contenido que resuelva esta solicitud");
+
+        // Configurar botones
+        ButtonType resolverButtonType = new ButtonType("Resolver", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(resolverButtonType, ButtonType.CANCEL);
+
+        // Crear formulario para el contenido
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 10, 10, 10));
+
+        TextField txtTituloContenido = new TextField();
+        txtTituloContenido.setPromptText("Título del contenido");
+        ComboBox<TIPOCONTENIDO> cbTipoContenido = new ComboBox<>();
+        cbTipoContenido.getItems().setAll(TIPOCONTENIDO.values());
+        TextField txtAutorContenido = new TextField();
+        txtAutorContenido.setPromptText("Autor");
+
+        // Obtener tema de la solicitud para asignarlo al contenido
+        TEMA temaSolicitud = null;
+        try {
+            SolicitudAyuda solicitud = actually.obtenerSolicitud(idSolicitud);
+            temaSolicitud = solicitud.getTema();
+
+            // Verificar que el usuario no sea el solicitante
+            if (actually.getUsuarioActivo().getId().equals(solicitud.getSolicitante().getId())) {
+                mostrarMensaje(Alert.AlertType.ERROR, "No puedes resolver tus propias solicitudes");
+                return;
+            }
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error al obtener la solicitud: " + e.getMessage());
+            return;
+        }
+
+        grid.add(new Label("Título:"), 0, 0);
+        grid.add(txtTituloContenido, 1, 0);
+        grid.add(new Label("Tipo:"), 0, 1);
+        grid.add(cbTipoContenido, 1, 1);
+        grid.add(new Label("Autor:"), 0, 2);
+        grid.add(txtAutorContenido, 1, 2);
+
+        // Deshabilitar botón de resolver hasta que los campos estén completos
+        Node resolverButton = dialog.getDialogPane().lookupButton(resolverButtonType);
+        resolverButton.setDisable(true);
+
+        // Validar campos en tiempo real
+        ChangeListener<String> changeListener = (observable, oldValue, newValue) -> {
+            boolean camposCompletos = !txtTituloContenido.getText().isEmpty() &&
+                    cbTipoContenido.getValue() != null &&
+                    !txtAutorContenido.getText().isEmpty();
+            resolverButton.setDisable(!camposCompletos);
+        };
+
+        txtTituloContenido.textProperty().addListener(changeListener);
+        txtAutorContenido.textProperty().addListener(changeListener);
+        cbTipoContenido.valueProperty().addListener((observable, oldValue, newValue) -> {
+            changeListener.changed(null, null, null);
+        });
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Convertir el resultado a un ContenidoAcademico cuando se presiona Resolver
+        TEMA finalTemaSolicitud = temaSolicitud;
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == resolverButtonType) {
+                ContenidoAcademico contenido = new ContenidoAcademico();
+                contenido.setTitulo(txtTituloContenido.getText());
+                contenido.setTipoContenido(cbTipoContenido.getValue());
+                contenido.setAutor(txtAutorContenido.getText());
+                contenido.setTema(finalTemaSolicitud); // Usar el tema de la solicitud
+                contenido.setId(ArchivoUtilidades.generarId());
+                return contenido;
+            }
+            return null;
+        });
+
+        Optional<ContenidoAcademico> result = dialog.showAndWait();
+
+        result.ifPresent(contenido -> {
+            try {
+                // Seleccionar archivo para el contenido
+                Stage stage = (Stage) panelAyuda.getScene().getWindow();
+                File archivo = fileUploader.abrirSelectorDeArchivo(
+                        stage,
+                        contenido.getTipoContenido().toString().toLowerCase()
+                );
+
+                if (archivo != null) {
+                    // Procesar el archivo según su tipo
+                    switch (contenido.getTipoContenido()) {
+                        case TEXTO:
+                            contenido.setContenido(archivoUtil.leerArchivoComoTexto(archivo));
+                            break;
+                        case PDF:
+                            contenido.setContenido("PDF:" + archivo.getAbsolutePath());
+                            break;
+                        case VIDEO:
+                            contenido.setContenido("VIDEO:" + archivo.getAbsolutePath());
+                            break;
+                    }
+
+                    // Resolver la solicitud con el contenido
+                    actually.resolverSolicitud(idSolicitud, contenido);
+                    mostrarMensaje(Alert.AlertType.INFORMATION, "Solicitud resuelta con éxito");
+                    mostrarSolicitudesPendientes(null);
+                }
+            } catch (Exception e) {
+                mostrarMensaje(Alert.AlertType.ERROR, "Error al resolver solicitud: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private String obtenerPrioridadTexto(int urgencia) {
+        switch(urgencia) {
+            case 1: return "Máxima";
+            case 2: return "Alta";
+            case 3: return "Media";
+            case 4: return "Baja";
+            case 5: return "Mínima";
+            default: return "No definida";
+        }
+    }
+
+    private void atenderSolicitud(String idSolicitud) {
+        try {
+            // Aquí podrías implementar lógica para conectar al estudiante que atiende
+            // con el que hizo la solicitud (ej. abrir chat, etc.)
+
+            actually.atenderSolicitud();
+            mostrarMensaje(Alert.AlertType.INFORMATION, "Solicitud atendida con éxito");
+
+            // Actualizar la vista
+            mostrarSolicitudesPendientes(null);
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error al atender solicitud: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

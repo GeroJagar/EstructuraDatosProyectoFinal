@@ -23,9 +23,12 @@ public class Actually {
 
     private Map<String, Usuario> usuarios = new HashMap<>();
     private Map<String, ContenidoAcademico> contenidos = new HashMap<>();
+    private ColaPrioridad<SolicitudAyuda> colaSolicitudes;
+    private Map<String, SolicitudAyuda> solicitudesMap;
 
     private final String RUTA_USUARIOS = "src/main/resources/serializacion/usuarios.data";
     private final String RUTA_CONTENIDOS = "src/main/resources/serializacion/contenidos.data";
+    private final String RUTA_SOLICITUDES = "src/main/resources/serializacion/solicitudes.data";
 
     public static Actually getInstance() {
         if (actually == null) {
@@ -36,6 +39,7 @@ public class Actually {
 
     public void inicializar() {
         try {
+            // Cargar usuarios
             this.usuarios = (Map<String, Usuario>) ArchivoUtilidades.deserializarObjeto(RUTA_USUARIOS);
             for (Usuario usuario : this.usuarios.values()) {
                 System.out.println(usuario);
@@ -45,6 +49,7 @@ public class Actually {
         }
 
         try {
+            // Cargar contenidos académicos
             this.contenidos = (Map<String, ContenidoAcademico>) ArchivoUtilidades.deserializarObjeto(RUTA_CONTENIDOS);
             for (ContenidoAcademico contenido : this.contenidos.values()) {
                 System.out.println(contenido);
@@ -52,6 +57,27 @@ public class Actually {
             System.out.println("Contenidos cargados: " + contenidos.size());
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("No se encontraron contenidos serializados, iniciando con una lista vacía.");
+        }
+
+        // Inicializar cola de prioridad personalizada para solicitudes
+        this.colaSolicitudes = new ColaPrioridad<>();
+        this.solicitudesMap = new HashMap<>();
+
+        try {
+            // Cargar solicitudes existentes
+            List<SolicitudAyuda> solicitudesCargadas = (List<SolicitudAyuda>) ArchivoUtilidades.deserializarObjeto(RUTA_SOLICITUDES);
+            for (SolicitudAyuda solicitud : solicitudesCargadas) {
+                // Solo agregamos a la cola las solicitudes pendientes
+                if (solicitud.getEstado() == SolicitudAyuda.EstadoSolicitud.PENDIENTE) {
+                    colaSolicitudes.encolar(solicitud);
+                }
+                // Todas las solicitudes van al mapa para referencia rápida
+                solicitudesMap.put(solicitud.getId(), solicitud);
+            }
+            System.out.println("Solicitudes cargadas: " + solicitudesMap.size());
+            System.out.println("Solicitudes pendientes en cola: " + colaSolicitudes.getTamaño());
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("No se encontraron solicitudes serializadas, iniciando con cola vacía.");
         }
     }
 
@@ -222,11 +248,13 @@ public class Actually {
         alert.show();
     }
 
-    public ContenidoAcademico buscarContenido(String criterio, String clave) throws Exception {
+    public List<ContenidoAcademico> buscarContenido(String criterio, String clave) throws Exception {
         if (criterio == null || clave == null || criterio.isBlank() || clave.isBlank()) {
             throw new Exception("El criterio y la clave no pueden estar vacíos.");
         }
-        ABBContenido arbolContenido = new ABBContenido();
+
+        List<ContenidoAcademico> resultados = new ArrayList<>();
+
         for (ContenidoAcademico contenido : contenidos.values()) {
             String valorClave;
             switch (criterio.toLowerCase()) {
@@ -242,11 +270,17 @@ public class Actually {
                 default:
                     throw new Exception("Criterio no válido.");
             }
-            arbolContenido.insertar(contenido, valorClave);
+
+            if (valorClave.equalsIgnoreCase(clave)) {
+                resultados.add(contenido);
+            }
         }
-        ContenidoAcademico resultado = arbolContenido.buscar(clave);
-        if (resultado == null) throw new Exception("No se encontró contenido.");
-        return resultado;
+
+        if (resultados.isEmpty()) {
+            throw new Exception("No se encontraron contenidos que coincidan con la búsqueda.");
+        }
+
+        return resultados;
     }
 
     public List<ContenidoAcademico> buscarContenido(String clave) throws Exception {
@@ -274,4 +308,105 @@ public class Actually {
 
         return resultados;
     }
+
+    public void crearSolicitudAyuda(TEMA tema, int urgencia, String descripcion) throws Exception {
+        if (usuarioActivo == null || !(usuarioActivo instanceof Estudiante)) {
+            throw new Exception("Debe haber un estudiante logueado para crear solicitudes");
+        }
+
+        if (urgencia < 1 || urgencia > 5) {
+            throw new Exception("La urgencia debe estar entre 1 (más urgente) y 5 (menos urgente)");
+        }
+
+        SolicitudAyuda solicitud = new SolicitudAyuda();
+        solicitud.setTema(tema);
+        solicitud.setUrgencia(urgencia);
+        solicitud.setSolicitante(usuarioActivo);
+        solicitud.setDescripcion(descripcion);
+        solicitud.setId(ArchivoUtilidades.generarId());
+
+        // Cambio: Usamos encolar() en lugar de add()
+        colaSolicitudes.encolar(solicitud);
+        solicitudesMap.put(solicitud.getId(), solicitud);
+
+        guardarSolicitudes();
+    }
+
+    public SolicitudAyuda atenderSolicitud() throws Exception {
+        if (colaSolicitudes.estaVacia()) {
+            throw new Exception("No hay solicitudes pendientes");
+        }
+
+        SolicitudAyuda solicitud = colaSolicitudes.desencolar();
+        solicitud.setEstado(SolicitudAyuda.EstadoSolicitud.EN_PROCESO);
+        solicitudesMap.put(solicitud.getId(), solicitud);
+
+        guardarSolicitudes();
+        return solicitud;
+    }
+
+    public void marcarSolicitudResuelta(String idSolicitud) throws Exception {
+        SolicitudAyuda solicitud = solicitudesMap.get(idSolicitud);
+        if (solicitud == null) {
+            throw new Exception("Solicitud no encontrada");
+        }
+
+        solicitud.setEstado(SolicitudAyuda.EstadoSolicitud.RESUELTA);
+
+        if (solicitud.getEstado() == SolicitudAyuda.EstadoSolicitud.PENDIENTE) {
+            colaSolicitudes.eliminar(solicitud);
+        }
+
+        guardarSolicitudes();
+    }
+
+    public List<SolicitudAyuda> listarSolicitudesPendientes() {
+        return colaSolicitudes.obtenerTodosElementos();
+    }
+
+    public List<SolicitudAyuda> listarTodasLasSolicitudes() {
+        return new ArrayList<>(solicitudesMap.values());
+    }
+
+    private void guardarSolicitudes() throws IOException {
+        List<SolicitudAyuda> todasSolicitudes = new ArrayList<>(solicitudesMap.values());
+        ArchivoUtilidades.serializarObjeto(RUTA_SOLICITUDES, todasSolicitudes);
+    }
+
+    public void resolverSolicitud(String idSolicitud, ContenidoAcademico contenidoResuelto) throws Exception {
+        if (!solicitudesMap.containsKey(idSolicitud)) {
+            throw new Exception("Solicitud no encontrada");
+        }
+
+        SolicitudAyuda solicitud = solicitudesMap.get(idSolicitud);
+
+        // Verificar que el usuario activo no sea el solicitante
+        if (usuarioActivo != null && usuarioActivo.getId().equals(solicitud.getSolicitante().getId())) {
+            throw new Exception("No puedes resolver tus propias solicitudes");
+        }
+
+        // Subir el contenido que resuelve la solicitud
+        subirContenidoAcademico(contenidoResuelto);
+
+        // Marcar la solicitud como resuelta y vincular el contenido
+        solicitud.setEstado(SolicitudAyuda.EstadoSolicitud.RESUELTA);
+        solicitud.setIdContenidoResuelto(contenidoResuelto.getId());
+
+        // Eliminar de la cola de prioridad si aún está allí
+        colaSolicitudes.eliminar(solicitud);
+
+        // Actualizar el mapa
+        solicitudesMap.put(idSolicitud, solicitud);
+
+        guardarSolicitudes();
+    }
+
+    public SolicitudAyuda obtenerSolicitud(String idSolicitud) throws Exception {
+        if (!solicitudesMap.containsKey(idSolicitud)) {
+            throw new Exception("Solicitud no encontrada");
+        }
+        return solicitudesMap.get(idSolicitud);
+    }
+
+
 }
