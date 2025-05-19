@@ -7,6 +7,8 @@ import co.edu.uniquindio.Actually.utilidades.FileUploader;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -20,10 +22,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
@@ -89,6 +94,8 @@ public class PanelEstudianteControlador {
         scrollContenidos.setManaged(false);
         searchHBox.setVisible(false);
         searchHBox.setManaged(false);
+        panelAyuda.setVisible(false);
+        panelAyuda.setManaged(false);
 
         // Limpiar formulario al mostrar
         limpiarFormulario();
@@ -225,83 +232,133 @@ public class PanelEstudianteControlador {
     }
 
     private void agregarVistaDeContenido(ContenidoAcademico contenido) {
+        // Contenedor principal de la publicación (tarjeta)
         VBox card = new VBox(10);
-        card.setStyle("-fx-padding: 15; -fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 5;");
+        card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-border-color: #e0e0e0; " +
+                "-fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);");
 
-        Label label = new Label(String.format(
-                "Título: %s\nTema: %s\nAutor: %s\nTipo: %s\nPuntuación: %.2f",
-                contenido.getTitulo(),
-                contenido.getTema(),
-                contenido.getAutor(),
-                contenido.getTipoContenido(),
-                contenido.calcularPuntuacion()
-        ));
-        label.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        // Encabezado (Autor y Tema)
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
 
-        // Mostrar contenido según su tipo
+        Circle avatar = new Circle(20, Color.TRANSPARENT); // Puedes reemplazar con una imagen real
+        avatar.setStroke(Color.LIGHTGRAY);
+
+        Label autorLabel = new Label(contenido.getAutor());
+        autorLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #333; -fx-font-family: \"SansSerif\";");
+
+        Label temaLabel = new Label("#" + contenido.getTema());
+        temaLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #4a6baf; -fx-font-family: \"SansSerif\";");
+
+        header.getChildren().addAll(avatar, autorLabel, temaLabel);
+
+        // Contenido principal (dinámico según tipo)
+        StackPane contentPane = new StackPane();
+        contentPane.setStyle("-fx-background-color: #f8f9fa; -fx-padding: 10; -fx-border-radius: 8;");
+
         if (contenido.getTipoContenido() == TIPOCONTENIDO.TEXTO) {
             TextArea area = new TextArea(contenido.getContenido());
             area.setWrapText(true);
             area.setEditable(false);
-            area.setPrefRowCount(5);
-            area.setStyle("-fx-font-size: 13px;");
-            card.getChildren().add(area);
-        }
-        else if (contenido.getTipoContenido() == TIPOCONTENIDO.PDF) {
-            Button btnVerPdf = new Button("Ver PDF");
-            btnVerPdf.setStyle("-fx-background-color: #4a6baf; -fx-text-fill: white;");
+            area.setPrefHeight(600);
+            area.setStyle("""
+                -fx-font-size: 14px;
+                -fx-background-color: #f8f9fa;  /* Fondo gris claro */
+                -fx-border-color: #e0e0e0;     /* Borde sutil */
+                -fx-border-radius: 5;
+                -fx-padding: 10;
+                -fx-font-family: "SansSerif";
+            """);
+
+            area.setPrefRowCount(20);           // Altura basada en 20 líneas de texto
+            area.setPrefWidth(400);            // Ancho recomendado
+
+            contentPane.getChildren().add(area);
+        } else if (contenido.getTipoContenido() == TIPOCONTENIDO.PDF) {
+            Button btnVerPdf = new Button("📄 Ver PDF");
+            btnVerPdf.setStyle("-fx-background-color: #4a6baf; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-family: \"SansSerif\";");
+            btnVerPdf.setCursor(Cursor.HAND);
             btnVerPdf.setOnAction(e -> mostrarPdf(contenido.getContenido().replace("PDF:", "")));
-            card.getChildren().add(btnVerPdf);
-        }
-        else if (contenido.getTipoContenido() == TIPOCONTENIDO.VIDEO) {
+            contentPane.getChildren().add(btnVerPdf);
+        } else if (contenido.getTipoContenido() == TIPOCONTENIDO.VIDEO) {
             Media media = new Media(new File(contenido.getContenido().replace("VIDEO:", "")).toURI().toString());
             MediaPlayer mediaPlayer = new MediaPlayer(media);
             MediaView mediaView = new MediaView(mediaPlayer);
-            mediaView.setFitWidth(400);
-            mediaView.setFitHeight(225);
+            mediaView.setFitWidth(400);  // Ancho ajustable
+            mediaView.setFitHeight(225); // Altura ajustable
 
-            HBox controles = new HBox(10);
-            controles.setStyle("-fx-alignment: center;");
+            StackPane videoStackPane = new StackPane();
+            videoStackPane.setAlignment(Pos.CENTER); // ¡MAGIA PARA CENTRAR!
+            videoStackPane.setStyle("-fx-background-color: black;"); // Fondo opcional
+            videoStackPane.getChildren().add(mediaView);
 
+            // Controles de video (HBox con botones clásicos)
+            HBox controles = new HBox(10); // Espaciado entre botones: 10px
+            controles.setAlignment(Pos.CENTER);
+            controles.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-padding: 10; -fx-background-radius: 0 0 8 8;");
+
+            // Botón de Reproducir (verde)
             Button playBtn = new Button("▶");
-            playBtn.setStyle("-fx-background-color: #28a745; -fx-text-fill: white;");
+            playBtn.setStyle("-fx-background-color: #91B243; -fx-text-fill: #000000; -fx-font-weight: bold;");
+            playBtn.setCursor(Cursor.HAND);
             playBtn.setOnAction(e -> mediaPlayer.play());
 
+            // Botón de Pausa (amarillo)
             Button pauseBtn = new Button("⏸");
-            pauseBtn.setStyle("-fx-background-color: #ffc107; -fx-text-fill: black;");
+            pauseBtn.setStyle("-fx-background-color: #CFB360; -fx-text-fill: #000000; -fx-font-weight: bold;");
+            pauseBtn.setCursor(Cursor.HAND);
             pauseBtn.setOnAction(e -> mediaPlayer.pause());
 
+            // Botón de Reiniciar (rojo)
             Button stopBtn = new Button("⏹");
-            stopBtn.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white;");
+            stopBtn.setStyle("-fx-background-color: #AC5A61; -fx-text-fill: #000000; -fx-font-weight: bold;");
+            stopBtn.setCursor(Cursor.HAND);
             stopBtn.setOnAction(e -> mediaPlayer.stop());
 
             controles.getChildren().addAll(playBtn, pauseBtn, stopBtn);
-            card.getChildren().addAll(mediaView, controles);
+
+            // Contenedor del video + controles
+            VBox videoContainer = new VBox();
+            videoContainer.setAlignment(Pos.CENTER);
+            videoContainer.getChildren().addAll(mediaView, controles);
+            videoContainer.setStyle("-fx-border-radius: 8; -fx-background-radius: 8;");
+
+            contentPane.getChildren().add(videoContainer);
         }
 
-        // Botón de valoración
-        Button btnValorar = new Button("Valorar contenido");
-        btnValorar.setStyle("-fx-background-color: #17a2b8; -fx-text-fill: white;");
-        btnValorar.setOnAction(e -> mostrarDialogoValoracion(contenido));
+        // Pie de publicación (Título y Puntuación)
+        HBox footer = new HBox();
+        footer.setSpacing(10);
+        footer.setAlignment(Pos.CENTER_LEFT);
 
-        String estudianteId = actually.getUsuarioActivo().getId();
-        boolean yaValorado = contenido.getValoraciones().stream()
-                .anyMatch(v -> v.getEstudianteId().equals(estudianteId));
+        Label tituloLabel = new Label(contenido.getTitulo());
+        tituloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #222; -fx-font-family: \"SansSerif\";");
 
-        boolean esAutor = false;
-        if (actually.getUsuarioActivo() instanceof Estudiante estudiante) {
-            esAutor = estudiante.getContenidosSubidos().stream()
-                    .anyMatch(c -> c.getId().equals(contenido.getId()));
-        }
+        footer.getChildren().addAll(tituloLabel);
 
-        if (yaValorado || esAutor) {
-            btnValorar.setDisable(true);
-            btnValorar.setText(esAutor ? "Este contenido es tuyo" : "Ya valorado");
-            btnValorar.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white;");
-        }
+        // Botones de interacción (Like, Comentar, Compartir)
+        HBox interactionBar = new HBox(15);
+        interactionBar.setAlignment(Pos.CENTER_LEFT);
 
-        card.getChildren().addAll(label, btnValorar);
+        Button likeBtn = createInteractionButton("❤ Me gusta", "Me gusta");
+        likeBtn.setCursor(Cursor.HAND);
+        Button commentBtn = createInteractionButton("💬 Comentar", "Comentar");
+        commentBtn.setCursor(Cursor.HAND);
+        Button shareBtn = createInteractionButton("↪ Compartir", "Compartir");
+        shareBtn.setCursor(Cursor.HAND);
+
+        interactionBar.getChildren().addAll(likeBtn, commentBtn, shareBtn);
+
+        // Ensamblar la tarjeta
+        card.getChildren().addAll(header, contentPane, footer, interactionBar);
         contenedorContenido.getChildren().add(card);
+    }
+
+    private Button createInteractionButton(String emoji, String tooltipText) {
+        Button btn = new Button(emoji);
+        btn.setStyle("-fx-background-color: transparent; -fx-font-size: 16px;");
+        btn.setTooltip(new Tooltip(tooltipText));
+        return btn;
     }
 
     private void mostrarPdf(String rutaPdf) {
@@ -430,10 +487,11 @@ public class PanelEstudianteControlador {
         contenidoPanel.setVisible(false);
         scrollContenidos.setVisible(false);
         scrollSolicitudes.setVisible(false);
+        searchHBox.setVisible(false);
+        searchHBox.setManaged(false);
 
         panelAyuda.setVisible(true);
         panelAyuda.setManaged(true);
-        searchHBox.setVisible(false);
     }
 
     @FXML
@@ -465,7 +523,9 @@ public class PanelEstudianteControlador {
     @FXML
     public void mostrarSolicitudesPendientes(ActionEvent event) {
         panelAyuda.setVisible(false);
+        panelAyuda.setManaged(false);
         scrollContenidos.setVisible(false);
+        scrollContenidos.setManaged(false);
 
         scrollSolicitudes.setVisible(true);
         scrollSolicitudes.setManaged(true);
@@ -476,7 +536,7 @@ public class PanelEstudianteControlador {
 
             if (solicitudes.isEmpty()) {
                 Label vacio = new Label("No hay solicitudes pendientes.");
-                vacio.setStyle("-fx-text-fill: gray; -fx-font-size: 14px;");
+                vacio.setStyle("-fx-text-fill: gray; -fx-font-size: 20px;");
                 contenedorSolicitudes.getChildren().add(vacio);
                 return;
             }
@@ -492,30 +552,73 @@ public class PanelEstudianteControlador {
 
     private void agregarVistaSolicitud(SolicitudAyuda solicitud) {
         VBox card = new VBox(10);
-        card.setStyle("-fx-padding: 15; -fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 5;");
+        card.setStyle("""
+    -fx-padding: 15;
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1;
+""");
 
-        // Mostrar información de la solicitud con urgencia
-        Label labelInfo = new Label(String.format(
-                "Tema: %s\nUrgencia: %d (Prioridad %s)\nSolicitante: %s",
-                solicitud.getTema(),
-                solicitud.getUrgencia(),
-                obtenerPrioridadTexto(solicitud.getUrgencia()),
-                solicitud.getSolicitante().getNombre()
-        ));
-        labelInfo.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+// Encabezado (Usuario + Urgencia)
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
 
-        // Área de texto para la descripción
+// Avatar del solicitante (círculo o imagen)
+        Circle avatar = new Circle(20, Color.TRANSPARENT);
+        avatar.setStroke(Color.LIGHTGRAY);
+
+// Etiqueta de urgencia con color dinámico
+        Label lblUrgencia = new Label("Urgencia: " + obtenerPrioridadTexto(solicitud.getUrgencia()));
+        lblUrgencia.setStyle("-fx-font-family: \"SansSerif\"; -fx-text-fill: " +
+                switch(solicitud.getUrgencia()) {
+                    case 1 -> "#EB0013";  // Alta: rojo
+                    case 2 -> "#EB7900";  // Media urgente: Naranja
+                    case 3 -> "#EBC800"; // Media: Amarillo
+                    default -> "#B0EB00"; // Baja: verde
+                } + ";");
+
+        header.getChildren().addAll(
+                avatar,
+                new Label(solicitud.getSolicitante().getNombre()),
+                lblUrgencia
+        );
+
+// Cuerpo de la tarjeta
+        VBox body = new VBox(5);
+        Label lblTema = new Label("Tema: " + solicitud.getTema());
+        lblTema.setStyle("-fx-font-family: 'SansSerif'; -fx-font-size: 18px;");
+
         TextArea areaDescripcion = new TextArea(solicitud.getDescripcion());
         areaDescripcion.setEditable(false);
         areaDescripcion.setWrapText(true);
-        areaDescripcion.setStyle("-fx-font-size: 13px;");
+        areaDescripcion.setStyle("""
+    -fx-font-size: 18px;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 5;
+    -fx-padding: 10;
+""");
+        areaDescripcion.setPrefRowCount(3); // Altura para 3 líneas
 
-        // Botón para atender la solicitud
+// Pie de tarjeta (botón de acción)
         Button btnAtender = new Button("Resolver Solicitud");
-        btnAtender.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;");
+        btnAtender.setStyle("""
+    -fx-background-color: #000000;
+    -fx-text-fill: white;
+    -fx-font-family: 'SansSerif';
+    -fx-font-size: 14px;
+    -fx-background-radius: 20;
+    -fx-pref-width: 200;
+    -fx-pref-height: 35;
+""");
+        btnAtender.setCursor(Cursor.HAND);
         btnAtender.setOnAction(e -> mostrarDialogoResolverSolicitud(solicitud.getId()));
 
-        card.getChildren().addAll(labelInfo, areaDescripcion, btnAtender);
+// Ensamblar la tarjeta
+        body.getChildren().addAll(lblTema, areaDescripcion);
+        card.getChildren().addAll(header, body, btnAtender);
         contenedorSolicitudes.getChildren().add(card);
     }
 
