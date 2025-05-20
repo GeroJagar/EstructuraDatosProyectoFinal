@@ -52,6 +52,7 @@ public class PanelEstudianteControlador {
     @FXML private TextField txtClaveBusqueda;
     @FXML private ComboBox<String> cbCriterioBusqueda;
     @FXML private HBox searchHBox;
+    @FXML public VBox panelSolicitudes;
 
     // Campos del formulario de metadatos
     @FXML private TextField txtTitulo;
@@ -96,6 +97,8 @@ public class PanelEstudianteControlador {
         searchHBox.setManaged(false);
         panelAyuda.setVisible(false);
         panelAyuda.setManaged(false);
+        panelSolicitudes.setVisible(false);
+        panelSolicitudes.setManaged(false);
 
         // Limpiar formulario al mostrar
         limpiarFormulario();
@@ -346,8 +349,13 @@ public class PanelEstudianteControlador {
         commentBtn.setCursor(Cursor.HAND);
         Button shareBtn = createInteractionButton("↪ Compartir", "Compartir");
         shareBtn.setCursor(Cursor.HAND);
+        Button rateBtn = new Button("★ Valorar");
+        rateBtn.setStyle(" -fx-background-color: #FFD700; -fx-text-fill: #333; -fx-font-family: 'SansSerif'; " +
+                "-fx-font-size: 14px; -fx-background-radius: 15; -fx-padding: 5 10; -fx-pref-width: 150;");
+        rateBtn.setCursor(Cursor.HAND);
+        rateBtn.setOnAction(e -> mostrarDialogoValoracion(contenido));
 
-        interactionBar.getChildren().addAll(likeBtn, commentBtn, shareBtn);
+        interactionBar.getChildren().addAll(likeBtn, commentBtn, shareBtn, rateBtn);
 
         // Ensamblar la tarjeta
         card.getChildren().addAll(header, contentPane, footer, interactionBar);
@@ -471,6 +479,8 @@ public class PanelEstudianteControlador {
         scrollSolicitudes.setManaged(false);
         contenidoPanel.setVisible(false);
         contenidoPanel.setManaged(false);
+        panelSolicitudes.setVisible(false);
+        panelSolicitudes.setManaged(false);
 
         // Mostrar la vista principal
         searchHBox.setVisible(true);
@@ -489,6 +499,8 @@ public class PanelEstudianteControlador {
         scrollSolicitudes.setVisible(false);
         searchHBox.setVisible(false);
         searchHBox.setManaged(false);
+        panelSolicitudes.setVisible(false);
+        panelSolicitudes.setManaged(false);
 
         panelAyuda.setVisible(true);
         panelAyuda.setManaged(true);
@@ -529,6 +541,8 @@ public class PanelEstudianteControlador {
 
         scrollSolicitudes.setVisible(true);
         scrollSolicitudes.setManaged(true);
+        panelSolicitudes.setVisible(true);
+        panelSolicitudes.setManaged(true);
         contenedorSolicitudes.getChildren().clear();
 
         try {
@@ -553,13 +567,13 @@ public class PanelEstudianteControlador {
     private void agregarVistaSolicitud(SolicitudAyuda solicitud) {
         VBox card = new VBox(10);
         card.setStyle("""
-    -fx-padding: 15;
-    -fx-background-color: white;
-    -fx-border-color: #e0e0e0;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1;
-""");
+            -fx-padding: 15;
+            -fx-background-color: #F5F5F5;
+            -fx-border-color: #e0e0e0;
+            -fx-border-radius: 10;
+            -fx-border-width: 0px;
+            -fx-background-radius: 10;
+            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);""");
 
 // Encabezado (Usuario + Urgencia)
         HBox header = new HBox(10);
@@ -571,7 +585,7 @@ public class PanelEstudianteControlador {
 
 // Etiqueta de urgencia con color dinámico
         Label lblUrgencia = new Label("Urgencia: " + obtenerPrioridadTexto(solicitud.getUrgencia()));
-        lblUrgencia.setStyle("-fx-font-family: \"SansSerif\"; -fx-text-fill: " +
+        lblUrgencia.setStyle("-fx-font-size: 18px; -fx-font-family: \"SansSerif\"; -fx-text-fill: " +
                 switch(solicitud.getUrgencia()) {
                     case 1 -> "#EB0013";  // Alta: rojo
                     case 2 -> "#EB7900";  // Media urgente: Naranja
@@ -579,40 +593,27 @@ public class PanelEstudianteControlador {
                     default -> "#B0EB00"; // Baja: verde
                 } + ";");
 
-        header.getChildren().addAll(
-                avatar,
-                new Label(solicitud.getSolicitante().getNombre()),
-                lblUrgencia
-        );
+        Label solicitante = new Label(solicitud.getSolicitante().getNombre() + "   | ");
+        solicitante.setStyle("-fx-font-size: 18px; -fx-font-family: 'SansSerif'; -fx-text-fill: #05242F;");
+        header.getChildren().addAll(avatar, solicitante,
+                lblUrgencia);
 
 // Cuerpo de la tarjeta
         VBox body = new VBox(5);
-        Label lblTema = new Label("Tema: " + solicitud.getTema());
-        lblTema.setStyle("-fx-font-family: 'SansSerif'; -fx-font-size: 18px;");
+        Label lblTema = new Label("Tema: " + solicitud.getTema().getName());
+        lblTema.setStyle("-fx-font-family: 'SansSerif'; -fx-font-size: 18px; -fx-text-fill: #2C4A59;");
 
         TextArea areaDescripcion = new TextArea(solicitud.getDescripcion());
         areaDescripcion.setEditable(false);
         areaDescripcion.setWrapText(true);
-        areaDescripcion.setStyle("""
-    -fx-font-size: 18px;
-    -fx-background-color: #f8f9fa;
-    -fx-border-color: #dee2e6;
-    -fx-border-radius: 5;
-    -fx-padding: 10;
-""");
+        areaDescripcion.setStyle("-fx-font-family: 'SansSerif'; -fx-font-size: 18px; " +
+                "-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 5; -fx-padding: 10;");
         areaDescripcion.setPrefRowCount(3); // Altura para 3 líneas
 
 // Pie de tarjeta (botón de acción)
         Button btnAtender = new Button("Resolver Solicitud");
-        btnAtender.setStyle("""
-    -fx-background-color: #000000;
-    -fx-text-fill: white;
-    -fx-font-family: 'SansSerif';
-    -fx-font-size: 14px;
-    -fx-background-radius: 20;
-    -fx-pref-width: 200;
-    -fx-pref-height: 35;
-""");
+        btnAtender.setStyle("-fx-background-color: #31545E; -fx-text-fill: #F5F5F5; -fx-font-family: 'SansSerif'; " +
+                "-fx-font-size: 18px; -fx-background-radius: 40; -fx-pref-width: 200; -fx-pref-height: 35; ");
         btnAtender.setCursor(Cursor.HAND);
         btnAtender.setOnAction(e -> mostrarDialogoResolverSolicitud(solicitud.getId()));
 

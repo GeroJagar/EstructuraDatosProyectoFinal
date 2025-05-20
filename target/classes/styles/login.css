@@ -216,24 +216,24 @@
 }
 #viewRequestsButton:hover {
     -fx-background-color: #5B99C2;
-        -fx-text-fill: #000000;
+    -fx-text-fill: #000000;
 }
 
 /* Botón Volver */
 #backButton {
     -fx-background-color: #F5F5F5;
-            -fx-text-fill: #A4A4A4;
-            -fx-pref-width: 220px;
-            -fx-font-family: 'SansSerif';
-            -fx-font-size: 18px;
-            -fx-pref-height: 60px;
-            -fx-background-radius: 25px;
-            -fx-border-radius: 25px;
-            -fx-cursor: hand;
-            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);
+    -fx-text-fill: #A4A4A4;
+    -fx-pref-width: 220px;
+    -fx-font-family: 'SansSerif';
+    -fx-font-size: 18px;
+    -fx-pref-height: 60px;
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);
 }
 
 #backButton:hover {
     -fx-background-color: #B97F92;
-            -fx-text-fill: #000000;
+    -fx-text-fill: #000000;
 }
