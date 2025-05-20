@@ -150,6 +150,13 @@
                         </Hyperlink>
                     </children>
                 </VBox>
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
+                    <children>
+                        <Button fx:id="btnSugerencias" mnemonicParsing="false"
+                                style="-fx-background-color: transparent; -fx-text-fill: white;"
+                                text="Sugerencias"/>
+                    </children>
+                </VBox>
                 <VBox alignment="CENTER" prefHeight="117.0" prefWidth="150.0">
                     <children>
                         <ImageView fitHeight="55.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
@@ -376,6 +383,19 @@
                     </cursor>
                 </Button>
             </VBox>
+
+            <!-- Panel de Sugerencias -->
+            <VBox fx:id="panelSugerencias" alignment="TOP_LEFT" visible="false"
+                  style="-fx-background-color: #f5f5f5; -fx-padding: 20;">
+                <children>
+                    <ScrollPane fx:id="scrollSugerencias" fitToWidth="true" hbarPolicy="NEVER">
+                        <content>
+                            <VBox fx:id="contenedorSugerencias" spacing="15"/>
+                        </content>
+                    </ScrollPane>
+                </children>
+            </VBox>
+
         </StackPane>
     </center>
 </BorderPane>

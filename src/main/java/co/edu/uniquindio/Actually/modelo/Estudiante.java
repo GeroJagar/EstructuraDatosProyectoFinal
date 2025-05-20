@@ -51,10 +51,15 @@ public class Estudiante extends Usuario implements Serializable {
         }
     }
 
-    public void agregarAmigo(Estudiante estudiante) {
-        if (estudiante != null && !amigos.contains(estudiante)) {
-            amigos.add(estudiante);
+
+    public void agregarAmigo(Estudiante amigo) {
+        if (amigo != null && !this.amigos.contains(amigo)) {
+            this.amigos.add(amigo);
         }
+    }
+
+    public void eliminarAmigo(Estudiante amigo) {
+        this.amigos.remove(amigo);
     }
 
     public void subirContenido(ContenidoAcademico contenido) {

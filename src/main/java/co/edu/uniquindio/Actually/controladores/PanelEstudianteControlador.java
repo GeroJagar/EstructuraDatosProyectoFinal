@@ -37,8 +37,11 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PanelEstudianteControlador {
 
@@ -53,6 +56,15 @@ public class PanelEstudianteControlador {
     @FXML private ComboBox<String> cbCriterioBusqueda;
     @FXML private HBox searchHBox;
     @FXML public VBox panelSolicitudes;
+
+    @FXML
+    private VBox contenedorSugerencias;
+    @FXML
+    private VBox panelSugerencias;
+    @FXML
+    private Button btnSugerencias;
+    @FXML
+    private ScrollPane scrollSugerencias;
 
     // Campos del formulario de metadatos
     @FXML private TextField txtTitulo;
@@ -85,6 +97,9 @@ public class PanelEstudianteControlador {
         scrollSolicitudes.setVisible(false);
 
         mostrarTodoElContenido(null);
+
+        btnSugerencias.setOnAction(e -> mostrarSugerencias());
+        panelSugerencias.setVisible(false);
     }
 
     @FXML
@@ -584,19 +599,19 @@ public class PanelEstudianteControlador {
         avatar.setStroke(Color.LIGHTGRAY);
 
 // Etiqueta de urgencia con color dinámico
+        String colorUrgencia = switch(solicitud.getUrgencia()) {
+            case 1 -> "#EB0013";  // Alta: rojo
+            case 2 -> "#EB7900";  // Media urgente: Naranja
+            case 3 -> "#EBC800";  // Media: Amarillo
+            default -> "#B0EB00"; // Baja: verde
+        };
+
         Label lblUrgencia = new Label("Urgencia: " + obtenerPrioridadTexto(solicitud.getUrgencia()));
-        lblUrgencia.setStyle("-fx-font-size: 18px; -fx-font-family: \"SansSerif\"; -fx-text-fill: " +
-                switch(solicitud.getUrgencia()) {
-                    case 1 -> "#EB0013";  // Alta: rojo
-                    case 2 -> "#EB7900";  // Media urgente: Naranja
-                    case 3 -> "#EBC800"; // Media: Amarillo
-                    default -> "#B0EB00"; // Baja: verde
-                } + ";");
+        lblUrgencia.setStyle("-fx-font-size: 18px; -fx-font-family: \"SansSerif\"; -fx-text-fill: " + colorUrgencia + ";");
 
         Label solicitante = new Label(solicitud.getSolicitante().getNombre() + "   | ");
         solicitante.setStyle("-fx-font-size: 18px; -fx-font-family: 'SansSerif'; -fx-text-fill: #05242F;");
-        header.getChildren().addAll(avatar, solicitante,
-                lblUrgencia);
+        header.getChildren().addAll(avatar, solicitante, lblUrgencia);
 
 // Cuerpo de la tarjeta
         VBox body = new VBox(5);
@@ -766,5 +781,145 @@ public class PanelEstudianteControlador {
             mostrarMensaje(Alert.AlertType.ERROR, "Error al atender solicitud: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void agregarTarjetaSugerencia(Estudiante estudiante) {
+        HBox card = new HBox(10);
+        card.setStyle("-fx-padding: 10; -fx-background-color: #f8f9fa; -fx-border-radius: 5;");
+
+        Circle avatar = new Circle(20, Color.LIGHTGRAY);
+
+        VBox info = new VBox(5);
+        Label nombre = new Label(estudiante.getNombre());
+        nombre.setStyle("-fx-font-weight: bold;");
+
+        Button btnAgregar = new Button("Agregar");
+        btnAgregar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        btnAgregar.setOnAction(e -> agregarAmigo(estudiante));
+
+        info.getChildren().addAll(nombre, btnAgregar);
+        card.getChildren().addAll(avatar, info);
+
+        contenedorSugerencias.getChildren().add(card);
+    }
+
+    private void agregarAmigo(Estudiante estudiante) {
+        try {
+            Estudiante actual = (Estudiante) actually.getUsuarioActivo();
+
+            // Verificar si ya son amigos
+            if (actual.getAmigos().stream().anyMatch(a -> a.getId().equals(estudiante.getId()))) {
+                mostrarMensaje(Alert.AlertType.WARNING, "Ya eres amigo de " + estudiante.getNombre());
+                return;
+            }
+
+            // Agregar amistad
+            actually.agregarAmistad(actual.getId(), estudiante.getId());
+
+            cargarSugerenciasAmistades();
+
+            mostrarMensaje(Alert.AlertType.INFORMATION,
+                    "¡Ahora eres amigo de " + estudiante.getNombre() + "!");
+
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error al agregar amigo: " + e.getMessage());
+        }
+    }
+
+
+    private void mostrarSugerencias() {
+        panelSugerencias.setVisible(true);
+        panelSugerencias.setManaged(true);
+        scrollContenidos.setVisible(false);
+        panelAyuda.setVisible(false);
+
+        cargarSugerenciasAmistades();
+    }
+
+    private void cargarSugerenciasAmistades() {
+        VBox contenedor = (VBox) scrollSugerencias.getContent();
+        contenedor.getChildren().clear();
+
+        if (!(actually.getUsuarioActivo() instanceof Estudiante estudiante)) {
+            return;
+        }
+
+        List<Estudiante> sugerencias = actually.obtenerSugerenciasAmistades(estudiante.getId(), 5);
+
+        if (sugerencias.isEmpty()) {
+            Label vacio = new Label("No hay sugerencias disponibles. Sube más contenidos para mejorar las recomendaciones.");
+            vacio.setStyle("-fx-text-fill: gray; -fx-padding: 20;");
+            contenedor.getChildren().add(vacio);
+            return;
+        }
+
+        Label titulo = new Label("Sugerencias basadas en:");
+        titulo.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-padding: 10 0 5 0;");
+        contenedor.getChildren().add(titulo);
+
+        if (((Estudiante) actually.getUsuarioActivo()).getAmigos().isEmpty()) {
+            Label criterio = new Label("• Intereses académicos comunes (temas que publicas)");
+            criterio.setStyle("-fx-text-fill: #555; -fx-padding: 0 0 10 15;");
+            contenedor.getChildren().add(criterio);
+        } else {
+            Label criterio = new Label("• Amigos de amigos con intereses similares");
+            criterio.setStyle("-fx-text-fill: #555; -fx-padding: 0 0 10 15;");
+            contenedor.getChildren().add(criterio);
+        }
+
+        for (Estudiante sugerencia : sugerencias) {
+            agregarTarjetaSugerencia(contenedor, sugerencia);
+        }
+    }
+
+    private void agregarTarjetaSugerencia(VBox contenedor, Estudiante estudiante) {
+        HBox card = new HBox(15);
+        card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;");
+
+        // Avatar (puedes reemplazar con imagen real)
+        Circle avatar = new Circle(25);
+        avatar.setFill(Color.LIGHTGRAY);
+        avatar.setStroke(Color.DARKGRAY);
+
+        // Información
+        VBox info = new VBox(5);
+        Label nombre = new Label(estudiante.getNombre());
+        nombre.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+
+        // Intereses en común
+        Set<TEMA> interesesComunes = obtenerInteresesComunes(estudiante);
+        Label intereses = new Label("Intereses comunes: " + formatIntereses(interesesComunes));
+        intereses.setStyle("-fx-text-fill: #555; -fx-font-size: 12;");
+
+        // Botón
+        Button btnAgregar = new Button("Agregar");
+        btnAgregar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand;");
+        btnAgregar.setOnAction(e -> agregarAmigo(estudiante));
+
+        info.getChildren().addAll(nombre, intereses);
+        card.getChildren().addAll(avatar, info, btnAgregar);
+        contenedor.getChildren().add(card);
+    }
+
+    private Set<TEMA> obtenerInteresesComunes(Estudiante otroEstudiante) {
+        Set<TEMA> interesesComunes = new HashSet<>();
+        if (actually.getUsuarioActivo() instanceof Estudiante estudianteActual) {
+            Set<TEMA> misIntereses = estudianteActual.getContenidosSubidos().stream()
+                    .map(ContenidoAcademico::getTema)
+                    .collect(Collectors.toSet());
+
+            interesesComunes = otroEstudiante.getContenidosSubidos().stream()
+                    .map(ContenidoAcademico::getTema)
+                    .filter(misIntereses::contains)
+                    .collect(Collectors.toSet());
+        }
+        return interesesComunes;
+    }
+
+    private String formatIntereses(Set<TEMA> intereses) {
+        return intereses.isEmpty() ? "Ninguno aún" :
+                intereses.stream()
+                        .map(TEMA::name)
+                        .collect(Collectors.joining(", "));
     }
 }

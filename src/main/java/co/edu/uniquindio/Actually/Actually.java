@@ -20,6 +20,7 @@ public class Actually {
 
     private static Actually actually;
     private Usuario usuarioActivo;
+    private GrafoAmistades grafoAmistades;
 
     private Map<String, Usuario> usuarios = new HashMap<>();
     private Map<String, ContenidoAcademico> contenidos = new HashMap<>();
@@ -79,6 +80,9 @@ public class Actually {
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("No se encontraron solicitudes serializadas, iniciando con cola vacía.");
         }
+
+        this.grafoAmistades = new GrafoAmistades(); // Inicialización
+        inicializarGrafoAmistades();
     }
 
     public Usuario getUsuarioActivo() {
@@ -408,5 +412,115 @@ public class Actually {
         return solicitudesMap.get(idSolicitud);
     }
 
+    private void inicializarGrafoAmistades() {
+        // Verificación de nulidad por seguridad
+        if (grafoAmistades == null) {
+            grafoAmistades = new GrafoAmistades();
+        }
+
+        for (Usuario usuario : usuarios.values()) {
+            if (usuario instanceof Estudiante estudiante) {
+                try {
+                    Set<TEMA> intereses = obtenerInteresesEstudiante(estudiante);
+                    grafoAmistades.agregarEstudiante(estudiante.getId(), intereses);
+
+                    // Cargar amistades existentes con verificación
+                    if (estudiante.getAmigos() != null) {
+                        for (Estudiante amigo : estudiante.getAmigos()) {
+                            if (amigo != null && amigo.getId() != null) {
+                                grafoAmistades.agregarAmistad(estudiante.getId(), amigo.getId());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error al inicializar estudiante en grafo: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    private Set<TEMA> obtenerInteresesEstudiante(Estudiante estudiante) {
+        Set<TEMA> intereses = new HashSet<>();
+        for (ContenidoAcademico contenido : estudiante.getContenidosSubidos()) {
+            intereses.add(contenido.getTema());
+        }
+        return intereses;
+    }
+
+    public List<Estudiante> obtenerSugerenciasAmistades(String idEstudiante, int limite) {
+        List<String> idsSugerencias = grafoAmistades.obtenerSugerencias(idEstudiante, limite);
+        List<Estudiante> sugerencias = new ArrayList<>();
+
+        for (String id : idsSugerencias) {
+            Usuario usuario = usuarios.get(id);
+            if (usuario instanceof Estudiante) {
+                sugerencias.add((Estudiante) usuario);
+            }
+        }
+
+        return sugerencias;
+    }
+
+    public void actualizarInteresesEstudiante(String idEstudiante) {
+        if (usuarios.containsKey(idEstudiante) && usuarios.get(idEstudiante) instanceof Estudiante) {
+            Estudiante estudiante = (Estudiante) usuarios.get(idEstudiante);
+            Set<TEMA> nuevosIntereses = obtenerInteresesEstudiante(estudiante);
+            grafoAmistades.actualizarIntereses(idEstudiante, nuevosIntereses);
+        }
+    }
+
+    // Método para agregar amistades
+    public void agregarAmistad(String idEstudiante1, String idEstudiante2) throws Exception {
+        // Validaciones iniciales
+        if (idEstudiante1 == null || idEstudiante2 == null) {
+            throw new IllegalArgumentException("Los IDs no pueden ser nulos");
+        }
+
+        if (idEstudiante1.equals(idEstudiante2)) {
+            throw new IllegalArgumentException("Un estudiante no puede ser amigo de sí mismo");
+        }
+
+        Estudiante estudiante1 = (Estudiante) usuarios.get(idEstudiante1);
+        Estudiante estudiante2 = (Estudiante) usuarios.get(idEstudiante2);
+
+        if (estudiante1 == null || estudiante2 == null) {
+            throw new Exception("Uno o ambos estudiantes no existen");
+        }
+
+        // Verificar si ya son amigos (evitar duplicados)
+        if (estudiante1.getAmigos().contains(estudiante2)) {
+            throw new Exception("Los estudiantes ya son amigos");
+        }
+
+        try {
+            // 1. Crear backup (solo en memoria)
+            Map<String, Usuario> backup = new HashMap<>(usuarios);
+
+            // 2. Realizar cambios (una sola vez)
+            grafoAmistades.agregarAmistad(idEstudiante1, idEstudiante2);
+            estudiante1.agregarAmigo(estudiante2);
+            estudiante2.agregarAmigo(estudiante1);
+
+            // 3. Serializar
+            ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
+            // Notificar a los observadores (nuevo)
+            notificarCambiosAmistades(estudiante1, estudiante2);
+
+            System.out.println("Amistad establecida entre " + idEstudiante1 + " y " + idEstudiante2);
+
+        } catch (IOException e) {
+            // Revertir cambios en memoria
+            grafoAmistades.eliminarAmistad(idEstudiante1, idEstudiante2);
+            if (estudiante1 != null) estudiante1.getAmigos().remove(estudiante2);
+            if (estudiante2 != null) estudiante2.getAmigos().remove(estudiante1);
+
+            throw new Exception("Error al guardar la amistad: " + e.getMessage());
+        }
+    }
+
+    private void notificarCambiosAmistades(Estudiante estudiante1, Estudiante estudiante2) {
+        // Puedes implementar un sistema de observadores aquí
+        System.out.println("Amistad actualizada: " + estudiante1.getNombre() + " y " + estudiante2.getNombre());
+    }
 
 }

@@ -3,6 +3,7 @@ co\edu\uniquindio\Actually\modelo\Moderador.class
 co\edu\uniquindio\Actually\modelo\SolicitudAyuda.class
 co\edu\uniquindio\Actually\controladores\PanelEstudianteControlador.class
 co\edu\uniquindio\Actually\controladores\LoginControlador.class
+co\edu\uniquindio\Actually\modelo\GrafoAmistades.class
 co\edu\uniquindio\Actually\modelo\SolicitudAyuda$EstadoSolicitud.class
 co\edu\uniquindio\Actually\modelo\Valoracion.class
 co\edu\uniquindio\Actually\modelo\ColaPrioridad.class
@@ -11,7 +12,6 @@ co\edu\uniquindio\Actually\modelo\Nodo.class
 co\edu\uniquindio\Actually\utilidades\FileUploader.class
 co\edu\uniquindio\Actually\modelo\NodoContenido.class
 co\edu\uniquindio\Actually\excepciones\CampoObligatorioException.class
-co\edu\uniquindio\Actually\controladores\InicioControlador.class
 co\edu\uniquindio\Actually\excepciones\CampoVacioException.class
 co\edu\uniquindio\Actually\Actually.class
 co\edu\uniquindio\Actually\controladores\PanelEstudianteControlador$1.class
