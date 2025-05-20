@@ -268,6 +268,9 @@ public class PanelEstudianteControlador {
         Label temaLabel = new Label("#" + contenido.getTema());
         temaLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #4a6baf; -fx-font-family: \"SansSerif\";");
 
+        Label contenidoLabel = new Label("    |     "+"★ Puntuación promedio: " + String.format("%.2f", contenido.calcularPuntuacion()));
+        contenidoLabel.setStyle("-fx-font-family: 'SansSerif'; -fx-font-size: 16px; -fx-text-fill: #333;");
+
         header.getChildren().addAll(avatar, autorLabel, temaLabel);
 
         // Contenido principal (dinámico según tipo)
@@ -352,7 +355,7 @@ public class PanelEstudianteControlador {
         Label tituloLabel = new Label(contenido.getTitulo());
         tituloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #222; -fx-font-family: \"SansSerif\";");
 
-        footer.getChildren().addAll(tituloLabel);
+        footer.getChildren().addAll(tituloLabel, contenidoLabel);
 
         // Botones de interacción (Like, Comentar, Compartir)
         HBox interactionBar = new HBox(15);
