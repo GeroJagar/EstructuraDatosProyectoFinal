@@ -32,17 +32,12 @@ public class GrafoAmistades {
     }
 
     public List<String> obtenerSugerencias(String idEstudiante, int limite) {
-        Set<String> sugerencias = new HashSet<>();
+        Set<String> sugerencias = new LinkedHashSet<>(); // Usamos LinkedHashSet para mantener el orden
         Set<String> amigosDirectos = grafoAmistades.getOrDefault(idEstudiante, new HashSet<>());
         Set<TEMA> misIntereses = interesesEstudiantes.getOrDefault(idEstudiante, new HashSet<>());
 
-        // Si no tiene amigos, sugerir por intereses comunes
-        if (amigosDirectos.isEmpty()) {
-            return sugerirPorIntereses(idEstudiante, misIntereses, limite);
-        }
-
-        // Si tiene amigos, sugerir amigos de amigos con intereses comunes
-        Map<String, Integer> puntuaciones = new HashMap<>();
+        // Primero obtenemos amigos de amigos con intereses comunes
+        Map<String, Integer> puntuacionesAmigosDeAmigos = new HashMap<>();
 
         for (String amigo : amigosDirectos) {
             for (String amigoDeAmigo : grafoAmistades.getOrDefault(amigo, new HashSet<>())) {
@@ -52,19 +47,50 @@ public class GrafoAmistades {
                             .filter(misIntereses::contains)
                             .count();
 
-                    puntuaciones.put(amigoDeAmigo, puntuaciones.getOrDefault(amigoDeAmigo, 0) + puntos + 1); // +1 por la conexión
+                    puntuacionesAmigosDeAmigos.put(amigoDeAmigo,
+                            puntuacionesAmigosDeAmigos.getOrDefault(amigoDeAmigo, 0) + puntos + 2); // +2 por ser amigo de amigo
                 }
             }
         }
 
-        // Si no hay suficientes sugerencias, completar con intereses comunes
-        if (puntuaciones.size() < limite) {
-            sugerencias.addAll(sugerirPorIntereses(idEstudiante, misIntereses, limite - puntuaciones.size()));
+        // Luego obtenemos todas las personas con intereses comunes (que no sean amigos directos)
+        Map<String, Integer> puntuacionesIntereses = new HashMap<>();
+
+        for (Map.Entry<String, Set<TEMA>> entry : interesesEstudiantes.entrySet()) {
+            String otroEstudiante = entry.getKey();
+            if (!otroEstudiante.equals(idEstudiante) && !amigosDirectos.contains(otroEstudiante)) {
+                int puntos = (int) entry.getValue().stream()
+                        .filter(misIntereses::contains)
+                        .count();
+
+                if (puntos > 0) {
+                    puntuacionesIntereses.put(otroEstudiante, puntos);
+                }
+            }
         }
 
-        // Ordenar por puntuación
-        List<String> resultado = new ArrayList<>(puntuaciones.keySet());
-        resultado.sort((a, b) -> puntuaciones.get(b) - puntuaciones.get(a));
+        // Combinamos ambos conjuntos, dando prioridad a amigos de amigos
+        Map<String, Integer> puntuacionesCombinadas = new HashMap<>();
+        puntuacionesCombinadas.putAll(puntuacionesAmigosDeAmigos);
+
+        // Sumamos puntos a las sugerencias por intereses que ya existan
+        puntuacionesIntereses.forEach((k, v) ->
+                puntuacionesCombinadas.merge(k, v, Integer::sum));
+
+        // Ordenamos primero por puntuación, luego por tipo (amigos de amigos primero)
+        List<String> resultado = new ArrayList<>(puntuacionesCombinadas.keySet());
+        resultado.sort((a, b) -> {
+            int cmp = puntuacionesCombinadas.get(b) - puntuacionesCombinadas.get(a);
+            if (cmp != 0) return cmp;
+
+            // Si tienen la misma puntuación, amigos de amigos primero
+            boolean aEsAmigoDeAmigo = puntuacionesAmigosDeAmigos.containsKey(a);
+            boolean bEsAmigoDeAmigo = puntuacionesAmigosDeAmigos.containsKey(b);
+
+            if (aEsAmigoDeAmigo && !bEsAmigoDeAmigo) return -1;
+            if (!aEsAmigoDeAmigo && bEsAmigoDeAmigo) return 1;
+            return 0;
+        });
 
         return resultado.subList(0, Math.min(limite, resultado.size()));
     }

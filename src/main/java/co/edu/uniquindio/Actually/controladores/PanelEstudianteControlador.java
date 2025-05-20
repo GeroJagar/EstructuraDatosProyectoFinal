@@ -37,10 +37,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PanelEstudianteControlador {
@@ -847,7 +845,7 @@ public class PanelEstudianteControlador {
             return;
         }
 
-        List<Estudiante> sugerencias = actually.obtenerSugerenciasAmistades(estudiante.getId(), 5);
+        List<Estudiante> sugerencias = actually.obtenerSugerenciasAmistades(estudiante.getId(), 10);
 
         if (sugerencias.isEmpty()) {
             Label vacio = new Label("No hay sugerencias disponibles. Sube más contenidos para mejorar las recomendaciones.");
@@ -856,23 +854,82 @@ public class PanelEstudianteControlador {
             return;
         }
 
-        Label titulo = new Label("Sugerencias basadas en:");
-        titulo.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-padding: 10 0 5 0;");
-        contenedor.getChildren().add(titulo);
-
-        if (((Estudiante) actually.getUsuarioActivo()).getAmigos().isEmpty()) {
-            Label criterio = new Label("• Intereses académicos comunes (temas que publicas)");
-            criterio.setStyle("-fx-text-fill: #555; -fx-padding: 0 0 10 15;");
-            contenedor.getChildren().add(criterio);
-        } else {
-            Label criterio = new Label("• Amigos de amigos con intereses similares");
-            criterio.setStyle("-fx-text-fill: #555; -fx-padding: 0 0 10 15;");
-            contenedor.getChildren().add(criterio);
-        }
+        // Separar sugerencias en dos categorías
+        List<Estudiante> amigosDeAmigos = new ArrayList<>();
+        List<Estudiante> porIntereses = new ArrayList<>();
 
         for (Estudiante sugerencia : sugerencias) {
-            agregarTarjetaSugerencia(contenedor, sugerencia);
+            if (tieneAmigosEnComun(estudiante, sugerencia)) {
+                amigosDeAmigos.add(sugerencia);
+            } else {
+                porIntereses.add(sugerencia);
+            }
         }
+
+        // Mostrar amigos de amigos primero
+        if (!amigosDeAmigos.isEmpty()) {
+            Label tituloAmigos = new Label("Amigos de amigos con intereses similares:");
+            tituloAmigos.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-padding: 10 0 5 0;");
+            contenedor.getChildren().add(tituloAmigos);
+
+            for (Estudiante sugerencia : amigosDeAmigos) {
+                agregarTarjetaSugerencia(contenedor, sugerencia, true);
+            }
+        }
+
+        // Mostrar sugerencias por intereses
+        if (!porIntereses.isEmpty()) {
+            Label tituloIntereses = new Label("Personas con intereses similares:");
+            tituloIntereses.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-padding: 20 0 5 0;");
+            contenedor.getChildren().add(tituloIntereses);
+
+            for (Estudiante sugerencia : porIntereses) {
+                agregarTarjetaSugerencia(contenedor, sugerencia, false);
+            }
+        }
+    }
+
+    private boolean tieneAmigosEnComun(Estudiante estudiante1, Estudiante estudiante2) {
+        Set<String> amigos1 = estudiante1.getAmigos().stream()
+                .map(Estudiante::getId)
+                .collect(Collectors.toSet());
+
+        return estudiante2.getAmigos().stream()
+                .anyMatch(amigo -> amigos1.contains(amigo.getId()));
+    }
+
+    private void agregarTarjetaSugerencia(VBox contenedor, Estudiante estudiante, boolean esAmigoDeAmigo) {
+        HBox card = new HBox(15);
+        card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+
+        // Avatar
+        Circle avatar = new Circle(25);
+        avatar.setFill(Color.LIGHTGRAY);
+        avatar.setStroke(Color.DARKGRAY);
+
+        // Información
+        VBox info = new VBox(5);
+        Label nombre = new Label(estudiante.getNombre());
+        nombre.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+
+        // Tipo de sugerencia
+        Label tipo = new Label(esAmigoDeAmigo ? "Amigo de amigos" : "Intereses similares");
+        tipo.setStyle("-fx-text-fill: " + (esAmigoDeAmigo ? "#4a6baf" : "#4CAF50") + "; -fx-font-size: 12;");
+
+        // Intereses en común
+        Set<TEMA> interesesComunes = obtenerInteresesComunes(estudiante);
+        Label intereses = new Label("Temas comunes: " + formatIntereses(interesesComunes));
+        intereses.setStyle("-fx-text-fill: #555; -fx-font-size: 12;");
+
+        // Botón
+        Button btnAgregar = new Button("Agregar");
+        btnAgregar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand;");
+        btnAgregar.setOnAction(e -> agregarAmigo(estudiante));
+
+        info.getChildren().addAll(nombre, tipo, intereses);
+        card.getChildren().addAll(avatar, info, btnAgregar);
+        contenedor.getChildren().add(card);
     }
 
     private void agregarTarjetaSugerencia(VBox contenedor, Estudiante estudiante) {
