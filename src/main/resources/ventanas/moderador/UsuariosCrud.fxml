@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.Actually.controladores.UsuarioCrudController"
+            prefHeight="600" prefWidth="800">
+
+    <!-- Tabla de Usuarios -->
+    <TableView fx:id="tablaUsuarios" layoutX="20" layoutY="70" prefHeight="450" prefWidth="760">
+        <columns>
+            <TableColumn fx:id="colNombre" prefWidth="150" text="Nombre"/>
+            <TableColumn fx:id="colId" prefWidth="120" text="ID"/>
+            <TableColumn fx:id="colCorreo" prefWidth="200" text="Correo"/>
+            <TableColumn fx:id="colTipo" prefWidth="120" text="Tipo"/>
+            <TableColumn fx:id="colDetalle" prefWidth="150" text="Detalles"/>
+        </columns>
+    </TableView>
+
+    <!-- Barra de herramientas -->
+    <HBox layoutX="20" layoutY="20" spacing="10">
+        <ComboBox fx:id="cbTipoUsuario" promptText="Filtrar por tipo"/>
+        <TextField fx:id="txtBusqueda" promptText="Buscar..." prefWidth="300"/>
+        <Button fx:id="btnBuscar" text="Buscar"/>
+        <Button fx:id="btnLimpiar" text="Limpiar"/>
+    </HBox>
+
+    <!-- Botones CRUD -->
+    <HBox layoutX="20" layoutY="530" spacing="20">
+        <Button fx:id="btnAgregar" text="Agregar" prefWidth="100"/>
+        <Button fx:id="btnEditar" text="Editar" prefWidth="100"/>
+        <Button fx:id="btnEliminar" text="Eliminar" prefWidth="100"/>
+    </HBox>
+</AnchorPane>
