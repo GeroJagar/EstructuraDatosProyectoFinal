@@ -6,7 +6,7 @@
 <AnchorPane prefHeight="625.0" prefWidth="952.0"
             xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/23.0.1"
-            fx:controller="co.edu.uniquindio.Actually.controladores.ContenidoCrudController">
+            fx:controller="co.edu.uniquindio.Actually.controladores.ContenidoAcademicoCrudController">
 
     <!-- Tabla -->
     <TableView fx:id="tablaContenidos" layoutX="26.0" layoutY="70.0" prefHeight="482.0" prefWidth="900.0">
@@ -26,7 +26,7 @@
     <Button fx:id="btnBuscar" layoutX="470.0" layoutY="25.0" prefWidth="80.0" text="Buscar"/>
     <Button fx:id="btnLimpiarBusqueda" layoutX="560.0" layoutY="25.0" prefWidth="80.0" text="Limpiar"/>
 
-    <!-- Botones de CRUD centrados -->
+    <!-- Botones de CRUD -->
     <HBox layoutX="276.0" layoutY="570.0" spacing="40">
         <Button fx:id="btnAgregar" text="Agregar" prefWidth="100"/>
         <Button fx:id="btnModificar" text="Modificar" prefWidth="100"/>
