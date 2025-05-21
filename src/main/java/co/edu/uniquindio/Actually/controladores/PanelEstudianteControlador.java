@@ -20,15 +20,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
@@ -805,26 +803,6 @@ public class PanelEstudianteControlador {
         }
     }
 
-    private void agregarTarjetaSugerencia(Estudiante estudiante) {
-        HBox card = new HBox(10);
-        card.setStyle("-fx-padding: 10; -fx-background-color: #f8f9fa; -fx-border-radius: 5;");
-
-        Circle avatar = new Circle(20, Color.LIGHTGRAY);
-
-        VBox info = new VBox(5);
-        Label nombre = new Label(estudiante.getNombre());
-        nombre.setStyle("-fx-font-weight: bold;");
-
-        Button btnAgregar = new Button("Agregar");
-        btnAgregar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-        btnAgregar.setOnAction(e -> agregarAmigo(estudiante));
-
-        info.getChildren().addAll(nombre, btnAgregar);
-        card.getChildren().addAll(avatar, info);
-
-        contenedorSugerencias.getChildren().add(card);
-    }
-
     private void agregarAmigo(Estudiante estudiante) {
         try {
             Estudiante actual = (Estudiante) actually.getUsuarioActivo();
@@ -881,7 +859,7 @@ public class PanelEstudianteControlador {
 
         if (sugerencias.isEmpty()) {
             Label vacio = new Label("No hay sugerencias disponibles. Sube más contenidos para mejorar las recomendaciones.");
-            vacio.setStyle("-fx-text-fill: gray; -fx-padding: 20;");
+            vacio.setStyle("-fx-font-size: 26px; -fx-text-fill: gray; -fx-padding: 20;");
             contenedor.getChildren().add(vacio);
             return;
         }
@@ -901,7 +879,7 @@ public class PanelEstudianteControlador {
         // Mostrar amigos de amigos primero
         if (!amigosDeAmigos.isEmpty()) {
             Label tituloAmigos = new Label("Amigos de amigos con intereses similares:");
-            tituloAmigos.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-padding: 10 0 5 0;");
+            tituloAmigos.setStyle("-fx-font-family: 'SansSerif'; -fx-font-size: 22; -fx-text-fill: #05242F; -fx-padding: 10 0 5 0;");
             contenedor.getChildren().add(tituloAmigos);
 
             for (Estudiante sugerencia : amigosDeAmigos) {
@@ -912,7 +890,7 @@ public class PanelEstudianteControlador {
         // Mostrar sugerencias por intereses
         if (!porIntereses.isEmpty()) {
             Label tituloIntereses = new Label("Personas con intereses similares:");
-            tituloIntereses.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-padding: 20 0 5 0;");
+            tituloIntereses.setStyle("-fx-font-family: 'SansSerif'; -fx-font-size: 22; -fx-text-fill: #05242F; -fx-padding: 20 0 5 0;");
             contenedor.getChildren().add(tituloIntereses);
 
             for (Estudiante sugerencia : porIntereses) {
@@ -932,35 +910,80 @@ public class PanelEstudianteControlador {
 
     private void agregarTarjetaSugerencia(VBox contenedor, Estudiante estudiante, boolean esAmigoDeAmigo) {
         HBox card = new HBox(15);
-        card.setStyle("-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10; " +
-                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+        card.setPadding(new Insets(15));
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setStyle(
+                "-fx-background-color: #F5F5F5;" +
+                        "-fx-background-radius: 40;" +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 6, 0, 0, 2);"
+        );
 
-        // Avatar
-        Circle avatar = new Circle(25);
-        avatar.setFill(Color.LIGHTGRAY);
-        avatar.setStroke(Color.DARKGRAY);
+        Circle avatarPlaceholder = new Circle(30, Color.LIGHTGRAY);
+        Text inicial = new Text(estudiante.getNombre().substring(0, 1));
+        inicial.setStyle("-fx-font-size: 36; -fx-fill: #000000;");
+        StackPane avatar = new StackPane(avatarPlaceholder, inicial);
 
-        // Información
-        VBox info = new VBox(5);
+        // Información del estudiante
+        VBox info = new VBox(6);
+        info.setAlignment(Pos.CENTER_LEFT);
+
         Label nombre = new Label(estudiante.getNombre());
-        nombre.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+        nombre.setStyle("-fx-font-family: 'SansSerif'; -fx-text-fill: #000000; -fx-font-size: 20px;");
 
-        // Tipo de sugerencia
         Label tipo = new Label(esAmigoDeAmigo ? "Amigo de amigos" : "Intereses similares");
-        tipo.setStyle("-fx-text-fill: " + (esAmigoDeAmigo ? "#4a6baf" : "#4CAF50") + "; -fx-font-size: 12;");
+        tipo.setStyle("-fx-text-fill: " + (esAmigoDeAmigo ? "#1F4C59" : "#B0EB00") + "; -fx-font-family: 'SansSerif'; -fx-font-size: 16px;");
 
-        // Intereses en común
         Set<TEMA> interesesComunes = obtenerInteresesComunes(estudiante);
         Label intereses = new Label("Temas comunes: " + formatIntereses(interesesComunes));
-        intereses.setStyle("-fx-text-fill: #555; -fx-font-size: 12;");
-
-        // Botón
-        Button btnAgregar = new Button("Agregar");
-        btnAgregar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand;");
-        btnAgregar.setOnAction(e -> agregarAmigo(estudiante));
+        intereses.setStyle("-fx-text-fill: #777; -fx-font-size: 16px; -fx-font-family: 'SansSerif';");
 
         info.getChildren().addAll(nombre, tipo, intereses);
-        card.getChildren().addAll(avatar, info, btnAgregar);
+
+        // Contenedor derecho para botón (alineado abajo)
+        VBox contenedorBtn = new VBox();
+        contenedorBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        contenedorBtn.setPadding(new Insets(0, 0, 0, 20));
+
+        Button btnAgregar = new Button("Agregar");
+        btnAgregar.setStyle(
+                "-fx-background-color: #2D94B0;" +
+                        "-fx-text-fill: black;" +
+                        "-fx-font-size: 18px;" +
+                        "-fx-font-family: 'SansSerif';" +
+                        "-fx-background-radius: 40;" +
+                        "-fx-padding: 5 15;" +
+                        "-fx-cursor: hand;"
+        );
+
+        btnAgregar.setOnMouseEntered(e -> btnAgregar.setStyle(
+                "-fx-background-color: #62AEC3;" +
+                        "-fx-text-fill: black;" +
+                        "-fx-font-size: 18px;" +
+                        "-fx-font-family: 'SansSerif';" +
+                        "-fx-background-radius: 40;" +
+                        "-fx-padding: 5 15;" +
+                        "-fx-cursor: hand;"
+        ));
+
+        btnAgregar.setOnMouseExited(e -> btnAgregar.setStyle(
+                "-fx-background-color: #2D94B0;" +
+                        "-fx-text-fill: black;" +
+                        "-fx-font-size: 18px;" +
+                        "-fx-font-family: 'SansSerif';" +
+                        "-fx-background-radius: 40;" +
+                        "-fx-padding: 5 15;" +
+                        "-fx-cursor: hand;"
+        ));
+
+        btnAgregar.setOnAction(e -> agregarAmigo(estudiante));
+
+        contenedorBtn.getChildren().add(btnAgregar);
+
+        // Armado final de la tarjeta
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        card.getChildren().addAll(avatar, info, spacer, contenedorBtn);
         contenedor.getChildren().add(card);
     }
 

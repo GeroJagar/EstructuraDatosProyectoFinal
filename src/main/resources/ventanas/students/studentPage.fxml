@@ -377,15 +377,36 @@
             </VBox>
 
             <!-- Panel de Sugerencias -->
-            <VBox fx:id="panelSugerencias" alignment="CENTER" visible="false"
-                  style="-fx-background-color: #f5f5f5; -fx-padding: 20;">
-                <children>
-                    <ScrollPane fx:id="scrollSugerencias" fitToWidth="true" hbarPolicy="NEVER">
-                        <content>
-                            <VBox fx:id="contenedorSugerencias" spacing="15"/>
-                        </content>
-                    </ScrollPane>
-                </children>
+            <VBox fx:id="panelSugerencias" alignment="CENTER" spacing="20"
+                  style="-fx-background-color: #05242F; -fx-border-color: #F5F5F5; -fx-border-radius: 10;"
+                  visible="false" managed="false">
+
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <!-- Título con icono -->
+                <HBox alignment="CENTER" spacing="15">
+                    <ImageView fitHeight="80" fitWidth="80" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../images/FriendsIcon.png"/> <!-- Icono personalizado -->
+                        </image>
+                    </ImageView>
+                    <Label text="Sugerencias de Contenido"
+                           style="-fx-text-fill: white; -fx-font-size: 30px; -fx-font-family: 'SansSerif';"/>
+                </HBox>
+
+                <!-- Contenedor de sugerencias con scroll -->
+                <ScrollPane fx:id="scrollSugerencias" fitToWidth="true" hbarPolicy="NEVER"
+                            style="-fx-background: transparent; -fx-border-color: transparent;">
+                    <content>
+                        <VBox fx:id="contenedorSugerencias" spacing="15"/>
+                    </content>
+                </ScrollPane>
+
+                <!-- Botón de volver (hermano de los otros paneles) -->
+                <Button text="Volver" onAction="#goBack"
+                        styleClass="cancel-button" prefWidth="200"/>
             </VBox>
 
             <!-- Panel de Mi Perfil -->
