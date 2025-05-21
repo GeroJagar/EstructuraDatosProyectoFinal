@@ -20,7 +20,7 @@ public class Actually {
 
     private static Actually actually;
     private Usuario usuarioActivo;
-    private GrafoAmistades grafoAmistades;
+    private GestorGrafos gestorGrafos;
 
     private Map<String, Usuario> usuarios = new HashMap<>();
     private Map<String, ContenidoAcademico> contenidos = new HashMap<>();
@@ -81,8 +81,8 @@ public class Actually {
             System.out.println("No se encontraron solicitudes serializadas, iniciando con cola vacía.");
         }
 
-        this.grafoAmistades = new GrafoAmistades(); // Inicialización
-        inicializarGrafoAmistades();
+        this.gestorGrafos = new GestorGrafos(); // Inicialización
+        inicializarGrafos();
     }
 
     public Usuario getUsuarioActivo() {
@@ -412,32 +412,27 @@ public class Actually {
         return solicitudesMap.get(idSolicitud);
     }
 
-    private void inicializarGrafoAmistades() {
-        // Verificación de nulidad por seguridad
-        if (grafoAmistades == null) {
-            grafoAmistades = new GrafoAmistades();
-        }
-
+    private void inicializarGrafos() {
         for (Usuario usuario : usuarios.values()) {
             if (usuario instanceof Estudiante estudiante) {
                 try {
                     Set<TEMA> intereses = obtenerInteresesEstudiante(estudiante);
-                    grafoAmistades.agregarEstudiante(estudiante.getId(), intereses);
+                    gestorGrafos.agregarEstudiante(estudiante.getId(), intereses);
 
-                    // Cargar amistades existentes con verificación
                     if (estudiante.getAmigos() != null) {
                         for (Estudiante amigo : estudiante.getAmigos()) {
                             if (amigo != null && amigo.getId() != null) {
-                                grafoAmistades.agregarAmistad(estudiante.getId(), amigo.getId());
+                                gestorGrafos.agregarAmistad(estudiante.getId(), amigo.getId());
                             }
                         }
                     }
                 } catch (Exception e) {
-                    System.err.println("Error al inicializar estudiante en grafo: " + e.getMessage());
+                    System.err.println("Error al inicializar grafos para el estudiante " + estudiante.getId() + ": " + e.getMessage());
                 }
             }
         }
     }
+
 
     private Set<TEMA> obtenerInteresesEstudiante(Estudiante estudiante) {
         Set<TEMA> intereses = new HashSet<>();
@@ -448,7 +443,7 @@ public class Actually {
     }
 
     public List<Estudiante> obtenerSugerenciasAmistades(String idEstudiante, int limite) {
-        List<String> idsSugerencias = grafoAmistades.obtenerSugerencias(idEstudiante, limite);
+        List<String> idsSugerencias = gestorGrafos.getGrafoAmistades().obtenerSugerencias(idEstudiante, limite);
         List<Estudiante> sugerencias = new ArrayList<>();
 
         for (String id : idsSugerencias) {
@@ -465,7 +460,7 @@ public class Actually {
         if (usuarios.containsKey(idEstudiante) && usuarios.get(idEstudiante) instanceof Estudiante) {
             Estudiante estudiante = (Estudiante) usuarios.get(idEstudiante);
             Set<TEMA> nuevosIntereses = obtenerInteresesEstudiante(estudiante);
-            grafoAmistades.actualizarIntereses(idEstudiante, nuevosIntereses);
+            gestorGrafos.actualizarIntereses(idEstudiante, nuevosIntereses);
         }
     }
 
@@ -497,7 +492,7 @@ public class Actually {
             Map<String, Usuario> backup = new HashMap<>(usuarios);
 
             // 2. Realizar cambios (una sola vez)
-            grafoAmistades.agregarAmistad(idEstudiante1, idEstudiante2);
+            gestorGrafos.getGrafoAmistades().agregarAmistad(idEstudiante1, idEstudiante2);
             estudiante1.agregarAmigo(estudiante2);
             estudiante2.agregarAmigo(estudiante1);
 
@@ -510,7 +505,7 @@ public class Actually {
 
         } catch (IOException e) {
             // Revertir cambios en memoria
-            grafoAmistades.eliminarAmistad(idEstudiante1, idEstudiante2);
+            gestorGrafos.getGrafoAmistades().eliminarAmistad(idEstudiante1, idEstudiante2);
             if (estudiante1 != null) estudiante1.getAmigos().remove(estudiante2);
             if (estudiante2 != null) estudiante2.getAmigos().remove(estudiante1);
 

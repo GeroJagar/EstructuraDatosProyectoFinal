@@ -8,35 +8,52 @@ public class GrafoAmistades {
 
     public GrafoAmistades() {
         grafoAmistades = new HashMap<>();
-        interesesEstudiantes = new HashMap<>();
     }
 
-    public void agregarEstudiante(String idEstudiante, Set<TEMA> intereses) {
+    public void agregarEstudiante(String idEstudiante) {
         grafoAmistades.putIfAbsent(idEstudiante, new HashSet<>());
-        interesesEstudiantes.put(idEstudiante, new HashSet<>(intereses));
-    }
-
-    public void actualizarIntereses(String idEstudiante, Set<TEMA> nuevosIntereses) {
-        if (interesesEstudiantes.containsKey(idEstudiante)) {
-            interesesEstudiantes.get(idEstudiante).clear();
-            interesesEstudiantes.get(idEstudiante).addAll(nuevosIntereses);
-        }
     }
 
     public void agregarAmistad(String idEstudiante1, String idEstudiante2) {
-        grafoAmistades.putIfAbsent(idEstudiante1, new HashSet<>());
-        grafoAmistades.putIfAbsent(idEstudiante2, new HashSet<>());
-
-        grafoAmistades.get(idEstudiante1).add(idEstudiante2);
-        grafoAmistades.get(idEstudiante2).add(idEstudiante1);
+        if (grafoAmistades.containsKey(idEstudiante1) && grafoAmistades.containsKey(idEstudiante2)) {
+            grafoAmistades.get(idEstudiante1).add(idEstudiante2);
+            grafoAmistades.get(idEstudiante2).add(idEstudiante1);
+        }
     }
 
+    public void eliminarEstudiante(String idEstudiante) {
+        grafoAmistades.remove(idEstudiante);
+        for (Set<String> amigos : grafoAmistades.values()) {
+            amigos.remove(idEstudiante);
+        }
+    }
+
+    public Set<String> obtenerAmigos(String idEstudiante) {
+        return grafoAmistades.getOrDefault(idEstudiante, Collections.emptySet());
+    }
+
+    public boolean sonAmigos(String id1, String id2) {
+        return grafoAmistades.getOrDefault(id1, Collections.emptySet()).contains(id2);
+    }
+
+    public void eliminarAmistad(String id1, String id2) {
+        if (grafoAmistades.containsKey(id1)) {
+            grafoAmistades.get(id1).remove(id2);
+        }
+        if (grafoAmistades.containsKey(id2)) {
+            grafoAmistades.get(id2).remove(id1);
+        }
+    }
+
+    public Set<String> obtenerEstudiantes() {
+        return grafoAmistades.keySet();
+    }
     public List<String> obtenerSugerencias(String idEstudiante, int limite) {
-        Set<String> sugerencias = new LinkedHashSet<>(); // Usamos LinkedHashSet para mantener el orden
+        Set<String> sugerencias = new LinkedHashSet<>();
         Set<String> amigosDirectos = grafoAmistades.getOrDefault(idEstudiante, new HashSet<>());
         Set<TEMA> misIntereses = interesesEstudiantes.getOrDefault(idEstudiante, new HashSet<>());
 
-        // Primero obtenemos amigos de amigos con intereses comunes
+        // Sugerencias por amigos de amigos
         Map<String, Integer> puntuacionesAmigosDeAmigos = new HashMap<>();
 
         for (String amigo : amigosDirectos) {
@@ -48,12 +65,12 @@ public class GrafoAmistades {
                             .count();
 
                     puntuacionesAmigosDeAmigos.put(amigoDeAmigo,
-                            puntuacionesAmigosDeAmigos.getOrDefault(amigoDeAmigo, 0) + puntos + 2); // +2 por ser amigo de amigo
+                            puntuacionesAmigosDeAmigos.getOrDefault(amigoDeAmigo, 0) + puntos + 2);
                 }
             }
         }
 
-        // Luego obtenemos todas las personas con intereses comunes (que no sean amigos directos)
+        // Sugerencias por intereses en común
         Map<String, Integer> puntuacionesIntereses = new HashMap<>();
 
         for (Map.Entry<String, Set<TEMA>> entry : interesesEstudiantes.entrySet()) {
@@ -69,21 +86,17 @@ public class GrafoAmistades {
             }
         }
 
-        // Combinamos ambos conjuntos, dando prioridad a amigos de amigos
-        Map<String, Integer> puntuacionesCombinadas = new HashMap<>();
-        puntuacionesCombinadas.putAll(puntuacionesAmigosDeAmigos);
-
-        // Sumamos puntos a las sugerencias por intereses que ya existan
+        // Combinar sugerencias
+        Map<String, Integer> puntuacionesCombinadas = new HashMap<>(puntuacionesAmigosDeAmigos);
         puntuacionesIntereses.forEach((k, v) ->
                 puntuacionesCombinadas.merge(k, v, Integer::sum));
 
-        // Ordenamos primero por puntuación, luego por tipo (amigos de amigos primero)
+        // Ordenar sugerencias
         List<String> resultado = new ArrayList<>(puntuacionesCombinadas.keySet());
         resultado.sort((a, b) -> {
             int cmp = puntuacionesCombinadas.get(b) - puntuacionesCombinadas.get(a);
             if (cmp != 0) return cmp;
 
-            // Si tienen la misma puntuación, amigos de amigos primero
             boolean aEsAmigoDeAmigo = puntuacionesAmigosDeAmigos.containsKey(a);
             boolean bEsAmigoDeAmigo = puntuacionesAmigosDeAmigos.containsKey(b);
 
@@ -95,28 +108,5 @@ public class GrafoAmistades {
         return resultado.subList(0, Math.min(limite, resultado.size()));
     }
 
-    private List<String> sugerirPorIntereses(String idEstudiante, Set<TEMA> misIntereses, int limite) {
-        Map<String, Integer> puntuaciones = new HashMap<>();
 
-        for (Map.Entry<String, Set<TEMA>> entry : interesesEstudiantes.entrySet()) {
-            String otroEstudiante = entry.getKey();
-            if (!otroEstudiante.equals(idEstudiante) && !grafoAmistades.getOrDefault(idEstudiante, new HashSet<>()).contains(otroEstudiante)) {
-                int puntos = (int) entry.getValue().stream()
-                        .filter(misIntereses::contains)
-                        .count();
-
-                if (puntos > 0) {
-                    puntuaciones.put(otroEstudiante, puntos);
-                }
-            }
-        }
-
-        List<String> resultado = new ArrayList<>(puntuaciones.keySet());
-        resultado.sort((a, b) -> puntuaciones.get(b) - puntuaciones.get(a));
-
-        return resultado.subList(0, Math.min(limite, resultado.size()));
-    }
-
-    public void eliminarAmistad(String idEstudiante1, String idEstudiante2) {
-    }
 }
