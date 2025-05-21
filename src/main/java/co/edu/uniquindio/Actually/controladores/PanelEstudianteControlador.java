@@ -47,6 +47,7 @@ public class PanelEstudianteControlador {
     private final FileUploader fileUploader = new FileUploader();
     private final ArchivoUtilidades archivoUtil = new ArchivoUtilidades();
 
+
     @FXML private VBox contenidoPanel;
     @FXML private VBox contenedorContenido;
     @FXML private ScrollPane scrollContenidos;
@@ -54,6 +55,12 @@ public class PanelEstudianteControlador {
     @FXML private ComboBox<String> cbCriterioBusqueda;
     @FXML private HBox searchHBox;
     @FXML public VBox panelSolicitudes;
+
+    // Panel Mi Perfil.
+    @FXML public VBox panelMiPerfil;
+    @FXML public Label nombreLabel;
+    @FXML public Label idLabel;
+    @FXML public Label correoLabel;
 
     @FXML
     private VBox contenedorSugerencias;
@@ -90,14 +97,12 @@ public class PanelEstudianteControlador {
         cbTemaAyuda.getItems().setAll(TEMA.values());
         cbUrgencia.getItems().addAll(1, 2, 3, 4, 5);
 
-        // Ocultar panel de ayuda al inicio
-        panelAyuda.setVisible(false);
-        scrollSolicitudes.setVisible(false);
-
         mostrarTodoElContenido(null);
 
-        btnSugerencias.setOnAction(e -> mostrarSugerencias());
-        panelSugerencias.setVisible(false);
+        // Labels en el panel "Mi Perfil"
+        nombreLabel.setText("❥ Nombre: " + actually.getUsuarioActivo().getNombre());
+        idLabel.setText("❥ ID: " + actually.getUsuarioActivo().getId());
+        correoLabel.setText("❥ Correo: " + actually.getUsuarioActivo().getCorreo());
     }
 
     @FXML
@@ -112,6 +117,10 @@ public class PanelEstudianteControlador {
         panelAyuda.setManaged(false);
         panelSolicitudes.setVisible(false);
         panelSolicitudes.setManaged(false);
+        panelSugerencias.setVisible(false);
+        panelSugerencias.setManaged(false);
+        panelMiPerfil.setVisible(false);
+        panelMiPerfil.setManaged(false);
 
         // Limpiar formulario al mostrar
         limpiarFormulario();
@@ -136,6 +145,10 @@ public class PanelEstudianteControlador {
         scrollContenidos.setManaged(true);
         searchHBox.setVisible(true);
         searchHBox.setManaged(true);
+        panelSugerencias.setVisible(false);
+        panelSugerencias.setManaged(false);
+        panelMiPerfil.setVisible(false);
+        panelMiPerfil.setManaged(false);
         cargarTodosLosContenidos();
     }
 
@@ -491,12 +504,14 @@ public class PanelEstudianteControlador {
         // Ocultar todos los paneles especiales
         panelAyuda.setVisible(false);
         panelAyuda.setManaged(false);
-        scrollSolicitudes.setVisible(false);
-        scrollSolicitudes.setManaged(false);
         contenidoPanel.setVisible(false);
         contenidoPanel.setManaged(false);
         panelSolicitudes.setVisible(false);
         panelSolicitudes.setManaged(false);
+        panelSugerencias.setVisible(false);
+        panelSugerencias.setManaged(false);
+        panelMiPerfil.setVisible(false);
+        panelMiPerfil.setManaged(false);
 
         // Mostrar la vista principal
         searchHBox.setVisible(true);
@@ -517,6 +532,10 @@ public class PanelEstudianteControlador {
         searchHBox.setManaged(false);
         panelSolicitudes.setVisible(false);
         panelSolicitudes.setManaged(false);
+        panelSugerencias.setVisible(false);
+        panelSugerencias.setManaged(false);
+        panelMiPerfil.setVisible(false);
+        panelMiPerfil.setManaged(false);
 
         panelAyuda.setVisible(true);
         panelAyuda.setManaged(true);
@@ -554,6 +573,8 @@ public class PanelEstudianteControlador {
         panelAyuda.setManaged(false);
         scrollContenidos.setVisible(false);
         scrollContenidos.setManaged(false);
+        panelMiPerfil.setVisible(false);
+        panelMiPerfil.setManaged(false);
 
         scrollSolicitudes.setVisible(true);
         scrollSolicitudes.setManaged(true);
@@ -827,12 +848,23 @@ public class PanelEstudianteControlador {
         }
     }
 
+    @FXML
+    private void mostrarSugerencias(MouseEvent event) {
+        searchHBox.setVisible(false);
+        searchHBox.setManaged(false);
+        scrollContenidos.setVisible(false);
+        scrollContenidos.setManaged(false);
+        contenidoPanel.setVisible(false);
+        contenidoPanel.setManaged(false);
+        panelAyuda.setVisible(false);
+        panelAyuda.setManaged(false);
+        panelSolicitudes.setVisible(false);
+        panelSolicitudes.setManaged(false);
+        panelMiPerfil.setVisible(false);
+        panelMiPerfil.setManaged(false);
 
-    private void mostrarSugerencias() {
         panelSugerencias.setVisible(true);
         panelSugerencias.setManaged(true);
-        scrollContenidos.setVisible(false);
-        panelAyuda.setVisible(false);
 
         cargarSugerenciasAmistades();
     }
@@ -981,5 +1013,21 @@ public class PanelEstudianteControlador {
                 intereses.stream()
                         .map(TEMA::name)
                         .collect(Collectors.joining(", "));
+    }
+
+    public void mostrarMiPerfil(MouseEvent event) {
+        searchHBox.setVisible(false);
+        searchHBox.setManaged(false);
+        scrollContenidos.setVisible(false);
+        scrollContenidos.setManaged(false);
+        contenidoPanel.setVisible(false);
+        contenidoPanel.setManaged(false);
+        panelAyuda.setVisible(false);
+        panelAyuda.setManaged(false);
+        panelSugerencias.setVisible(false);
+        panelSugerencias.setManaged(false);
+
+        panelMiPerfil.setVisible(true);
+        panelMiPerfil.setManaged(true);
     }
 }
