@@ -33,28 +33,23 @@
     <!-- Primera fila de botones -->
     <HBox alignment="CENTER" spacing="40">
         <Button fx:id="btnContenidos" text="Contenidos"
-                styleClass="moderator-button"
-                style="-fx-background-color: #4CAF50; -fx-pref-width: 200;"/>
+                styleClass="moderator-button"/>
 
         <Button fx:id="btnUsuarios" text="Usuarios"
-                styleClass="moderator-button"
-                style="-fx-background-color: #2196F3; -fx-pref-width: 200;"/>
+                styleClass="moderator-button"/>
     </HBox>
 
     <!-- Segunda fila de botones -->
     <HBox alignment="CENTER" spacing="40">
         <Button fx:id="btnReportes" text="Reportes"
-                styleClass="moderator-button"
-                style="-fx-background-color: #FF9800; -fx-pref-width: 200;"/>
+                styleClass="moderator-button"/>
 
         <Button fx:id="btnGrafos" text="Grafos"
-                styleClass="moderator-button"
-                style="-fx-background-color: #9C27B0; -fx-pref-width: 200;"/>
+                styleClass="moderator-button"/>
     </HBox>
 
     <!-- Botón inferior -->
     <Button fx:id="cerrarSesion" text="Cerrar Sesión"
             style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;
-                  -fx-font-size: 16px; -fx-pref-width: 150; -fx-background-radius: 20;"
-            HBox.alignment="BOTTOM_RIGHT"/>
+                  -fx-font-size: 16px; -fx-pref-width: 150; -fx-background-radius: 20;"/>
 </VBox>
