@@ -34,5 +34,6 @@
         <Button fx:id="btnModificar" prefWidth="100" text="Modificar" />
         <Button fx:id="btnEliminar" prefWidth="100" text="Eliminar" />
     </HBox>
-   <Button layoutX="852.0" layoutY="25.0" mnemonicParsing="false" text="Volver 😀" />
+    <!-- Botón para volver a la ventana main -->
+   <Button fx:id="volver" layoutX="852.0" layoutY="25.0" mnemonicParsing="false" text="Volver 😀" />
 </AnchorPane>

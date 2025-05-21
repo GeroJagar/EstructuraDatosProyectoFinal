@@ -17,6 +17,6 @@
     <Button fx:id="btnUsuarios" layoutX="367.0" layoutY="100.0" prefWidth="150" text="Usuarios" />
     <Button fx:id="btnReportes" layoutX="89.0" layoutY="244.0" prefWidth="150" text="Reportes" />
     <Button fx:id="btnGrafos" layoutX="367.0" layoutY="244.0" prefWidth="150" text="Grafos" />
-   <Button layoutX="481.0" layoutY="337.0" mnemonicParsing="false" text="Volver" />
+    <Button fx:id="cerrarSesion" layoutX="467.0" layoutY="340.0" mnemonicParsing="false" text="Cerrar Sesion" />
 
 </AnchorPane>
