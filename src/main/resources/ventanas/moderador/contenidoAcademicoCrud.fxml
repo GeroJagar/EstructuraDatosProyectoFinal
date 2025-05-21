@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="625.0" prefWidth="952.0"
+            xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            fx:controller="co.edu.uniquindio.Actually.controladores.ContenidoCrudController">
+
+    <!-- Tabla -->
+    <TableView fx:id="tablaContenidos" layoutX="26.0" layoutY="70.0" prefHeight="482.0" prefWidth="900.0">
+        <columns>
+            <TableColumn fx:id="colTitulo" prefWidth="138.4" text="Título"/>
+            <TableColumn fx:id="colTema" prefWidth="137.6" text="Tema"/>
+            <TableColumn fx:id="colAutor" prefWidth="144.8" text="Autor"/>
+            <TableColumn fx:id="colTipo" prefWidth="196.0" text="Tipo"/>
+            <TableColumn fx:id="colPuntaje" prefWidth="137.6" text="Puntaje"/>
+            <TableColumn fx:id="colId" prefWidth="145.6" text="ID"/>
+        </columns>
+    </TableView>
+
+    <!-- Barra de búsqueda -->
+    <ComboBox fx:id="comboCriterio" layoutX="25.0" layoutY="25.0" prefWidth="120.0" promptText="Buscar por"/>
+    <TextField fx:id="campoBusqueda" layoutX="160.0" layoutY="25.0" prefWidth="300.0" promptText="Buscar..."/>
+    <Button fx:id="btnBuscar" layoutX="470.0" layoutY="25.0" prefWidth="80.0" text="Buscar"/>
+    <Button fx:id="btnLimpiarBusqueda" layoutX="560.0" layoutY="25.0" prefWidth="80.0" text="Limpiar"/>
+
+    <!-- Botones de CRUD centrados -->
+    <HBox layoutX="276.0" layoutY="570.0" spacing="40">
+        <Button fx:id="btnAgregar" text="Agregar" prefWidth="100"/>
+        <Button fx:id="btnModificar" text="Modificar" prefWidth="100"/>
+        <Button fx:id="btnEliminar" text="Eliminar" prefWidth="100"/>
+    </HBox>
+</AnchorPane>

@@ -18,7 +18,7 @@ public class LoginControlador {
         String id = idField.getText();
         String contrasena = contrasenaField.getText();
         if(id.equals("999999") && contrasena.equals("999999")){
-            actually.loadStage("/ventanas/admin/adminPage.fxml", event);
+            actually.loadStage("/ventanas/moderador/moderadorMain.fxml", event);
             return;
         }
         Usuario usuario = actually.obtenerUsuarioPorId(id);
