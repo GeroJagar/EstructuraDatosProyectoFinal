@@ -159,7 +159,7 @@ public class ContenidoAcademicoCrudController {
             stage.initModality(Modality.APPLICATION_MODAL);
 
             FormularioContenidoController controller = loader.getController();
-            controller.setContenido(new ContenidoAcademico(seleccionado), false);
+            controller.setContenido(seleccionado, false);
 
             stage.showAndWait();
 

@@ -41,7 +41,7 @@ public class FormularioContenidoController {
     }
 
     @FXML
-    private void guardar() {
+    private ContenidoAcademico guardar() {
         // Validar campos
         if (validarCampos()) {
             contenido.setTitulo(txtTitulo.getText());
@@ -57,6 +57,7 @@ public class FormularioContenidoController {
             // Cerrar la ventana
             txtTitulo.getScene().getWindow().hide();
         }
+        return contenido;
     }
 
     @FXML
