@@ -255,3 +255,20 @@
     -fx-background-color: #8DB8C6;
     -fx-text-fill: #000000;
 }
+
+/* Estilo base para botones de moderador */
+.moderator-button {
+    -fx-font-family: 'SansSerif';
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-radius: 15;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+.moderator-button:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-cursor: hand;
+}
