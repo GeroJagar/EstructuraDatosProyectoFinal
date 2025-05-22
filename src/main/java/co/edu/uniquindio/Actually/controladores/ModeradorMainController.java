@@ -5,6 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -12,27 +16,24 @@ import java.io.IOException;
 
 public class ModeradorMainController {
 
-    @FXML
-    private Text titulo;
-
-    @FXML
-    private Button btnContenidos;
-
-    @FXML
-    private Button btnUsuarios;
-
-    @FXML
-    private Button btnReportes;
-
-    @FXML
-    private Button btnGrafos;
-
-    @FXML
-    private Button cerrarSesion;
+    @FXML public VBox panelUsuarios;
+    @FXML public ComboBox<String> cbTipoUsuario;
+    @FXML public TextField txtBusqueda;
+    @FXML private Text titulo;
+    @FXML private Button btnContenidos;
+    @FXML private Button btnUsuarios;
+    @FXML private Button btnReportes;
+    @FXML private Button btnGrafos;
+    @FXML private Button cerrarSesion;
 
     @FXML
     public void initialize() {
+        configurarFiltros();
+    }
 
+    private void configurarFiltros() {
+        cbTipoUsuario.getItems().addAll("Todos", "Estudiante", "Moderador");
+        cbTipoUsuario.getSelectionModel().selectFirst();
     }
 
     @FXML
@@ -116,6 +117,11 @@ public class ModeradorMainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void abrirPanelUsuarios(MouseEvent event) {
+        panelUsuarios.setVisible(true);
+        panelUsuarios.setManaged(true);
     }
 }
 
