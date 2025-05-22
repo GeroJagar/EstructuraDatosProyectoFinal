@@ -7,7 +7,6 @@
 /home/geronimo/IdeaProjects/EstructuraDatosProyectoFinal/src/main/java/co/edu/uniquindio/Actually/modelo/ABBContenido.java
 /home/geronimo/IdeaProjects/EstructuraDatosProyectoFinal/src/main/java/co/edu/uniquindio/Actually/modelo/NodoContenido.java
 /home/geronimo/IdeaProjects/EstructuraDatosProyectoFinal/src/main/java/co/edu/uniquindio/Actually/modelo/ColaPrioridad.java
-/home/geronimo/IdeaProjects/EstructuraDatosProyectoFinal/src/main/java/co/edu/uniquindio/Actually/modelo/GrafoInterese.java
 /home/geronimo/IdeaProjects/EstructuraDatosProyectoFinal/src/main/java/co/edu/uniquindio/Actually/modelo/Nodo.java
 /home/geronimo/IdeaProjects/EstructuraDatosProyectoFinal/src/main/java/co/edu/uniquindio/Actually/excepciones/CampoVacioException.java
 /home/geronimo/IdeaProjects/EstructuraDatosProyectoFinal/src/main/java/co/edu/uniquindio/Actually/controladores/UsuarioCrudController.java

@@ -2,6 +2,7 @@ package co.edu.uniquindio.Actually.modelo;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.*;
 
 import java.util.*;
@@ -88,6 +89,22 @@ public class GrafoIntereses {
     public Graph getGrafo() {
         return grafoIntereses;
     }
+
+    public List<String> recomendarContenido(String idEstudiante) {
+        List<String> recomendaciones = new ArrayList<>();
+
+        Node nodo = grafoIntereses.getNode(idEstudiante);
+        if (nodo == null) return recomendaciones;
+
+        // Obtener nodos con arista directa (vecinos)
+        for (Edge e : nodo.edges().toList()) {
+            Node vecino = e.getOpposite(nodo);
+            recomendaciones.add(vecino.getId());
+        }
+
+        return recomendaciones;
+    }
+
 
 }
 

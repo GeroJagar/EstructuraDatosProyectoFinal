@@ -443,10 +443,17 @@ public class Actually {
     }
 
     public List<Estudiante> obtenerSugerenciasAmistades(String idEstudiante) {
-        List<String> idsSugerencias = (List<String>) gestorGrafos.getGrafoAmistades().recomendarAmigos(idEstudiante);
+        List<String> idsSugerencias = gestorGrafos.getGrafoAmistades().recomendarAmigos(idEstudiante);
+        List<String> sugerenciaContenido = gestorGrafos.getGrafoIntereses().recomendarContenido(idEstudiante);
+
+        // Usar un Set para evitar duplicados
+        Set<String> idsCombinados = new HashSet<>();
+        idsCombinados.addAll(idsSugerencias);
+        idsCombinados.addAll(sugerenciaContenido);
+
         List<Estudiante> sugerencias = new ArrayList<>();
 
-        for (String id : idsSugerencias) {
+        for (String id : idsCombinados) {
             Usuario usuario = usuarios.get(id);
             if (usuario instanceof Estudiante) {
                 sugerencias.add((Estudiante) usuario);
@@ -455,6 +462,7 @@ public class Actually {
 
         return sugerencias;
     }
+
 
     public void actualizarInteresesEstudiante(String idEstudiante) {
         if (usuarios.containsKey(idEstudiante) && usuarios.get(idEstudiante) instanceof Estudiante) {

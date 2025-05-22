@@ -856,6 +856,7 @@ public class PanelEstudianteControlador {
         }
 
         List<Estudiante> sugerencias = actually.obtenerSugerenciasAmistades(estudiante.getId());
+        System.out.println(sugerencias.size());
 
         if (sugerencias.isEmpty()) {
             Label vacio = new Label("No hay sugerencias disponibles. Sube más contenidos para mejorar las recomendaciones.");

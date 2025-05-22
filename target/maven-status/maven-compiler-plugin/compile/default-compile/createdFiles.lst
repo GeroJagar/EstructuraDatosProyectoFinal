@@ -17,6 +17,7 @@ co/edu/uniquindio/Actually/modelo/Estudiante.class
 co/edu/uniquindio/Actually/modelo/GrupoEstudio.class
 co/edu/uniquindio/Actually/controladores/FormularioContenidoController.class
 co/edu/uniquindio/Actually/modelo/NodoContenido.class
+co/edu/uniquindio/Actually/modelo/GrafoIntereses.class
 co/edu/uniquindio/Actually/modelo/GestorGrafos.class
 co/edu/uniquindio/Actually/modelo/GrafoAmistades.class
 co/edu/uniquindio/Actually/modelo/Valoracion.class
@@ -29,7 +30,6 @@ co/edu/uniquindio/Actually/modelo/TEMA.class
 co/edu/uniquindio/Actually/modelo/SolicitudAyuda$EstadoSolicitud.class
 co/edu/uniquindio/Actually/modelo/Usuario.class
 co/edu/uniquindio/Actually/excepciones/CampoObligatorioException.class
-co/edu/uniquindio/Actually/modelo/GrafoInterese.class
 co/edu/uniquindio/Actually/aplicacion/ActuallyAplicacion.class
 co/edu/uniquindio/Actually/controladores/LoginControlador.class
 co/edu/uniquindio/Actually/modelo/NodoDoble.class

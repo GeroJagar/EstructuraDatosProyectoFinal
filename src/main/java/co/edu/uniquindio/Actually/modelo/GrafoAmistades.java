@@ -74,8 +74,8 @@ public class GrafoAmistades {
         return grafoAmistades;
     }
 
-    public Set<String> recomendarAmigos(String idEstudiante) {
-        Set<String> recomendaciones = new HashSet<>();
+    public List<String> recomendarAmigos(String idEstudiante) {
+        List<String> recomendaciones = new ArrayList<>();
 
         Node nodo = grafoAmistades.getNode(idEstudiante);
         if (nodo == null) return recomendaciones;
