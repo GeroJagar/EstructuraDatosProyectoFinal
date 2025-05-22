@@ -910,6 +910,10 @@ public class PanelEstudianteControlador {
     }
 
     private void agregarTarjetaSugerencia(VBox contenedor, Estudiante estudiante, boolean esAmigoDeAmigo) {
+        Estudiante actual = (Estudiante) actually.getUsuarioActivo();
+        if (actual.getAmigos().stream().anyMatch(a -> a.getId().equals(estudiante.getId()))) {
+            return; // Ya son amigos, no mostrar la tarjeta
+        }
         HBox card = new HBox(15);
         card.setPadding(new Insets(15));
         card.setAlignment(Pos.CENTER_LEFT);
@@ -976,7 +980,10 @@ public class PanelEstudianteControlador {
                         "-fx-cursor: hand;"
         ));
 
-        btnAgregar.setOnAction(e -> agregarAmigo(estudiante));
+        btnAgregar.setOnAction(e -> {
+            agregarAmigo(estudiante);
+            contenedor.getChildren().remove(card); // Eliminar la tarjeta de la vista
+        });
 
         contenedorBtn.getChildren().add(btnAgregar);
 
