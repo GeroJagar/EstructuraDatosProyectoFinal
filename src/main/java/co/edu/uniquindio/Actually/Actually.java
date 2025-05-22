@@ -442,8 +442,8 @@ public class Actually {
         return intereses;
     }
 
-    public List<Estudiante> obtenerSugerenciasAmistades(String idEstudiante, int limite) {
-        List<String> idsSugerencias = gestorGrafos.getGrafoAmistades().obtenerSugerencias(idEstudiante, limite);
+    public List<Estudiante> obtenerSugerenciasAmistades(String idEstudiante) {
+        List<String> idsSugerencias = (List<String>) gestorGrafos.getGrafoAmistades().recomendarAmigos(idEstudiante);
         List<Estudiante> sugerencias = new ArrayList<>();
 
         for (String id : idsSugerencias) {
