@@ -1,112 +1,76 @@
 package co.edu.uniquindio.Actually.modelo;
 
+import org.graphstream.graph.*;
+import org.graphstream.graph.implementations.*;
+
 import java.util.*;
 
 public class GrafoAmistades {
-    private Map<String, Set<String>> grafoAmistades;
-    private Map<String, Set<TEMA>> interesesEstudiantes;
+
+    private final MultiGraph grafoAmistades;
+    private final Map<String, Set<String>> amistades;
 
     public GrafoAmistades() {
-        grafoAmistades = new HashMap<>();
+        this.grafoAmistades = new MultiGraph("Amistades");
+        this.amistades = new HashMap<>();
+
+        // Estilos para mostrar etiquetas
+        grafoAmistades.setAttribute("ui.stylesheet", "edge { text-alignment: above; }");
     }
 
-    public void agregarEstudiante(String idEstudiante) {
-        grafoAmistades.putIfAbsent(idEstudiante, new HashSet<>());
-    }
-
-    public void agregarAmistad(String idEstudiante1, String idEstudiante2) {
-        if (grafoAmistades.containsKey(idEstudiante1) && grafoAmistades.containsKey(idEstudiante2)) {
-            grafoAmistades.get(idEstudiante1).add(idEstudiante2);
-            grafoAmistades.get(idEstudiante2).add(idEstudiante1);
+    public void agregarEstudiante(String id) {
+        if (grafoAmistades.getNode(id) == null) {
+            grafoAmistades.addNode(id).setAttribute("ui.label", id);
         }
+        amistades.putIfAbsent(id, new HashSet<>());
     }
 
-    public void eliminarEstudiante(String idEstudiante) {
-        grafoAmistades.remove(idEstudiante);
-        for (Set<String> amigos : grafoAmistades.values()) {
-            amigos.remove(idEstudiante);
+    public void agregarAmistad(String id1, String id2) {
+        if (id1.equals(id2)) return; // No se permite amistad consigo mismo
+
+        agregarEstudiante(id1);
+        agregarEstudiante(id2);
+
+        amistades.get(id1).add(id2);
+        amistades.get(id2).add(id1);
+
+        String edgeId = generarIdArista(id1, id2);
+        if (grafoAmistades.getEdge(edgeId) == null) {
+            Edge edge = grafoAmistades.addEdge(edgeId, id1, id2, false);
+            edge.setAttribute("tipo", "Amigos");
+            edge.setAttribute("ui.label", "Amigos");
         }
-    }
-
-    public Set<String> obtenerAmigos(String idEstudiante) {
-        return grafoAmistades.getOrDefault(idEstudiante, Collections.emptySet());
-    }
-
-    public boolean sonAmigos(String id1, String id2) {
-        return grafoAmistades.getOrDefault(id1, Collections.emptySet()).contains(id2);
     }
 
     public void eliminarAmistad(String id1, String id2) {
-        if (grafoAmistades.containsKey(id1)) {
-            grafoAmistades.get(id1).remove(id2);
-        }
-        if (grafoAmistades.containsKey(id2)) {
-            grafoAmistades.get(id2).remove(id1);
+        amistades.getOrDefault(id1, new HashSet<>()).remove(id2);
+        amistades.getOrDefault(id2, new HashSet<>()).remove(id1);
+
+        String edgeId = generarIdArista(id1, id2);
+        if (grafoAmistades.getEdge(edgeId) != null) {
+            grafoAmistades.removeEdge(edgeId);
         }
     }
 
-    public Set<String> obtenerEstudiantes() {
-        return grafoAmistades.keySet();
-    }
-    public List<String> obtenerSugerencias(String idEstudiante, int limite) {
-        Set<String> sugerencias = new LinkedHashSet<>();
-        Set<String> amigosDirectos = grafoAmistades.getOrDefault(idEstudiante, new HashSet<>());
-        Set<TEMA> misIntereses = interesesEstudiantes.getOrDefault(idEstudiante, new HashSet<>());
+    public void eliminarEstudiante(String id) {
+        if (!amistades.containsKey(id)) return;
 
-        // Sugerencias por amigos de amigos
-        Map<String, Integer> puntuacionesAmigosDeAmigos = new HashMap<>();
-
-        for (String amigo : amigosDirectos) {
-            for (String amigoDeAmigo : grafoAmistades.getOrDefault(amigo, new HashSet<>())) {
-                if (!amigoDeAmigo.equals(idEstudiante) && !amigosDirectos.contains(amigoDeAmigo)) {
-                    Set<TEMA> interesesAmigo = interesesEstudiantes.getOrDefault(amigoDeAmigo, new HashSet<>());
-                    int puntos = (int) interesesAmigo.stream()
-                            .filter(misIntereses::contains)
-                            .count();
-
-                    puntuacionesAmigosDeAmigos.put(amigoDeAmigo,
-                            puntuacionesAmigosDeAmigos.getOrDefault(amigoDeAmigo, 0) + puntos + 2);
-                }
-            }
+        Set<String> amigos = new HashSet<>(amistades.get(id));
+        for (String otro : amigos) {
+            eliminarAmistad(id, otro);
         }
 
-        // Sugerencias por intereses en común
-        Map<String, Integer> puntuacionesIntereses = new HashMap<>();
-
-        for (Map.Entry<String, Set<TEMA>> entry : interesesEstudiantes.entrySet()) {
-            String otroEstudiante = entry.getKey();
-            if (!otroEstudiante.equals(idEstudiante) && !amigosDirectos.contains(otroEstudiante)) {
-                int puntos = (int) entry.getValue().stream()
-                        .filter(misIntereses::contains)
-                        .count();
-
-                if (puntos > 0) {
-                    puntuacionesIntereses.put(otroEstudiante, puntos);
-                }
-            }
-        }
-
-        // Combinar sugerencias
-        Map<String, Integer> puntuacionesCombinadas = new HashMap<>(puntuacionesAmigosDeAmigos);
-        puntuacionesIntereses.forEach((k, v) ->
-                puntuacionesCombinadas.merge(k, v, Integer::sum));
-
-        // Ordenar sugerencias
-        List<String> resultado = new ArrayList<>(puntuacionesCombinadas.keySet());
-        resultado.sort((a, b) -> {
-            int cmp = puntuacionesCombinadas.get(b) - puntuacionesCombinadas.get(a);
-            if (cmp != 0) return cmp;
-
-            boolean aEsAmigoDeAmigo = puntuacionesAmigosDeAmigos.containsKey(a);
-            boolean bEsAmigoDeAmigo = puntuacionesAmigosDeAmigos.containsKey(b);
-
-            if (aEsAmigoDeAmigo && !bEsAmigoDeAmigo) return -1;
-            if (!aEsAmigoDeAmigo && bEsAmigoDeAmigo) return 1;
-            return 0;
-        });
-
-        return resultado.subList(0, Math.min(limite, resultado.size()));
+        amistades.remove(id);
+        grafoAmistades.removeNode(id);
     }
 
+    private String generarIdArista(String id1, String id2) {
+        String nodoA = id1.compareTo(id2) < 0 ? id1 : id2;
+        String nodoB = id1.compareTo(id2) < 0 ? id2 : id1;
+        return nodoA + "_" + nodoB;
+    }
 
+    public Graph getGrafo() {
+        return grafoAmistades;
+    }
 }
