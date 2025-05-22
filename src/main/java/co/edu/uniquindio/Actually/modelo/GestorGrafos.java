@@ -1,5 +1,10 @@
 package co.edu.uniquindio.Actually.modelo;
 
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.MultiGraph;
+
+import java.util.HashSet;
 import java.util.Set;
 
 public class GestorGrafos {
@@ -34,7 +39,62 @@ public class GestorGrafos {
         grafoIntereses.eliminarEstudiante(id);
     }
 
-    // Accesores para los grafos (por si los necesitas para visualización)
+    /*
+    Método para generar el grafo entero, combinando el grafo de intereses y el grafo de amistades, dando prioridad a las
+    aristas del grafo de intereses.
+     */
+
+    public Graph generarGrafoCombinado() {
+        Graph grafoCombinado = new MultiGraph("GrafoCombinado");
+
+        // Añadir todos los nodos únicos (estudiantes)
+        Set<String> todosLosNodos = new HashSet<>();
+        grafoIntereses.getGrafo().nodes().forEach(n -> todosLosNodos.add(n.getId()));
+        grafoAmistades.getGrafo().nodes().forEach(n -> todosLosNodos.add(n.getId()));
+
+        for (String id : todosLosNodos) {
+            if (grafoCombinado.getNode(id) == null) {
+                grafoCombinado.addNode(id);
+            }
+        }
+
+        Set<String> aristasAgregadas = new HashSet<>();
+
+        // ➤ 1. Agregar aristas de intereses primero (prioridad)
+        for (Edge e : grafoIntereses.getGrafo().edges().toList()) {
+            String source = e.getNode0().getId();
+            String target = e.getNode1().getId();
+            String idArista = generarIdArista(source, target);
+
+            if (!aristasAgregadas.contains(idArista)) {
+                Edge nueva = grafoCombinado.addEdge(idArista, source, target, false);
+                nueva.setAttribute("tipo", "interes");
+                nueva.setAttribute("tema", e.getAttribute("tema"));
+                aristasAgregadas.add(idArista);
+            }
+        }
+
+        // ➤ 2. Agregar aristas de amistad solo si no están ya
+        for (Edge e : grafoAmistades.getGrafo().edges().toList()) {
+            String source = e.getNode0().getId();
+            String target = e.getNode1().getId();
+            String idArista = generarIdArista(source, target);
+
+            if (!aristasAgregadas.contains(idArista)) {
+                Edge nueva = grafoCombinado.addEdge(idArista, source, target, false);
+                nueva.setAttribute("tipo", "amistad");
+                aristasAgregadas.add(idArista);
+            }
+        }
+
+        return grafoCombinado;
+    }
+
+    private String generarIdArista(String id1, String id2) {
+        return id1.compareTo(id2) < 0 ? id1 + "_" + id2 : id2 + "_" + id1;
+    }
+
+    // Accesores para los grafos
     public GrafoAmistades getGrafoAmistades() {
         return grafoAmistades;
     }

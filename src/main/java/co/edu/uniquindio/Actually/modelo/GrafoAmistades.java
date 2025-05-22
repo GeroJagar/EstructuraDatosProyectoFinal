@@ -73,4 +73,36 @@ public class GrafoAmistades {
     public Graph getGrafo() {
         return grafoAmistades;
     }
+
+    public Set<String> recomendarAmigos(String idEstudiante) {
+        Set<String> recomendaciones = new HashSet<>();
+
+        Node nodo = grafoAmistades.getNode(idEstudiante);
+        if (nodo == null) return recomendaciones;
+
+        // Obtener amigos directos
+        Set<String> amigosDirectos = new HashSet<>();
+        for (Edge e : nodo.edges().toList()) {
+            Node amigo = e.getOpposite(nodo);
+            amigosDirectos.add(amigo.getId());
+        }
+
+        // Buscar amigos de amigos
+        for (String amigoId : amigosDirectos) {
+            Node nodoAmigo = grafoAmistades.getNode(amigoId);
+            if (nodoAmigo == null) continue;
+
+            for (Edge e : nodoAmigo.edges().toList()) {
+                Node amigoDeAmigo = e.getOpposite(nodoAmigo);
+                String idAmigoDeAmigo = amigoDeAmigo.getId();
+
+                if (!idAmigoDeAmigo.equals(idEstudiante) && !amigosDirectos.contains(idAmigoDeAmigo)) {
+                    recomendaciones.add(idAmigoDeAmigo);
+                }
+            }
+        }
+
+        return recomendaciones;
+    }
+
 }
