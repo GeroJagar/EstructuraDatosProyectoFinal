@@ -6,6 +6,7 @@ import co.edu.uniquindio.Actually.modelo.Usuario;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,6 +19,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class ModeradorMainController {
 
@@ -37,6 +39,8 @@ public class ModeradorMainController {
     @FXML private Button btnReportes;
     @FXML private Button btnGrafos;
     @FXML private Button cerrarSesion;
+
+    Map<String, Usuario> mapaUsuarios = Actually.getInstance().getUsuarios();
 
     @FXML
     public void initialize() {
@@ -71,8 +75,45 @@ public class ModeradorMainController {
             }
             return new SimpleStringProperty("Moderador");
         });
-
+        ObservableList<Usuario> listaUsuarios = FXCollections.observableArrayList(mapaUsuarios.values());
         tablaUsuarios.setItems(listaUsuarios);
+    }
+
+    private void configurarTabla(FilteredList<Usuario> listaUsuarios) {
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
+
+        colTipo.setCellValueFactory(cellData -> {
+            Usuario usuario = cellData.getValue();
+            return new SimpleStringProperty(usuario instanceof Estudiante ? "Estudiante" : "Moderador");
+        });
+
+        colDetalle.setCellValueFactory(cellData -> {
+            Usuario usuario = cellData.getValue();
+            if (usuario instanceof Estudiante) {
+                Estudiante est = (Estudiante) usuario;
+                return new SimpleStringProperty(
+                        String.format("Amigos: %d, Grupos: %d",
+                                est.getAmigos().size(),
+                                est.getGruposEstudio().size())
+                );
+            }
+            return new SimpleStringProperty("Moderador");
+        });
+        tablaUsuarios.setItems(listaUsuarios);
+    }
+
+    @FXML
+    public void performSearch(){
+        String searchText = txtBusqueda.getText().toLowerCase();
+        if(searchText.isEmpty()){
+            configurarTabla();
+        } else {
+            ObservableList<Usuario> listaUsuarios = FXCollections.observableArrayList(mapaUsuarios.values());
+            FilteredList<Usuario> usuariosFiltrados = listaUsuarios.filtered(event -> event.getNombre().toLowerCase().contains(searchText));
+            configurarTabla(usuariosFiltrados);
+        }
     }
 
     @FXML

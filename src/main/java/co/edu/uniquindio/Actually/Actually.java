@@ -85,6 +85,10 @@ public class Actually {
         inicializarGrafos();
     }
 
+    public Map<String, Usuario> getUsuarios(){
+        return this.usuarios;
+    }
+
     public Usuario getUsuarioActivo() {
         return usuarioActivo;
     }

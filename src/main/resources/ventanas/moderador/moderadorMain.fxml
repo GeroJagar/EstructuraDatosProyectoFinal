@@ -106,7 +106,7 @@
                               </cursor>
                            </ComboBox>
 
-                           <TextField fx:id="txtBusqueda" prefWidth="400" promptText="Buscar..." style="-fx-background-radius: 40;" styleClass="searchModerno">
+                           <TextField fx:id="txtBusqueda" onKeyPressed="#performSearch" prefWidth="400" promptText="Buscar..." style="-fx-background-radius: 40;" styleClass="searchModerno">
                               <font>
                                  <Font name="SansSerif Regular" size="18.0" />
                               </font>
