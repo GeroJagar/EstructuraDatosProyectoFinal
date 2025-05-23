@@ -131,7 +131,7 @@
                               </HBox.margin>
                            </Button>
 
-                           <Button fx:id="btnLimpiar" styleClass="boton-cancelar" text="Limpiar">
+                           <Button fx:id="btnLimpiar" onAction="#limpiarBusqueda" styleClass="boton-cancelar" text="Limpiar">
                               <cursor>
                                  <Cursor fx:constant="HAND" />
                               </cursor>
