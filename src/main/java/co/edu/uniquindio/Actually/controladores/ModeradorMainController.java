@@ -1,12 +1,17 @@
 package co.edu.uniquindio.Actually.controladores;
 
+import co.edu.uniquindio.Actually.Actually;
+import co.edu.uniquindio.Actually.modelo.Estudiante;
+import co.edu.uniquindio.Actually.modelo.Usuario;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -19,6 +24,13 @@ public class ModeradorMainController {
     @FXML public VBox panelUsuarios;
     @FXML public ComboBox<String> cbTipoUsuario;
     @FXML public TextField txtBusqueda;
+    @FXML private TableView<Usuario> tablaUsuarios;
+    @FXML public TableColumn<Usuario, String> colNombre;
+    @FXML public TableColumn<Usuario, String> colId;
+    @FXML public TableColumn<Usuario, String> colCorreo;
+    @FXML public TableColumn<Usuario, String> colTipo;
+    @FXML public TableColumn<Usuario, String> colDetalle;
+    @FXML public TableColumn<Usuario, String> colParticipacion;
     @FXML private Text titulo;
     @FXML private Button btnContenidos;
     @FXML private Button btnUsuarios;
@@ -26,14 +38,43 @@ public class ModeradorMainController {
     @FXML private Button btnGrafos;
     @FXML private Button cerrarSesion;
 
+    Actually actually = Actually.getInstance().
+
     @FXML
     public void initialize() {
         configurarFiltros();
+        configurarTabla();
     }
 
     private void configurarFiltros() {
         cbTipoUsuario.getItems().addAll("Todos", "Estudiante", "Moderador");
         cbTipoUsuario.getSelectionModel().selectFirst();
+    }
+
+    private void configurarTabla() {
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
+
+        colTipo.setCellValueFactory(cellData -> {
+            Usuario usuario = cellData.getValue();
+            return new SimpleStringProperty(usuario instanceof Estudiante ? "Estudiante" : "Moderador");
+        });
+
+        colDetalle.setCellValueFactory(cellData -> {
+            Usuario usuario = cellData.getValue();
+            if (usuario instanceof Estudiante) {
+                Estudiante est = (Estudiante) usuario;
+                return new SimpleStringProperty(
+                        String.format("Amigos: %d, Grupos: %d",
+                                est.getAmigos().size(),
+                                est.getGruposEstudio().size())
+                );
+            }
+            return new SimpleStringProperty("Moderador");
+        });
+
+        tablaUsuarios.setItems(listaUsuarios);
     }
 
     @FXML

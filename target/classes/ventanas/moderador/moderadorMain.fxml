@@ -91,7 +91,7 @@
             <VBox prefHeight="200.0" prefWidth="800.0" style="-fx-background-color: #F5F5F5;">
                <children>
                   <StackPane prefHeight="600.0" prefWidth="200.0">
-                     <VBox fx:id="panelUsuarios" alignment="CENTER" spacing="20" style="-fx-background-color: #05242F; -fx-border-width: 5; -fx-border-color: #F5F5F5; -fx-border-radius: 10;" visible="false">
+                     <VBox fx:id="panelUsuarios" alignment="CENTER" spacing="20" style="-fx-background-color: #05242F; -fx-border-width: 5; -fx-border-color: #F5F5F5; -fx-border-radius: 10;">
                         <padding>
                            <Insets bottom="5" left="15" right="15" top="10" />
                         </padding>
