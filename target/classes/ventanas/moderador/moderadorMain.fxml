@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,7 +14,10 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -97,7 +101,7 @@
                         </padding>
                         <!-- Barra de herramientas (búsqueda y filtros) -->
                         <HBox alignment="CENTER" spacing="15" style="-fx-padding: 20 20 20 20;">
-                           <ComboBox fx:id="cbTipoUsuario" prefWidth="200" promptText="Tipo" styleClass="combo-moderno">
+                           <ComboBox fx:id="cbTipoUsuario1" prefWidth="200" promptText="Tipo" styleClass="combo-moderno">
                               <effect>
                                  <Reflection />
                               </effect>
@@ -145,9 +149,8 @@
                                  <TableColumn fx:id="colNombre" prefWidth="150" text="Nombre" />
                                  <TableColumn fx:id="colId" prefWidth="100" text="ID" />
                                  <TableColumn fx:id="colCorreo" prefWidth="200" text="Correo" />
-                                 <TableColumn fx:id="colTipo" prefWidth="120" text="Tipo" />
-                                 <TableColumn fx:id="colDetalle" prefWidth="150" text="Detalles" />
-                                 <TableColumn fx:id="colParticipacion" prefWidth="180" text="Participación" />
+                                 <TableColumn fx:id="colDetalle" prefWidth="208.0" text="Detalles" />
+                                 <TableColumn fx:id="colParticipacion" prefWidth="122.0" text="Participación" />
                               </columns>
                               <style>
                                  -fx-table-cell-border-color: transparent;
@@ -160,7 +163,7 @@
 
                         <!-- Botones CRUD -->
                         <HBox alignment="CENTER" spacing="20" style="-fx-padding: 20;">
-                           <Button fx:id="btnAgregar" prefWidth="120" styleClass="boton-accion" text="Agregar">
+                           <Button fx:id="btnAgregar" onAction="#vistaFormularioEstudiante" prefWidth="120" styleClass="boton-accion" text="Agregar">
                               <graphic>
                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -200,6 +203,56 @@
                            </Button>
                         </HBox>
                      </VBox>
+
+                     <!-- Formulario del Usuario -->
+                     <VBox fx:id="agregarFormulario" alignment="TOP_CENTER" spacing="25" style="-fx-padding: 30; -fx-background-color: white; -fx-background-radius: 20;" visible="false">
+
+                        <!-- Título del formulario -->
+                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2D94B0;" text="Formulario de Usuario" />
+
+                        <!-- Contenido del formulario en GridPane -->
+                        <GridPane hgap="15" vgap="15">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="RIGHT" minWidth="120" prefWidth="140" />
+                              <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" prefWidth="250" />
+                           </columnConstraints>
+
+                           <rowConstraints>
+                              <RowConstraints prefHeight="30" valignment="CENTER" />
+                              <RowConstraints prefHeight="30" valignment="CENTER" />
+                              <RowConstraints prefHeight="30" valignment="CENTER" />
+                              <RowConstraints prefHeight="30" valignment="CENTER" />
+                              <RowConstraints prefHeight="30" valignment="CENTER" />
+                           </rowConstraints>
+
+                           <!-- Tipo de Usuario -->
+                           <Label style="-fx-font-size: 16px; -fx-font-family: 'SansSerif';" text="Tipo de Usuario:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                           <ComboBox fx:id="cbTipoUsuario" prefHeight="30" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                           <!-- Nombre -->
+                           <Label style="-fx-font-size: 16px; -fx-font-family: 'SansSerif';" text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                           <TextField fx:id="txtNombre" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                           <!-- ID -->
+                           <Label style="-fx-font-size: 16px; -fx-font-family: 'SansSerif';" text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                           <TextField fx:id="txtId" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                           <!-- Correo -->
+                           <Label style="-fx-font-size: 16px; -fx-font-family: 'SansSerif';" text="Correo:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                           <TextField fx:id="txtCorreo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                           <!-- Contraseña -->
+                           <Label style="-fx-font-size: 16px; -fx-font-family: 'SansSerif';" text="Contraseña:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                           <PasswordField fx:id="txtContrasena" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        </GridPane>
+
+                        <!-- Botones -->
+                        <HBox alignment="CENTER" spacing="20">
+                           <Button fx:id="btnGuardar" style="-fx-background-color: #2D94B0; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 20; -fx-padding: 8 20;" text="Guardar" />
+                           <Button fx:id="btnCancelar" style="-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 20; -fx-padding: 8 20;" text="Cancelar" />
+                        </HBox>
+                     </VBox>
+
                   </StackPane>
                </children></VBox>
          </children>

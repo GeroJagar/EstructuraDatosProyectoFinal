@@ -14,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -27,6 +28,7 @@ public class ModeradorMainController {
     @FXML public VBox panelUsuarios;
     @FXML public ComboBox<String> cbTipoUsuario;
     @FXML public TextField txtBusqueda;
+    @FXML public VBox agregarFormulario;
     @FXML private TableView<Usuario> tablaUsuarios;
     @FXML public TableColumn<Usuario, String> colNombre;
     @FXML public TableColumn<Usuario, String> colId;
@@ -45,13 +47,7 @@ public class ModeradorMainController {
 
     @FXML
     public void initialize() {
-        configurarFiltros();
         configurarTabla();
-    }
-
-    private void configurarFiltros() {
-        cbTipoUsuario.getItems().addAll("Todos", "Estudiante", "Moderador");
-        cbTipoUsuario.getSelectionModel().selectFirst();
     }
 
     private void configurarTabla() {
@@ -59,23 +55,16 @@ public class ModeradorMainController {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
 
-        colTipo.setCellValueFactory(cellData -> {
-            Usuario usuario = cellData.getValue();
-            return new SimpleStringProperty(usuario instanceof Estudiante ? "Estudiante" : "Moderador");
+        // Ya no se verifica si es Estudiante, se asume que todos lo son
+        colDetalle.setCellValueFactory(cellData -> {
+            Estudiante est = (Estudiante) cellData.getValue();
+            return new SimpleStringProperty(
+                    String.format("Amigos: %d, Grupos: %d",
+                            est.getAmigos().size(),
+                            est.getGruposEstudio().size())
+            );
         });
 
-        colDetalle.setCellValueFactory(cellData -> {
-            Usuario usuario = cellData.getValue();
-            if (usuario instanceof Estudiante) {
-                Estudiante est = (Estudiante) usuario;
-                return new SimpleStringProperty(
-                        String.format("Amigos: %d, Grupos: %d",
-                                est.getAmigos().size(),
-                                est.getGruposEstudio().size())
-                );
-            }
-            return new SimpleStringProperty("Moderador");
-        });
         ObservableList<Usuario> listaUsuarios = FXCollections.observableArrayList(mapaUsuarios.values());
         tablaUsuarios.setItems(listaUsuarios);
     }
@@ -85,22 +74,14 @@ public class ModeradorMainController {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
 
-        colTipo.setCellValueFactory(cellData -> {
-            Usuario usuario = cellData.getValue();
-            return new SimpleStringProperty(usuario instanceof Estudiante ? "Estudiante" : "Moderador");
-        });
-
+        // Ya no se verifica si es Estudiante, se asume que todos lo son
         colDetalle.setCellValueFactory(cellData -> {
-            Usuario usuario = cellData.getValue();
-            if (usuario instanceof Estudiante) {
-                Estudiante est = (Estudiante) usuario;
-                return new SimpleStringProperty(
-                        String.format("Amigos: %d, Grupos: %d",
-                                est.getAmigos().size(),
-                                est.getGruposEstudio().size())
-                );
-            }
-            return new SimpleStringProperty("Moderador");
+            Estudiante est = (Estudiante) cellData.getValue();
+            return new SimpleStringProperty(
+                    String.format("Amigos: %d, Grupos: %d",
+                            est.getAmigos().size(),
+                            est.getGruposEstudio().size())
+            );
         });
         tablaUsuarios.setItems(listaUsuarios);
     }
@@ -208,9 +189,19 @@ public class ModeradorMainController {
         }
     }
 
+    @FXML
     public void abrirPanelUsuarios(MouseEvent event) {
+        agregarFormulario.setVisible(false);
+        agregarFormulario.setManaged(false);
         panelUsuarios.setVisible(true);
         panelUsuarios.setManaged(true);
+    }
+
+    public void vistaFormularioEstudiante(ActionEvent event) {
+        panelUsuarios.setVisible(false);
+        panelUsuarios.setManaged(false);
+        agregarFormulario.setVisible(true);
+        agregarFormulario.setManaged(true);
     }
 }
 
