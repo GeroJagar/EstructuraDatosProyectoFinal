@@ -38,8 +38,6 @@ public class ModeradorMainController {
     @FXML private Button btnGrafos;
     @FXML private Button cerrarSesion;
 
-    Actually actually = Actually.getInstance().
-
     @FXML
     public void initialize() {
         configurarFiltros();
