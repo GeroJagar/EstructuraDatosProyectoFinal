@@ -1,6 +1,9 @@
 package co.edu.uniquindio.Actually.controladores;
 
 import co.edu.uniquindio.Actually.Actually;
+import co.edu.uniquindio.Actually.excepciones.CampoObligatorioException;
+import co.edu.uniquindio.Actually.excepciones.CampoRepetidoException;
+import co.edu.uniquindio.Actually.excepciones.CampoVacioException;
 import co.edu.uniquindio.Actually.modelo.Estudiante;
 import co.edu.uniquindio.Actually.modelo.Usuario;
 import javafx.beans.property.SimpleStringProperty;
@@ -29,6 +32,10 @@ public class ModeradorMainController {
     @FXML public ComboBox<String> cbTipoUsuario;
     @FXML public TextField txtBusqueda;
     @FXML public VBox agregarFormulario;
+    @FXML public TextField txtNombre;
+    @FXML public TextField txtId;
+    @FXML public TextField txtCorreo;
+    @FXML public PasswordField txtContrasena;
     @FXML private TableView<Usuario> tablaUsuarios;
     @FXML public TableColumn<Usuario, String> colNombre;
     @FXML public TableColumn<Usuario, String> colId;
@@ -44,6 +51,7 @@ public class ModeradorMainController {
     @FXML private Button cerrarSesion;
 
     Map<String, Usuario> mapaUsuarios = Actually.getInstance().getUsuarios();
+    Actually actually = Actually.getInstance();
 
     @FXML
     public void initialize() {
@@ -202,6 +210,31 @@ public class ModeradorMainController {
         panelUsuarios.setManaged(false);
         agregarFormulario.setVisible(true);
         agregarFormulario.setManaged(true);
+    }
+
+    public void onSaveStudentButtonClick(ActionEvent event) {
+        try {
+            actually.registrarEstudiante(
+                    txtNombre.getText(),
+                    txtId.getText(),
+                    txtCorreo.getText(),
+                    txtContrasena.getText()
+            );
+
+        } catch (CampoVacioException | CampoObligatorioException | CampoRepetidoException e) {
+            actually.mostrarMensaje(Alert.AlertType.ERROR, e.getMessage());  // Mostrar alerta de error
+        } catch (Exception e) {
+            actually.mostrarMensaje(Alert.AlertType.ERROR, "Error inesperado: " + e.getMessage());  // Mostrar alerta de error inesperado
+        } finally {
+            limpiarCampos();
+        }
+    }
+
+    private void limpiarCampos() {
+        txtNombre.clear();
+        txtId.clear();
+        txtCorreo.clear();
+        txtContrasena.clear();
     }
 }
 

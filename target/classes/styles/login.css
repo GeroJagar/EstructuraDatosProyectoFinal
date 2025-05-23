@@ -70,7 +70,8 @@
 .searchModerno{
     -fx-background-color: #ffffff;
     -fx-border-color: Transparent;
-    -fx-border-radius: 10;
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
     -fx-border-background: 10;
     -fx-effect: dropshadow(gaussian, rgba(44, 74, 89, 0.25), 6, 0, 0, 3);
 }
@@ -78,7 +79,8 @@
 .searchModerno:focused{
     -fx-background-color: #ffffff;
     -fx-border-color: Transparent;
-    -fx-border-radius: 10;
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
     -fx-border-back: 10;
     -fx-prompt-text-fill: #4B4B4B;
     -fx-effect: dropshadow(gaussian, rgba(44, 74, 89, 0.25), 6, 0, 0, 3);
