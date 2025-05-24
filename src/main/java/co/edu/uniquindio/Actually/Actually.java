@@ -183,6 +183,22 @@ public class Actually {
         ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
     }
 
+    public void editStudentIfo(String estudianteId, String nuevoId, String nombre, String correo, String password) throws Exception {
+        if(!usuarios.containsKey(estudianteId)){
+            throw new Exception("El estudiante no existe: primero debes registrarlo");
+        }
+        if (usuarios.containsKey(nuevoId) && !nuevoId.equals(estudianteId)) {
+            throw new Exception("El nuevo ID ya está en uso por otro estudiante");
+        }
+        Estudiante estudiante = (Estudiante) usuarios.remove(estudianteId);
+        estudiante.setId(nuevoId);
+        estudiante.setNombre(nombre);
+        estudiante.setCorreo(correo);
+        estudiante.setContrasena(password);
+        usuarios.put(nuevoId, estudiante);
+        ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
+    }
+
     public void valorarContenido(String estudianteId, String contenidoId, int puntaje) throws Exception {
         if (!contenidos.containsKey(contenidoId)) {
             throw new Exception("El contenido no existe");

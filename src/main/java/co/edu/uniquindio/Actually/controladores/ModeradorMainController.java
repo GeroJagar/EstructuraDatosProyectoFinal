@@ -19,6 +19,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -36,6 +38,16 @@ public class ModeradorMainController {
     @FXML public TextField txtId;
     @FXML public TextField txtCorreo;
     @FXML public PasswordField txtContrasena;
+    @FXML public VBox editarFormulario;
+    @FXML public GridPane gridDatosEstudiante;
+    @FXML public TextField txtNombreEdit;
+    @FXML public TextField txtIdEdit;
+    @FXML public TextField txtCorreoEdit;
+    @FXML public PasswordField txtContrasenaEdit;
+    @FXML public TextField txtBuscarId;
+    @FXML public HBox boxBotonesEdicion;
+    @FXML public Button btnGuardarEdit;
+    @FXML public Button btnCancelarEdit;
     @FXML private TableView<Usuario> tablaUsuarios;
     @FXML public TableColumn<Usuario, String> colNombre;
     @FXML public TableColumn<Usuario, String> colId;
@@ -115,103 +127,26 @@ public class ModeradorMainController {
     }
 
     @FXML
-    private void manejarContenidos() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ventanas/moderador/contenidoAcademicoCrud.fxml"));
-            Parent root = loader.load();
-
-            // Obtener la ventana actual
-            Stage stage = (Stage) btnContenidos.getScene().getWindow();
-
-            // Reemplazar la escena
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("Gestión de Contenidos");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void manejarUsuarios() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ventanas/moderador/UsuariosCrud.fxml"));
-            Parent root = loader.load();
-
-            // Obtener la ventana actual
-            Stage stage = (Stage) btnContenidos.getScene().getWindow();
-
-            // Reemplazar la escena
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("Gestión de Usuarios");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void manejarReportes() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ventanas/moderador/reportes.fxml"));
-            Parent root = loader.load();
-
-            // Obtener la ventana actual
-            Stage stage = (Stage) btnContenidos.getScene().getWindow();
-
-            // Reemplazar la escena
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("Reportes");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void manejarGrafos() {
-        /*
-        hay que hacer ventana para los grafos
-         */
-    }
-
-    @FXML
-    private void manejarCerrarSesion() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ventanas/moderador/contenidoAcademicoCrud.fxml"));
-            Parent root = loader.load();
-
-            // Obtener la ventana actual
-            Stage stage = (Stage) btnContenidos.getScene().getWindow();
-
-            // Reemplazar la escena
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("Actually Application");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    public void abrirPanelUsuarios(MouseEvent event) {
+    public void abrirPanelUsuarios(ActionEvent event) {
         agregarFormulario.setVisible(false);
         agregarFormulario.setManaged(false);
+        editarFormulario.setVisible(false);
+        editarFormulario.setManaged(false);
         panelUsuarios.setVisible(true);
         panelUsuarios.setManaged(true);
     }
 
+    @FXML
     public void vistaFormularioEstudiante(ActionEvent event) {
         panelUsuarios.setVisible(false);
         panelUsuarios.setManaged(false);
+        editarFormulario.setVisible(false);
+        editarFormulario.setManaged(false);
         agregarFormulario.setVisible(true);
         agregarFormulario.setManaged(true);
     }
 
+    @FXML
     public void onSaveStudentButtonClick(ActionEvent event) {
         try {
             actually.registrarEstudiante(
@@ -235,6 +170,59 @@ public class ModeradorMainController {
         txtId.clear();
         txtCorreo.clear();
         txtContrasena.clear();
+    }
+
+    @FXML
+    public void buscarEstudiante(ActionEvent event) {
+        String id = txtBuscarId.getText();
+        if (!mapaUsuarios.containsKey(id)) {
+            mostrarMensaje(Alert.AlertType.ERROR, "El estudiante no existe.");
+        }
+        Estudiante estudiante = (Estudiante) mapaUsuarios.get(id);
+        // Rellenar campos:
+        txtNombreEdit.setText(estudiante.getNombre());
+        txtIdEdit.setText(estudiante.getId());
+        txtCorreoEdit.setText(estudiante.getCorreo());
+        txtContrasenaEdit.setText(estudiante.getContrasena());
+        // Mostrar secciones:
+        gridDatosEstudiante.setVisible(true);
+        boxBotonesEdicion.setVisible(true);
+    }
+
+    @FXML
+    public void guardarEdicionEstudiante(ActionEvent event) {
+        try {
+            String idOriginal = txtBuscarId.getText();
+            String nuevoId = txtIdEdit.getText();
+            String nombre = txtNombreEdit.getText();
+            String correo = txtCorreoEdit.getText();
+            String password = txtContrasenaEdit.getText();
+
+            actually.editStudentIfo(idOriginal, nuevoId, nombre, correo, password);
+            mostrarMensaje(Alert.AlertType.CONFIRMATION, "Se editó la información del estudiante correctamente.");
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "No se pudo editar la información del estudiante.");
+        }
+    }
+
+    public void cerrarEdicion(ActionEvent event) {
+        abrirPanelUsuarios(null);
+    }
+
+    @FXML
+    public void editarEstudiante(ActionEvent event) {
+        panelUsuarios.setVisible(false);
+        panelUsuarios.setManaged(false);
+        agregarFormulario.setVisible(false);
+        agregarFormulario.setManaged(false);
+        editarFormulario.setVisible(true);
+        editarFormulario.setManaged(true);
+    }
+
+    private void mostrarMensaje(Alert.AlertType tipo, String mensaje) {
+        Alert alert = new Alert(tipo);
+        alert.setContentText(mensaje);
+        alert.show();
     }
 }
 
