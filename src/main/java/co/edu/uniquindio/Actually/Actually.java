@@ -183,6 +183,13 @@ public class Actually {
         ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
     }
 
+    public void deleteStudent(String studentID) throws IOException {
+        if(usuarios.containsKey(studentID)){
+            usuarios.remove(studentID);
+            ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
+        }
+    }
+
     public void editStudentIfo(String estudianteId, String nuevoId, String nombre, String correo, String password) throws Exception {
         if(!usuarios.containsKey(estudianteId)){
             throw new Exception("El estudiante no existe: primero debes registrarlo");

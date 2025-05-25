@@ -48,6 +48,15 @@ public class ModeradorMainController {
     @FXML public HBox boxBotonesEdicion;
     @FXML public Button btnGuardarEdit;
     @FXML public Button btnCancelarEdit;
+    @FXML public VBox eliminarFormulario;
+    public TextField txtBuscarIdEliminar;
+    public Button btnBuscarEliminar;
+    public GridPane gridDatosEliminar;
+    public TextField txtNombreEliminar;
+    public TextField txtIdEliminar;
+    public TextField txtCorreoEliminar;
+    public PasswordField txtContrasenaEliminar;
+    public HBox boxBotonesEliminar;
     @FXML private TableView<Usuario> tablaUsuarios;
     @FXML public TableColumn<Usuario, String> colNombre;
     @FXML public TableColumn<Usuario, String> colId;
@@ -162,6 +171,7 @@ public class ModeradorMainController {
             actually.mostrarMensaje(Alert.AlertType.ERROR, "Error inesperado: " + e.getMessage());  // Mostrar alerta de error inesperado
         } finally {
             limpiarCampos();
+            configurarTabla();
         }
     }
 
@@ -223,6 +233,56 @@ public class ModeradorMainController {
         Alert alert = new Alert(tipo);
         alert.setContentText(mensaje);
         alert.show();
+    }
+
+    @FXML
+    public void buscarEstudianteAEliminar(ActionEvent actionEvent) {
+        String id = txtBuscarIdEliminar.getText();
+        if (mapaUsuarios.containsKey(id)) {
+            Estudiante estudiante = (Estudiante) mapaUsuarios.get(id);
+            // Mostrar datos (no editables)
+            txtNombreEliminar.setText(estudiante.getNombre());
+            txtIdEliminar.setText(estudiante.getId());
+            txtCorreoEliminar.setText(estudiante.getCorreo());
+            txtContrasenaEliminar.setText(estudiante.getContrasena());
+            // Mostrar secciones
+            gridDatosEliminar.setVisible(true);
+            boxBotonesEliminar.setVisible(true);
+        } else {
+            mostrarMensaje(Alert.AlertType.ERROR, "El estudiante no existe.");
+        }
+    }
+
+    @FXML
+    public void eliminarEstudiante(ActionEvent actionEvent) throws IOException {
+        actually.deleteStudent(txtBuscarIdEliminar.getText());
+        mostrarMensaje(Alert.AlertType.CONFIRMATION, "El estudiante " + txtNombreEliminar.getText()
+                + " ha sido eliminado del sistema.");
+    }
+
+    @FXML
+    public void cerrarEliminacion(ActionEvent actionEvent) {
+        panelUsuarios.setVisible(true);
+        panelUsuarios.setManaged(true);
+        configurarTabla();
+        agregarFormulario.setVisible(false);
+        agregarFormulario.setManaged(false);
+        editarFormulario.setVisible(false);
+        editarFormulario.setManaged(false);
+        eliminarFormulario.setVisible(false);
+        eliminarFormulario.setManaged(false);
+    }
+
+    @FXML
+    public void openDeleteStudent(ActionEvent actionEvent) {
+        panelUsuarios.setVisible(false);
+        panelUsuarios.setManaged(false);
+        agregarFormulario.setVisible(false);
+        agregarFormulario.setManaged(false);
+        editarFormulario.setVisible(false);
+        editarFormulario.setManaged(false);
+        eliminarFormulario.setVisible(true);
+        eliminarFormulario.setManaged(true);
     }
 }
 
