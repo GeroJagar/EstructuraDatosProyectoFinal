@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Actually {
 
@@ -243,9 +244,12 @@ public class Actually {
         Valoracion valoracion = new Valoracion(estudianteId, puntaje);
         contenido.agregarValoracion(valoracion);
 
+        Estudiante student = (Estudiante) usuarios.get(estudianteId);
+        student.agregarPuntos(3);
+
         // Persistencia
         ArchivoUtilidades.serializarObjeto(RUTA_CONTENIDOS, contenidos);
-
+        ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
     }
 
 
@@ -436,6 +440,23 @@ public class Actually {
         solicitudesMap.put(idSolicitud, solicitud);
 
         guardarSolicitudes();
+
+        if (usuarioActivo instanceof Estudiante) {
+            Estudiante resolutor = (Estudiante) usuarioActivo;
+            resolutor.agregarPuntos(10); // 10 puntos por resolver una solicitud
+        }
+
+        guardarSolicitudes();
+        ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
+    }
+
+    // Nuevo metodo para obtener estudiantes ordenados por participación
+    public List<Estudiante> obtenerEstudiantesPorParticipacion() {
+        return usuarios.values().stream()
+                .filter(u -> u instanceof Estudiante)
+                .map(u -> (Estudiante) u)
+                .sorted((e1, e2) -> Integer.compare(e2.getPuntosParticipacion(), e1.getPuntosParticipacion()))
+                .collect(Collectors.toList());
     }
 
     public SolicitudAyuda obtenerSolicitud(String idSolicitud) throws Exception {

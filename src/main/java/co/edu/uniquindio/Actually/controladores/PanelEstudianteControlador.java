@@ -44,6 +44,10 @@ public class PanelEstudianteControlador {
     private final Actually actually = Actually.getInstance();
     private final FileUploader fileUploader = new FileUploader();
     private final ArchivoUtilidades archivoUtil = new ArchivoUtilidades();
+    public Label nivelLabel;
+    public Label puntosLabel;
+    public ProgressBar progresoBar;
+    public Label progresoLabel;
 
 
     @FXML private VBox contenidoPanel;
@@ -1024,6 +1028,7 @@ public class PanelEstudianteControlador {
                         .collect(Collectors.joining(", "));
     }
 
+    @FXML
     public void mostrarMiPerfil(MouseEvent event) {
         searchHBox.setVisible(false);
         searchHBox.setManaged(false);
@@ -1038,5 +1043,36 @@ public class PanelEstudianteControlador {
 
         panelMiPerfil.setVisible(true);
         panelMiPerfil.setManaged(true);
+
+        // Actualizar información básica
+        nombreLabel.setText("❥ Nombre: " + actually.getUsuarioActivo().getNombre());
+        idLabel.setText("❥ ID: " + actually.getUsuarioActivo().getId());
+        correoLabel.setText("❥ Correo: " + actually.getUsuarioActivo().getCorreo());
+
+        // Actualizar información de participación si es estudiante
+        if (actually.getUsuarioActivo() instanceof Estudiante) {
+            Estudiante estudiante = (Estudiante) actually.getUsuarioActivo();
+
+            nivelLabel.setText("❥ Nivel: " + estudiante.getNivel().getNombre());
+            puntosLabel.setText("❥ Puntos: " + estudiante.getPuntosParticipacion());
+
+            double progreso = calcularProgresoNivel(estudiante);
+            progresoBar.setProgress(progreso);
+            progresoLabel.setText(String.format("%.0f%% completado hacia el siguiente nivel", progreso * 100));
+        }
+    }
+
+    private double calcularProgresoNivel(Estudiante estudiante) {
+        NivelParticipacion nivelActual = estudiante.getNivel();
+        int puntosActuales = estudiante.getPuntosParticipacion();
+
+        if (nivelActual == NivelParticipacion.MAESTRO) {
+            return 1.0;
+        }
+
+        int rangoNivel = nivelActual.getMaxPuntos() - nivelActual.getMinPuntos();
+        int puntosEnNivel = puntosActuales - nivelActual.getMinPuntos();
+
+        return (double) puntosEnNivel / rangoNivel;
     }
 }

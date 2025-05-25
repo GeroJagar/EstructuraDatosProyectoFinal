@@ -144,7 +144,8 @@
                                  <TableColumn fx:id="colId" prefWidth="100" text="ID" />
                                  <TableColumn fx:id="colCorreo" prefWidth="200" text="Correo" />
                                  <TableColumn fx:id="colDetalle" prefWidth="208.0" text="Detalles" />
-                                 <TableColumn fx:id="colParticipacion" prefWidth="122.0" text="Participación" />
+                                 <TableColumn fx:id="colParticipacion" prefWidth="180.0" text="Nivel Participación" />
+                                 <TableColumn fx:id="colPuntaje" prefWidth="100" text="Puntos" />
                               </columns>
                               <style>
                                  -fx-table-cell-border-color: transparent;

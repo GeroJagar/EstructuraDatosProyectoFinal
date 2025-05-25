@@ -13,10 +13,34 @@ public class Estudiante extends Usuario implements Serializable {
     private List<Estudiante> amigos;
     private List<ContenidoAcademico> contenidosSubidos;
 
+    private int puntosParticipacion;
+    private NivelParticipacion nivel;
+
     public Estudiante() {
         this.gruposEstudio = new ArrayList<>();
         this.amigos = new ArrayList<>();
         this.contenidosSubidos = new ArrayList<>();
+        this.puntosParticipacion = 0;
+        this.nivel = NivelParticipacion.NOVATO;
+    }
+
+    // Métodos para gestionar participación
+    public void agregarPuntos(int puntos) {
+        this.puntosParticipacion += puntos;
+        actualizarNivel();
+    }
+
+    private void actualizarNivel() {
+        this.nivel = NivelParticipacion.determinarNivel(puntosParticipacion);
+    }
+
+    // Getters
+    public int getPuntosParticipacion() {
+        return puntosParticipacion;
+    }
+
+    public NivelParticipacion getNivel() {
+        return nivel;
     }
 
     // Getters y Setters
@@ -55,6 +79,7 @@ public class Estudiante extends Usuario implements Serializable {
     public void agregarAmigo(Estudiante amigo) {
         if (amigo != null && !this.amigos.contains(amigo)) {
             this.amigos.add(amigo);
+            agregarPuntos(5);
         }
     }
 
@@ -65,6 +90,7 @@ public class Estudiante extends Usuario implements Serializable {
     public void subirContenido(ContenidoAcademico contenido) {
         if (contenido != null && !contenidosSubidos.contains(contenido)) {
             contenidosSubidos.add(contenido);
+            agregarPuntos(10);
         }
     }
 

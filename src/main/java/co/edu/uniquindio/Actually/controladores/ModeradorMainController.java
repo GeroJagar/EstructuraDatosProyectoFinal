@@ -57,6 +57,7 @@ public class ModeradorMainController {
     public TextField txtCorreoEliminar;
     public PasswordField txtContrasenaEliminar;
     public HBox boxBotonesEliminar;
+    @FXML public TableColumn<Estudiante, String> colPuntaje;
     @FXML private TableView<Usuario> tablaUsuarios;
     @FXML public TableColumn<Usuario, String> colNombre;
     @FXML public TableColumn<Usuario, String> colId;
@@ -93,6 +94,9 @@ public class ModeradorMainController {
                             est.getGruposEstudio().size())
             );
         });
+
+        colPuntaje.setCellValueFactory(new PropertyValueFactory<>("puntosParticipacion"));
+        colParticipacion.setCellValueFactory(new PropertyValueFactory<>("nivel"));
 
         ObservableList<Usuario> listaUsuarios = FXCollections.observableArrayList(mapaUsuarios.values());
         tablaUsuarios.setItems(listaUsuarios);

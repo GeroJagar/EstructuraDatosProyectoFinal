@@ -21,7 +21,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #05242F;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.Actually.controladores.PanelEstudianteControlador">
+<?import javafx.scene.control.ProgressBar?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: #05242F;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.Actually.controladores.PanelEstudianteControlador">
     <top>
         <HBox fx:id="searchHBox" alignment="CENTER" prefHeight="109.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
             <children>
@@ -412,7 +413,7 @@
             <!-- Panel de Mi Perfil -->
             <VBox fx:id="panelMiPerfil" spacing="20"
                   style="-fx-background-color: #05242F; -fx-border-width: 5; -fx-border-color: #F5F5F5;
-                  -fx-border-radius: 10;" visible="false">
+      -fx-border-radius: 10;" visible="false">
                 <padding>
                     <Insets bottom="10" left="10" right="10" top="10" />
                 </padding>
@@ -440,9 +441,15 @@
                         </ImageView>
 
                         <VBox spacing="5" alignment="CENTER_LEFT">
-                            <Label fx:id="nombreLabel" style="-fx-font-family: 'SansSerif'; -fx-font-size: 18; -fx-text-fill: white;" wrapText="true"/>
-                            <Label fx:id="idLabel" style="-fx-font-family: 'SansSerif'; -fx-font-size: 18; -fx-text-fill: white;" wrapText="true"/>
-                            <Label fx:id="correoLabel" style="-fx-font-family: 'SansSerif'; -fx-font-size: 18; -fx-text-fill: white;" wrapText="true"/>
+                            <Label fx:id="nombreLabel" style="-fx-font-family: 'SansSerif'; -fx-font-size: 16; -fx-text-fill: white;" wrapText="true"/>
+                            <Label fx:id="idLabel" style="-fx-font-family: 'SansSerif'; -fx-font-size: 16; -fx-text-fill: white;" wrapText="true"/>
+                            <Label fx:id="correoLabel" style="-fx-font-family: 'SansSerif'; -fx-font-size: 16; -fx-text-fill: white;" wrapText="true"/>
+
+                            <!-- Nuevos elementos para mostrar el nivel de participación -->
+                            <Label fx:id="nivelLabel" style="-fx-font-family: 'SansSerif'; -fx-font-size: 16; -fx-text-fill: white;" wrapText="true"/>
+                            <Label fx:id="puntosLabel" style="-fx-font-family: 'SansSerif'; -fx-font-size: 16; -fx-text-fill: white;" wrapText="true"/>
+                            <ProgressBar fx:id="progresoBar" prefWidth="250" prefHeight="20" style="-fx-accent: #2D94B0;"/>
+                            <Label fx:id="progresoLabel" style="-fx-font-family: 'SansSerif'; -fx-font-size: 14; -fx-text-fill: white;" wrapText="true"/>
                         </VBox>
 
                         <Button text="Chats" fx:id="btnChats" prefWidth="180" styleClass="botonMiPerfil"/>
