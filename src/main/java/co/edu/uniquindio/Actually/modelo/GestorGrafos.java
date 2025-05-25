@@ -5,16 +5,26 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GestorGrafos {
+
+    private static GestorGrafos instance;
 
     private final GrafoAmistades grafoAmistades;
     private final GrafoIntereses grafoIntereses;
 
     public GestorGrafos() {
-        this.grafoAmistades = new GrafoAmistades();
-        this.grafoIntereses = new GrafoIntereses();
+        this.grafoAmistades = GrafoAmistades.getInstance();
+        this.grafoIntereses = GrafoIntereses.getInstance();
+    }
+
+    public static GestorGrafos getInstance() {
+        if (instance == null) {
+            instance = new GestorGrafos();
+        }
+        return instance;
     }
 
     // Agrega un estudiante con sus intereses (y lo agrega a ambos grafos)
@@ -88,6 +98,28 @@ public class GestorGrafos {
         }
 
         return grafoCombinado;
+    }
+
+    public void sincronizarGrafosConEstudiantes(List<String> estudiantesActuales) {
+        Set<String> idsActuales = new HashSet<>(estudiantesActuales);
+
+        // Eliminar nodos que no están en la lista en grafo de amistades
+        Set<String> nodosAmistades = new HashSet<>();
+        grafoAmistades.getGrafo().nodes().forEach(n -> nodosAmistades.add(n.getId()));
+        for (String id : nodosAmistades) {
+            if (!idsActuales.contains(id)) {
+                grafoAmistades.eliminarEstudiante(id);
+            }
+        }
+
+        // Eliminar nodos que no están en la lista en grafo de intereses
+        Set<String> nodosIntereses = new HashSet<>();
+        grafoIntereses.getGrafo().nodes().forEach(n -> nodosIntereses.add(n.getId()));
+        for (String id : nodosIntereses) {
+            if (!idsActuales.contains(id)) {
+                grafoIntereses.eliminarEstudiante(id);
+            }
+        }
     }
 
     private String generarIdArista(String id1, String id2) {

@@ -7,6 +7,8 @@ import java.util.*;
 
 public class GrafoAmistades {
 
+    private static GrafoAmistades instance;
+
     private final MultiGraph grafoAmistades;
     private final Map<String, Set<String>> amistades;
 
@@ -16,6 +18,13 @@ public class GrafoAmistades {
 
         // Estilos para mostrar etiquetas
         grafoAmistades.setAttribute("ui.stylesheet", "edge { text-alignment: above; }");
+    }
+
+    public static GrafoAmistades getInstance() {
+        if (instance == null) {
+            instance = new GrafoAmistades();
+        }
+        return instance;
     }
 
     public void agregarEstudiante(String id) {
