@@ -38,7 +38,7 @@ public class Actually {
         return actually;
     }
 
-    public void inicializar() {
+    public void inicializar() throws IOException, ClassNotFoundException {
         try {
             // Cargar usuarios
             this.usuarios = (Map<String, Usuario>) ArchivoUtilidades.deserializarObjeto(RUTA_USUARIOS);
@@ -81,7 +81,7 @@ public class Actually {
             System.out.println("No se encontraron solicitudes serializadas, iniciando con cola vacía.");
         }
 
-        this.gestorGrafos = GestorGrafos.getInstance(); // Inicialización
+        this.gestorGrafos = GestorGrafos.getInstance();// Inicialización
         inicializarGrafos();
     }
 
@@ -168,6 +168,10 @@ public class Actually {
         estudiante.subirContenido(contenido);
         contenidos.put(contenido.getId(), contenido);
 
+        Set<TEMA> nuevosIntereses = obtenerInteresesEstudiante(estudiante);
+        gestorGrafos.actualizarIntereses(estudiante.getId(), nuevosIntereses);
+        gestorGrafos.guardarGrafos();
+
         // Persistencia
         ArchivoUtilidades.serializarObjeto(RUTA_CONTENIDOS, contenidos);
         ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
@@ -187,6 +191,8 @@ public class Actually {
         if(usuarios.containsKey(studentID)){
             usuarios.remove(studentID);
             ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
+            gestorGrafos.eliminarEstudiante(studentID);
+            gestorGrafos.guardarGrafos();
         }
     }
 
@@ -499,7 +505,7 @@ public class Actually {
         }
     }
 
-    // Método para agregar amistades
+    // Metodo para agregar amistades
     public void agregarAmistad(String idEstudiante1, String idEstudiante2) throws Exception {
         // Validaciones iniciales
         if (idEstudiante1 == null || idEstudiante2 == null) {
@@ -526,14 +532,18 @@ public class Actually {
             // 1. Crear backup (solo en memoria)
             Map<String, Usuario> backup = new HashMap<>(usuarios);
 
-            // 2. Realizar cambios (una sola vez)
-            gestorGrafos.getGrafoAmistades().agregarAmistad(idEstudiante1, idEstudiante2);
+            // 2. Se actualiza el grafo de amistades antes que la lista de amigos.
+            gestorGrafos.agregarAmistad(idEstudiante1, idEstudiante2);
+
+            // 3. Actualizar lista de amigos en los estudiantes.
             estudiante1.agregarAmigo(estudiante2);
             estudiante2.agregarAmigo(estudiante1);
 
-            // 3. Serializar
+            // 3. Serializar.
             ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
-            // Notificar a los observadores (nuevo)
+            gestorGrafos.guardarGrafos();
+
+            // Notificar a los observadores.
             notificarCambiosAmistades(estudiante1, estudiante2);
 
             System.out.println("Amistad establecida entre " + idEstudiante1 + " y " + idEstudiante2);

@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 /**
  * La clase Actually es la clase principal de la aplicación Actually.
  * Extiende la clase Application de JavaFX y proporciona el método de inicio
@@ -38,7 +40,7 @@ public class ActuallyAplicacion extends Application {
      *
      * @param args Los argumentos de la línea de comandos.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         // Inicializar la instancia de Storify
         Actually.getInstance().inicializar();
 

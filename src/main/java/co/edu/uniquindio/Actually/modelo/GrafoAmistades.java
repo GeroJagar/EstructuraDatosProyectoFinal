@@ -3,9 +3,11 @@ package co.edu.uniquindio.Actually.modelo;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
-public class GrafoAmistades {
+public class GrafoAmistades implements Serializable {
 
     private static GrafoAmistades instance;
 
@@ -112,6 +114,28 @@ public class GrafoAmistades {
         }
 
         return recomendaciones;
+    }
+
+    public void cargarDesdePersistencia(Graph grafoGuardado) {
+        // 1. Limpiar el grafo actual
+        this.grafoAmistades.clear();  // Elimina todos los nodos y aristas
+
+        // 2. Copiar nodos del grafo guardado
+        grafoGuardado.nodes().forEach(nodo -> {
+            Node nuevoNodo = this.grafoAmistades.addNode(nodo.getId());
+            nuevoNodo.setAttribute("ui.label", nodo.getId());
+        });
+
+        // 3. Copiar aristas
+        grafoGuardado.edges().forEach(arista -> {
+            Edge nuevaArista = this.grafoAmistades.addEdge(
+                    arista.getId(),
+                    arista.getNode0().getId(),
+                    arista.getNode1().getId(),
+                    false
+            );
+            nuevaArista.setAttribute("tipo", arista.getAttribute("tipo"));
+        });
     }
 
 }

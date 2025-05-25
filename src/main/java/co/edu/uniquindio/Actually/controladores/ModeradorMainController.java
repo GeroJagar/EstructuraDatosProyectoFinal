@@ -284,5 +284,10 @@ public class ModeradorMainController {
         eliminarFormulario.setVisible(true);
         eliminarFormulario.setManaged(true);
     }
+
+    @FXML
+    public void cerrarSesion(ActionEvent actionEvent) {
+        actually.loadStage("/ventanas/common/homepage.fxml", actionEvent);
+    }
 }
 

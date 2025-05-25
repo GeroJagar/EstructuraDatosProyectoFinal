@@ -5,9 +5,11 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
-public class GrafoIntereses {
+public class GrafoIntereses implements Serializable {
 
     private static GrafoIntereses instance;
 
@@ -114,6 +116,28 @@ public class GrafoIntereses {
         return recomendaciones;
     }
 
+    // En GrafoAmistades.java
+    public void cargarDesdePersistencia(Graph grafoGuardado) {
+        // 1. Limpiar el grafo actual
+        this.grafoIntereses.clear();  // Elimina todos los nodos y aristas
+
+        // 2. Copiar nodos del grafo guardado
+        grafoGuardado.nodes().forEach(nodo -> {
+            Node nuevoNodo = this.grafoIntereses.addNode(nodo.getId());
+            nuevoNodo.setAttribute("ui.label", nodo.getId());
+        });
+
+        // 3. Copiar aristas
+        grafoGuardado.edges().forEach(arista -> {
+            Edge nuevaArista = this.grafoIntereses.addEdge(
+                    arista.getId(),
+                    arista.getNode0().getId(),
+                    arista.getNode1().getId(),
+                    false
+            );
+            nuevaArista.setAttribute("tipo", arista.getAttribute("tipo"));
+        });
+    }
 
 }
 

@@ -1,12 +1,13 @@
 package co.edu.uniquindio.Actually.modelo;
 
+import co.edu.uniquindio.Actually.utilidades.ArchivoUtilidades;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GestorGrafos {
 
@@ -49,8 +50,31 @@ public class GestorGrafos {
         grafoIntereses.eliminarEstudiante(id);
     }
 
+    // Guardar grafos
+    public void guardarGrafos() throws IOException {
+        // Grafo de amistades
+        Map<String, List<String>> amistades = new HashMap<>();
+        grafoAmistades.getGrafo().nodes().forEach(nodo -> {
+            List<String> amigos = nodo.edges()
+                    .map(e -> e.getOpposite(nodo).getId())
+                    .collect(Collectors.toList());
+            amistades.put(nodo.getId(), amigos);
+        });
+
+        // Grafo de intereses (nodos y temas)
+        Map<String, List<String>> intereses = new HashMap<>();
+        grafoIntereses.getGrafo().nodes().forEach(nodo -> {
+            if (nodo.getId().startsWith("EST_")) { // Filtra solo nodos de estudiantes
+                List<String> temas = nodo.edges()
+                        .map(e -> e.getOpposite(nodo).getId())
+                        .collect(Collectors.toList());
+                intereses.put(nodo.getId(), temas);
+            }
+        });
+    }
+
     /*
-    Método para generar el grafo entero, combinando el grafo de intereses y el grafo de amistades, dando prioridad a las
+    Metodo para generar el grafo entero, combinando el grafo de intereses y el grafo de amistades, dando prioridad a las
     aristas del grafo de intereses.
      */
 

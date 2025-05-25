@@ -88,7 +88,7 @@
                               <Image url="@../../images/getOutIcon.png" />
                            </image>
                         </ImageView>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="165.0" styleClass="back-button" text="Cerrar Sesión" />
+                        <Button mnemonicParsing="false" onAction="#cerrarSesion" prefHeight="25.0" prefWidth="165.0" styleClass="back-button" text="Cerrar Sesión" />
                      </children>
                   </HBox>
                </children>
@@ -437,12 +437,12 @@
 
                         <!-- Botones (visibles solo al encontrar el estudiante) -->
                         <HBox fx:id="boxBotonesEliminar" alignment="CENTER" spacing="20" style="-fx-padding: 10;" visible="false">
-                           <Button fx:id="btnConfirmarEliminar" onAction="#eliminarEstudiante" text="Eliminar" style="-fx-font-size: 20px;" styleClass="boton-eliminar">
+                           <Button fx:id="btnConfirmarEliminar" onAction="#eliminarEstudiante" text="Eliminar Estudiante" style="-fx-font-size: 20px;" styleClass="boton-eliminar">
                               <cursor>
                                  <Cursor fx:constant="HAND"/>
                               </cursor>
                            </Button>
-                           <Button fx:id="btnCancelarEliminar" onAction="#cerrarEliminacion" style="-fx-font-size: 20px;" text="Cancelar" styleClass="boton-cancelar">
+                           <Button fx:id="btnCancelarEliminar" onAction="#cerrarEliminacion" style="-fx-font-size: 20px;" text="Regresar" styleClass="boton-cancelar">
                               <cursor>
                                  <Cursor fx:constant="HAND"/>
                               </cursor>
