@@ -81,7 +81,7 @@ public class Actually {
             System.out.println("No se encontraron solicitudes serializadas, iniciando con cola vacía.");
         }
 
-        this.gestorGrafos = new GestorGrafos(); // Inicialización
+        this.gestorGrafos = GestorGrafos.getInstance(); // Inicialización
         inicializarGrafos();
     }
 
@@ -544,6 +544,10 @@ public class Actually {
     private void notificarCambiosAmistades(Estudiante estudiante1, Estudiante estudiante2) {
         // Puedes implementar un sistema de observadores aquí
         System.out.println("Amistad actualizada: " + estudiante1.getNombre() + " y " + estudiante2.getNombre());
+    }
+
+    public GestorGrafos getGestorGrafos() {
+        return gestorGrafos;
     }
 
 }

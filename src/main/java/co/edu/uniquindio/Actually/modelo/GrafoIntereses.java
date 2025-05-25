@@ -9,6 +9,8 @@ import java.util.*;
 
 public class GrafoIntereses {
 
+    private static GrafoIntereses instance;
+
     private final MultiGraph grafoIntereses;
     private final Map<String, Set<TEMA>> interesesEstudiantes; //mapa que asocia cada estudian con los temas que le interesan
 
@@ -18,6 +20,13 @@ public class GrafoIntereses {
 
         // Habilitar etiquetas en los nodos y aristas
         grafoIntereses.setAttribute("ui.stylesheet", "edge { text-alignment: above; }");
+    }
+
+    public static GrafoIntereses getInstance() {
+        if (instance == null) {
+            instance = new GrafoIntereses();
+        }
+        return instance;
     }
 
     public void agregarEstudiante(String id, Set<TEMA> temas){
