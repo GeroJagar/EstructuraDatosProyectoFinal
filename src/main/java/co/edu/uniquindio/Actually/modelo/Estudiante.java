@@ -8,6 +8,7 @@ import java.util.Objects;
 public class Estudiante extends Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private final List<GrupoEstudio> gruposRechazados = new ArrayList<>();
 
     private List<GrupoEstudio> gruposEstudio;
     private List<Estudiante> amigos;
@@ -75,6 +76,19 @@ public class Estudiante extends Usuario implements Serializable {
         }
     }
 
+    public void agregarGrupoRechazado(GrupoEstudio grupo) {
+        if (!gruposRechazados.contains(grupo)) {
+            gruposRechazados.add(grupo);
+        }
+    }
+
+    public List<GrupoEstudio> getGruposRechazados() {
+        return gruposRechazados;
+    }
+
+    public boolean haRechazadoGrupo(GrupoEstudio grupo) {
+        return gruposRechazados.contains(grupo);
+    }
 
     public void agregarAmigo(Estudiante amigo) {
         if (amigo != null && !this.amigos.contains(amigo)) {

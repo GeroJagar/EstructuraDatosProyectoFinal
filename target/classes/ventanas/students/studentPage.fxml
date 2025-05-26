@@ -96,7 +96,7 @@
                                 <Image url="@../../images/teamIcon.png" />
                             </image>
                         </ImageView>
-                        <Hyperlink text="Mis Grupos" textFill="WHITESMOKE">
+                        <Hyperlink text="Mis Grupos" textFill="WHITESMOKE" onMouseClicked="#mostrarSugerenciasGrupos">
                             <font>
                                 <Font name="SansSerif Regular" size="16.0" />
                             </font>
@@ -413,7 +413,7 @@
             <!-- Panel de Mi Perfil -->
             <VBox fx:id="panelMiPerfil" spacing="20"
                   style="-fx-background-color: #05242F; -fx-border-width: 5; -fx-border-color: #F5F5F5;
-      -fx-border-radius: 10;" visible="false">
+                        -fx-border-radius: 10;" visible="false">
                 <padding>
                     <Insets bottom="10" left="10" right="10" top="10" />
                 </padding>
@@ -468,6 +468,53 @@
                             </VBox>
                         </ScrollPane>
                     </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Panel de Sugerencias de Grupos -->
+            <VBox fx:id="panelSugerenciasGrupos" alignment="CENTER" spacing="20"
+                  style="-fx-background-color: #05242F; -fx-border-width: 5; -fx-border-color: #F5F5F5; -fx-border-radius: 10;"
+                  visible="false" managed="false">
+
+                <padding>
+                    <Insets bottom="20" left="20" right="20" top="20" />
+                </padding>
+
+                <!-- Encabezado con icono -->
+                <HBox alignment="CENTER" spacing="15">
+                    <ImageView fitHeight="60" fitWidth="60" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../images/teamIcon.png" />
+                        </image>
+                    </ImageView>
+                    <Label text="Sugerencias de Grupos de Estudio"
+                           style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold; -fx-font-family: 'SansSerif';"/>
+                </HBox>
+
+                <!-- Subtítulo descriptivo -->
+                <Label text="Basado en tus intereses y publicaciones"
+                       style="-fx-text-fill: #B0EB00; -fx-font-size: 16px; -fx-font-family: 'SansSerif';"/>
+
+                <!-- Contenedor principal con scroll -->
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                            style="-fx-background: transparent; -fx-border-color: transparent;">
+                    <VBox fx:id="contenedorSugerenciasGrupos" spacing="15"
+                          style="-fx-padding: 10;"/>
+                </ScrollPane>
+
+                <!-- Botón de acción -->
+                <HBox alignment="CENTER" spacing="20">
+                    <Button text="Volver" onAction="#goBack"
+                            styleClass="cancel-button" prefWidth="200">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                    <Button text="Mis Grupos" styleClass="submit-button" prefWidth="200">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
                 </HBox>
             </VBox>
         </StackPane>

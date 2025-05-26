@@ -8,6 +8,7 @@ import org.graphstream.graph.implementations.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GrafoIntereses implements Serializable {
 
@@ -116,26 +117,98 @@ public class GrafoIntereses implements Serializable {
         return recomendaciones;
     }
 
-    // En GrafoAmistades.java
-    public void cargarDesdePersistencia(Graph grafoGuardado) {
-        // 1. Limpiar el grafo actual
-        this.grafoIntereses.clear();  // Elimina todos los nodos y aristas
 
-        // 2. Copiar nodos del grafo guardado
-        grafoGuardado.nodes().forEach(nodo -> {
-            Node nuevoNodo = this.grafoIntereses.addNode(nodo.getId());
-            nuevoNodo.setAttribute("ui.label", nodo.getId());
-        });
+    public List<Set<String>> detectarComunidades(double umbralMinimo) {
+        List<Set<String>> comunidades = new ArrayList<>();
+        Set<String> visitados = new HashSet<>();
 
-        // 3. Copiar aristas
-        grafoGuardado.edges().forEach(arista -> {
-            Edge nuevaArista = this.grafoIntereses.addEdge(
-                    arista.getId(),
-                    arista.getNode0().getId(),
-                    arista.getNode1().getId(),
-                    false
-            );
-            nuevaArista.setAttribute("tipo", arista.getAttribute("tipo"));
+        // Ordenar nodos por grado (mayor a menor)
+        List<Node> nodosOrdenados = grafoIntereses.nodes()
+                .sorted((n1, n2) -> Integer.compare(n2.getDegree(), n1.getDegree()))
+                .collect(Collectors.toList());
+
+        for (Node nodo : nodosOrdenados) {
+            String idActual = nodo.getId();
+
+            if (!visitados.contains(idActual)) {
+                Set<String> comunidad = new HashSet<>();
+                Stack<String> pila = new Stack<>();
+                pila.push(idActual);
+
+                while (!pila.isEmpty()) {
+                    String actual = pila.pop();
+
+                    if (!visitados.contains(actual)) {
+                        visitados.add(actual);
+                        comunidad.add(actual);
+
+                        Node nodoActual = grafoIntereses.getNode(actual);
+                        Set<TEMA> interesesActual = interesesEstudiantes.get(actual);
+
+                        // Explorar vecinos ordenados por similitud
+                        List<Edge> aristasOrdenadas = nodoActual.edges()
+                                .sorted(compararAristasPorSimilitud(interesesActual))
+                                .collect(Collectors.toList());
+
+                        for (Edge arista : aristasOrdenadas) {
+                            Node vecino = arista.getOpposite(nodoActual);
+                            String idVecino = vecino.getId();
+
+                            if (!visitados.contains(idVecino)) {
+                                Set<TEMA> temasComunes = (Set<TEMA>) arista.getAttribute("temas");
+                                double similitud = (double) temasComunes.size() /
+                                        Math.max(interesesActual.size(), interesesEstudiantes.get(idVecino).size());
+
+                                if (similitud >= umbralMinimo) {
+                                    pila.push(idVecino);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (comunidad.size() >= 2) { // Bajar el mínimo a 2 miembros
+                    comunidades.add(comunidad);
+                    System.out.println("Comunidad detectada: " + comunidad +
+                            " | Tamaño: " + comunidad.size());
+                }
+            }
+        }
+
+        return comunidades.stream().distinct().collect(Collectors.toList());
+    }
+
+    private Comparator<Edge> compararAristasPorSimilitud(Set<TEMA> interesesActual) {
+        return (a1, a2) -> {
+            Set<TEMA> temas1 = (Set<TEMA>) a1.getAttribute("temas");
+            Set<TEMA> temas2 = (Set<TEMA>) a2.getAttribute("temas");
+            double sim1 = (double) temas1.size() / interesesActual.size();
+            double sim2 = (double) temas2.size() / interesesActual.size();
+            return Double.compare(sim2, sim1); // Orden descendente
+        };
+    }
+
+    public void verificarAtributosAristas() {
+        System.out.println("\n=== VERIFICACIÓN DE ATRIBUTOS EN ARISTAS ===");
+
+        grafoIntereses.edges().forEach(edge -> {
+            System.out.println("\nArista: " + edge.getId());
+            System.out.println("Nodos: " + edge.getNode0().getId() + " <-> " + edge.getNode1().getId());
+
+            Object temas = edge.getAttribute("temas");
+            if (temas == null) {
+                System.out.println("ERROR: Atributo 'temas' es null");
+            } else {
+                System.out.println("Tipo del atributo: " + temas.getClass().getName());
+                try {
+                    @SuppressWarnings("unchecked")
+                    Set<TEMA> temasSet = (Set<TEMA>) temas;
+                    System.out.println("Temas comunes: " + temasSet);
+                } catch (ClassCastException e) {
+                    System.out.println("ERROR: El atributo no es un Set<TEMA>");
+                    System.out.println("Contenido real: " + temas);
+                }
+            }
         });
     }
 

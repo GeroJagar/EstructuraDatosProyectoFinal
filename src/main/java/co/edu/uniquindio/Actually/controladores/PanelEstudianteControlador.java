@@ -48,6 +48,7 @@ public class PanelEstudianteControlador {
     public Label puntosLabel;
     public ProgressBar progresoBar;
     public Label progresoLabel;
+    public VBox panelSugerenciasGrupos;
 
 
     @FXML private VBox contenidoPanel;
@@ -57,6 +58,7 @@ public class PanelEstudianteControlador {
     @FXML private ComboBox<String> cbCriterioBusqueda;
     @FXML private HBox searchHBox;
     @FXML public VBox panelSolicitudes;
+    @FXML private VBox contenedorSugerenciasGrupos;
 
     // Panel Mi Perfil.
     @FXML public VBox panelMiPerfil;
@@ -123,6 +125,8 @@ public class PanelEstudianteControlador {
         panelSugerencias.setManaged(false);
         panelMiPerfil.setVisible(false);
         panelMiPerfil.setManaged(false);
+        panelSugerenciasGrupos.setVisible(false);
+        panelSugerenciasGrupos.setManaged(false);
 
         // Limpiar formulario al mostrar
         limpiarFormulario();
@@ -151,6 +155,8 @@ public class PanelEstudianteControlador {
         panelSugerencias.setManaged(false);
         panelMiPerfil.setVisible(false);
         panelMiPerfil.setManaged(false);
+        panelSugerenciasGrupos.setVisible(false);
+        panelSugerenciasGrupos.setManaged(false);
         cargarTodosLosContenidos();
     }
 
@@ -514,6 +520,8 @@ public class PanelEstudianteControlador {
         panelSugerencias.setManaged(false);
         panelMiPerfil.setVisible(false);
         panelMiPerfil.setManaged(false);
+        panelSugerenciasGrupos.setVisible(false);
+        panelSugerenciasGrupos.setManaged(false);
 
         // Mostrar la vista principal
         searchHBox.setVisible(true);
@@ -538,6 +546,8 @@ public class PanelEstudianteControlador {
         panelSugerencias.setManaged(false);
         panelMiPerfil.setVisible(false);
         panelMiPerfil.setManaged(false);
+        panelSugerenciasGrupos.setVisible(false);
+        panelSugerenciasGrupos.setManaged(false);
 
         panelAyuda.setVisible(true);
         panelAyuda.setManaged(true);
@@ -577,6 +587,8 @@ public class PanelEstudianteControlador {
         scrollContenidos.setManaged(false);
         panelMiPerfil.setVisible(false);
         panelMiPerfil.setManaged(false);
+        panelSugerenciasGrupos.setVisible(false);
+        panelSugerenciasGrupos.setManaged(false);
 
         scrollSolicitudes.setVisible(true);
         scrollSolicitudes.setManaged(true);
@@ -844,6 +856,8 @@ public class PanelEstudianteControlador {
         panelSolicitudes.setManaged(false);
         panelMiPerfil.setVisible(false);
         panelMiPerfil.setManaged(false);
+        panelSugerenciasGrupos.setVisible(false);
+        panelSugerenciasGrupos.setManaged(false);
 
         panelSugerencias.setVisible(true);
         panelSugerencias.setManaged(true);
@@ -1040,6 +1054,8 @@ public class PanelEstudianteControlador {
         panelAyuda.setManaged(false);
         panelSugerencias.setVisible(false);
         panelSugerencias.setManaged(false);
+        panelSugerenciasGrupos.setVisible(false);
+        panelSugerenciasGrupos.setManaged(false);
 
         panelMiPerfil.setVisible(true);
         panelMiPerfil.setManaged(true);
@@ -1074,5 +1090,127 @@ public class PanelEstudianteControlador {
         int puntosEnNivel = puntosActuales - nivelActual.getMinPuntos();
 
         return (double) puntosEnNivel / rangoNivel;
+    }
+
+    @FXML
+    public void mostrarSugerenciasGrupos(MouseEvent event) {
+        // Ocultar otros paneles
+        contenidoPanel.setVisible(false);
+        scrollContenidos.setVisible(false);
+        panelAyuda.setVisible(false);
+        panelSolicitudes.setVisible(false);
+        panelMiPerfil.setVisible(false);
+        panelSugerencias.setVisible(false);
+
+        // Mostrar panel de sugerencias de grupos
+        panelSugerenciasGrupos.setVisible(true);
+        panelSugerenciasGrupos.setManaged(true);
+
+        cargarSugerenciasGrupos();
+    }
+
+    private void cargarSugerenciasGrupos() {
+        contenedorSugerenciasGrupos.getChildren().clear();
+
+        if (!(actually.getUsuarioActivo() instanceof Estudiante estudiante)) return;
+
+        // 1. Obtener temas de interés del estudiante
+        Set<TEMA> temasInteres = estudiante.getContenidosSubidos().stream()
+                .map(ContenidoAcademico::getTema)
+                .collect(Collectors.toSet());
+
+        // 2. Filtrar grupos que coincidan con sus intereses
+        GestorGruposEstudio gestor = GestorGruposEstudio.getInstance();
+        Map<TEMA, List<GrupoEstudio>> sugerencias = gestor.generarSugerenciasGrupos();
+
+        if (sugerencias.isEmpty()) {
+            Label vacio = new Label("Sube más contenidos para recibir sugerencias de grupos");
+            contenedorSugerenciasGrupos.getChildren().add(vacio);
+            return;
+        }
+
+        // 3. Mostrar solo grupos relevantes
+        sugerencias.forEach((tema, grupos) -> {
+            if (temasInteres.contains(tema)) {
+                grupos.forEach(grupo -> {
+                    if (!estudiante.haRechazadoGrupo(grupo)) {
+                        agregarTarjetaGrupoSugerido(grupo);
+                    }
+                });
+            }
+        });
+    }
+
+    private void agregarTarjetaGrupoSugerido(GrupoEstudio grupo) {
+        VBox card = new VBox(10);
+        card.getStyleClass().add("grupo-sugerido");
+
+        // Información del grupo
+        Label nombre = new Label(grupo.getNombre());
+        nombre.getStyleClass().add("titulo-grupo");
+
+        Label tema = new Label("Tema principal: " + grupo.getTema().name());
+        tema.getStyleClass().add("info-grupo");
+
+        Label miembros = new Label("Miembros: " + grupo.getParticipantes().size());
+        miembros.getStyleClass().add("info-grupo");
+
+        // Mostrar miembros destacados (primeros 3)
+        StringBuilder miembrosStr = new StringBuilder("Miembros: ");
+        int count = 0;
+        for (Estudiante m : grupo.getParticipantes()) {
+            if (count++ >= 3) break;
+            miembrosStr.append(m.getNombre()).append(", ");
+        }
+        if (grupo.getParticipantes().size() > 3) {
+            miembrosStr.append("...");
+        } else if (!grupo.getParticipantes().isEmpty()) {
+            miembrosStr.delete(miembrosStr.length()-2, miembrosStr.length());
+        }
+
+        Label listaMiembros = new Label(miembrosStr.toString());
+        listaMiembros.setStyle("-fx-font-family: 'SansSerif'; -fx-font-size: 14px; -fx-text-fill: #4a6baf;");
+        listaMiembros.setWrapText(true);
+
+        // Botones de acción
+        HBox botones = new HBox(15);
+        botones.setAlignment(Pos.CENTER);
+
+        Button btnUnirse = new Button("Unirse");
+        btnUnirse.getStyleClass().add("boton-accion-grupo");
+        btnUnirse.getStyleClass().add("boton-unirse");
+        btnUnirse.setOnAction(e -> {
+            if (actually.getUsuarioActivo() instanceof Estudiante estudiante) {
+                GestorGruposEstudio gestor = GestorGruposEstudio.getInstance();
+                gestor.aceptarSugerenciaGrupo(estudiante, grupo);
+
+                // Deshabilitar botón después de unirse
+                btnUnirse.setDisable(true);
+                btnUnirse.setText("¡Unido!");
+
+                mostrarMensaje(Alert.AlertType.INFORMATION,
+                        "Te has unido al grupo de " + grupo.getTema());
+            }
+        });
+
+        Button btnRechazar = new Button("Rechazar");
+        btnRechazar.getStyleClass().add("boton-accion-grupo");
+        btnRechazar.getStyleClass().add("boton-rechazar");
+        btnRechazar.setOnAction(e -> rechazarGrupo(grupo));
+
+        botones.getChildren().addAll(btnUnirse, btnRechazar);
+
+        card.getChildren().addAll(nombre, tema, miembros, listaMiembros, botones);
+        contenedorSugerenciasGrupos.getChildren().add(card);
+    }
+
+    private void rechazarGrupo(GrupoEstudio grupo) {
+        if (actually.getUsuarioActivo() instanceof Estudiante estudiante) {
+            GestorGruposEstudio gestor = GestorGruposEstudio.getInstance();
+            gestor.rechazarSugerenciaGrupo(estudiante, grupo);
+
+            mostrarMensaje(Alert.AlertType.INFORMATION, "Has rechazado el grupo: " + grupo.getNombre());
+            cargarSugerenciasGrupos(); // Actualizar lista
+        }
     }
 }

@@ -84,6 +84,8 @@ public class Actually {
 
         this.gestorGrafos = GestorGrafos.getInstance();// Inicialización
         inicializarGrafos();
+        GrafoIntereses grafoIntereses = GestorGrafos.getInstance().getGrafoIntereses();
+        grafoIntereses.verificarAtributosAristas();
     }
 
     public Map<String, Usuario> getUsuarios(){
@@ -144,6 +146,31 @@ public class Actually {
 
     public Usuario obtenerUsuarioPorId(String id) {
         return usuarios.get(id);
+    }
+
+    public Estudiante obtenerEstudiantePorId(String id) {
+        return (Estudiante) usuarios.get(id);
+    }
+
+    private List<GrupoEstudio> gruposEstudio = new ArrayList<>();
+
+    public void agregarGrupo(GrupoEstudio grupo) {
+        if (!gruposEstudio.contains(grupo)) {
+            gruposEstudio.add(grupo);
+        }
+    }
+
+    public GrupoEstudio obtenerGrupoPorTemaYTamanio(TEMA tema, int tamanio) {
+        return gruposEstudio.stream()
+                .filter(g -> g.getTema() == tema && g.getParticipantes().size() == tamanio)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<GrupoEstudio> obtenerGruposDeEstudiante(String idEstudiante) {
+        return gruposEstudio.stream()
+                .filter(g -> g.getParticipantes().stream().anyMatch(e -> e.getId().equals(idEstudiante)))
+                .collect(Collectors.toList());
     }
 
     public void subirContenidoAcademico(ContenidoAcademico contenido) throws Exception {
