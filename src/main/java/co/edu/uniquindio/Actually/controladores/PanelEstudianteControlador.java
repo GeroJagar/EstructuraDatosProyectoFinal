@@ -1119,26 +1119,17 @@ public class PanelEstudianteControlador {
                 .map(ContenidoAcademico::getTema)
                 .collect(Collectors.toSet());
 
-        // 2. Filtrar grupos que coincidan con sus intereses
-        GestorGruposEstudio gestor = GestorGruposEstudio.getInstance();
-        Map<TEMA, List<GrupoEstudio>> sugerencias = gestor.generarSugerenciasGrupos();
+        // 2. Obtener grupos PERSISTENTES (no sugerencias nuevas)
+        List<GrupoEstudio> todosLosGrupos = actually.getGruposEstudio();
 
-        if (sugerencias.isEmpty()) {
-            Label vacio = new Label("Sube más contenidos para recibir sugerencias de grupos");
-            contenedorSugerenciasGrupos.getChildren().add(vacio);
-            return;
-        }
-
-        // 3. Mostrar solo grupos relevantes
-        sugerencias.forEach((tema, grupos) -> {
-            if (temasInteres.contains(tema)) {
-                grupos.forEach(grupo -> {
-                    if (!estudiante.haRechazadoGrupo(grupo)) {
-                        agregarTarjetaGrupoSugerido(grupo);
-                    }
+        // 3. Filtrar y mostrar
+        todosLosGrupos.stream()
+                .filter(grupo -> temasInteres.contains(grupo.getTema()))
+                .filter(grupo -> !estudiante.perteneceAGrupo(grupo))
+                .forEach(grupo -> {
+                    System.out.println("Grupo: " + grupo.getNombre() + " | Miembros: " + grupo.getParticipantes());
+                    agregarTarjetaGrupoSugerido(grupo);
                 });
-            }
-        });
     }
 
     private void agregarTarjetaGrupoSugerido(GrupoEstudio grupo) {
@@ -1149,23 +1140,29 @@ public class PanelEstudianteControlador {
         Label nombre = new Label(grupo.getNombre());
         nombre.getStyleClass().add("titulo-grupo");
 
-        Label tema = new Label("Tema principal: " + grupo.getTema().name());
+        Label tema = new Label("Tema principal: " + grupo.getTema().getName());
         tema.getStyleClass().add("info-grupo");
 
-        Label miembros = new Label("Miembros: " + grupo.getParticipantes().size());
-        miembros.getStyleClass().add("info-grupo");
+        // Actualiza el texto de miembros (usa grupo.getParticipantes().size())
+        Label miembrosLabel = new Label("Miembros: " + grupo.getParticipantes().size());
+        miembrosLabel.setStyle("-fx-text-fill: #4a6baf;");
 
-        // Mostrar miembros destacados (primeros 3)
+        // Muestra nombres de los primeros 3 miembros
         StringBuilder miembrosStr = new StringBuilder("Miembros: ");
-        int count = 0;
-        for (Estudiante m : grupo.getParticipantes()) {
-            if (count++ >= 3) break;
-            miembrosStr.append(m.getNombre()).append(", ");
+        grupo.getParticipantes().stream()
+                .limit(3)
+                .forEach(e -> miembrosStr.append(e.getNombre()).append(", "));
+
+        System.out.println("El grupo actual es: " + grupo.getNombre());
+        List<Estudiante> miembros = grupo.getParticipantes();
+        String miembro = "";
+        for(Estudiante e : miembros){
+            miembro = e.toString() + ", ";
         }
+        System.out.println("Los miembros del grupo son: " + miembros);
+
         if (grupo.getParticipantes().size() > 3) {
-            miembrosStr.append("...");
-        } else if (!grupo.getParticipantes().isEmpty()) {
-            miembrosStr.delete(miembrosStr.length()-2, miembrosStr.length());
+            miembrosStr.append("... (+").append(grupo.getParticipantes().size() - 3).append(")");
         }
 
         Label listaMiembros = new Label(miembrosStr.toString());
@@ -1182,7 +1179,11 @@ public class PanelEstudianteControlador {
         btnUnirse.setOnAction(e -> {
             if (actually.getUsuarioActivo() instanceof Estudiante estudiante) {
                 GestorGruposEstudio gestor = GestorGruposEstudio.getInstance();
-                gestor.aceptarSugerenciaGrupo(estudiante, grupo);
+                try {
+                    gestor.aceptarSugerenciaGrupo(estudiante, grupo);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
 
                 // Deshabilitar botón después de unirse
                 btnUnirse.setDisable(true);
@@ -1193,24 +1194,9 @@ public class PanelEstudianteControlador {
             }
         });
 
-        Button btnRechazar = new Button("Rechazar");
-        btnRechazar.getStyleClass().add("boton-accion-grupo");
-        btnRechazar.getStyleClass().add("boton-rechazar");
-        btnRechazar.setOnAction(e -> rechazarGrupo(grupo));
+        botones.getChildren().addAll(btnUnirse);
 
-        botones.getChildren().addAll(btnUnirse, btnRechazar);
-
-        card.getChildren().addAll(nombre, tema, miembros, listaMiembros, botones);
+        card.getChildren().addAll(nombre, tema, miembrosLabel, listaMiembros, botones);
         contenedorSugerenciasGrupos.getChildren().add(card);
-    }
-
-    private void rechazarGrupo(GrupoEstudio grupo) {
-        if (actually.getUsuarioActivo() instanceof Estudiante estudiante) {
-            GestorGruposEstudio gestor = GestorGruposEstudio.getInstance();
-            gestor.rechazarSugerenciaGrupo(estudiante, grupo);
-
-            mostrarMensaje(Alert.AlertType.INFORMATION, "Has rechazado el grupo: " + grupo.getNombre());
-            cargarSugerenciasGrupos(); // Actualizar lista
-        }
     }
 }

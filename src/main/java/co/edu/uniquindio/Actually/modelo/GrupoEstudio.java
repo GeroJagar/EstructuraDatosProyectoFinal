@@ -1,11 +1,19 @@
 package co.edu.uniquindio.Actually.modelo;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class GrupoEstudio implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private String nombre;
+    private String id;
     private TEMA tema;
     private List<Estudiante> participantes = new ArrayList<>();
 
@@ -16,6 +24,7 @@ public class GrupoEstudio implements Serializable {
     // Constructor con todos los parámetros
     public GrupoEstudio(String nombre, TEMA tema, List<Estudiante> participantes) {
         this.nombre = nombre;
+        this.id = UUID.randomUUID().toString();
         this.tema = tema;
         this.participantes = participantes;
     }
@@ -23,6 +32,14 @@ public class GrupoEstudio implements Serializable {
     // Getters y setters
     public String getNombre() {
         return nombre;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setNombre(String nombre) {
@@ -45,9 +62,24 @@ public class GrupoEstudio implements Serializable {
         this.participantes = participantes;
     }
 
-    // Método para agregar participante
     public void agregarParticipante(Estudiante estudiante) {
-        participantes.add(estudiante);
+        if (estudiante != null && !participantes.contains(estudiante)) {
+            participantes.add(estudiante);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GrupoEstudio that = (GrupoEstudio) o;
+        return Objects.equals(nombre, that.nombre) &&
+                tema == that.tema; // Compara por nombre y tema
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre, tema);
     }
 
     // Método toString

@@ -71,9 +71,15 @@ public class Estudiante extends Usuario implements Serializable {
 
     // Métodos para agregar elementos
     public void agregarGrupoEstudio(GrupoEstudio grupo) {
-        if (grupo != null && !gruposEstudio.contains(grupo)) {
+        if (grupo != null && !this.gruposEstudio.contains(grupo)) {
             gruposEstudio.add(grupo);
         }
+    }
+
+    // Metodo para verificar membresía
+    public boolean perteneceAGrupo(GrupoEstudio grupo) {
+        return this.gruposEstudio.stream()
+                .anyMatch(g -> g.equals(grupo)); // Usa equals() implementado
     }
 
     public void agregarGrupoRechazado(GrupoEstudio grupo) {

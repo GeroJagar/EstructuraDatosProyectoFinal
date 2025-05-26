@@ -27,10 +27,12 @@ public class Actually {
     private Map<String, ContenidoAcademico> contenidos = new HashMap<>();
     private ColaPrioridad<SolicitudAyuda> colaSolicitudes;
     private Map<String, SolicitudAyuda> solicitudesMap;
+    private List<GrupoEstudio> gruposEstudio = new ArrayList<>();
 
-    private final String RUTA_USUARIOS = "src/main/resources/serializacion/usuarios.data";
+    public final String RUTA_USUARIOS = "src/main/resources/serializacion/usuarios.data";
     private final String RUTA_CONTENIDOS = "src/main/resources/serializacion/contenidos.data";
     private final String RUTA_SOLICITUDES = "src/main/resources/serializacion/solicitudes.data";
+    private final String RUTA_GRUPOS = "src/main/resources/serializacion/gruposEstudio.data";
 
     public static Actually getInstance() {
         if (actually == null) {
@@ -39,7 +41,7 @@ public class Actually {
         return actually;
     }
 
-    public void inicializar() throws IOException, ClassNotFoundException {
+    public void inicializar() {
         try {
             // Cargar usuarios
             this.usuarios = (Map<String, Usuario>) ArchivoUtilidades.deserializarObjeto(RUTA_USUARIOS);
@@ -86,6 +88,40 @@ public class Actually {
         inicializarGrafos();
         GrafoIntereses grafoIntereses = GestorGrafos.getInstance().getGrafoIntereses();
         grafoIntereses.verificarAtributosAristas();
+
+        try {
+            this.gruposEstudio = (List<GrupoEstudio>) ArchivoUtilidades.deserializarObjeto(RUTA_GRUPOS);
+            System.out.println("Grupos de estudio disponibles: " + imprimirGrupos());
+            imprimirMiembrosGrupos();
+            if (this.gruposEstudio == null) {
+                this.gruposEstudio = new ArrayList<>(); // Inicializa si es null
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("No se encontraron grupos serializados. Iniciando nueva lista.");
+            this.gruposEstudio = new ArrayList<>();
+        }
+    }
+
+    public void imprimirMiembrosGrupos(){
+        for(GrupoEstudio g : gruposEstudio){
+            List<Estudiante> miembros = g.getParticipantes();
+            System.out.println("Los miembros del grupo " + g.getNombre() + " son: " + miembros.toString());
+        }
+    }
+
+    public String imprimirGrupos(){
+        StringBuilder msj = new StringBuilder();
+        for(GrupoEstudio g : gruposEstudio){
+            msj.append(", ").append(g.getNombre());
+        }
+        return msj.toString();
+    }
+
+    public GrupoEstudio obtenerGrupoPorId(String id) {
+        return gruposEstudio.stream()
+                .filter(g -> g.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public Map<String, Usuario> getUsuarios(){
@@ -98,6 +134,10 @@ public class Actually {
 
     public void setUsuarioActivo(Usuario usuarioActivo) {
         this.usuarioActivo = usuarioActivo;
+    }
+
+    public void guardarGrupos() throws IOException {
+        ArchivoUtilidades.serializarObjeto(RUTA_GRUPOS, gruposEstudio);
     }
 
     public void registrarEstudiante(String nombre, String id, String correo, String contrasena)
@@ -152,19 +192,21 @@ public class Actually {
         return (Estudiante) usuarios.get(id);
     }
 
-    private List<GrupoEstudio> gruposEstudio = new ArrayList<>();
-
     public void agregarGrupo(GrupoEstudio grupo) {
         if (!gruposEstudio.contains(grupo)) {
             gruposEstudio.add(grupo);
         }
     }
 
-    public GrupoEstudio obtenerGrupoPorTemaYTamanio(TEMA tema, int tamanio) {
+    public GrupoEstudio obtenerGrupoPorTema(TEMA tema) {
         return gruposEstudio.stream()
-                .filter(g -> g.getTema() == tema && g.getParticipantes().size() == tamanio)
-                .findFirst()
-                .orElse(null);
+                .filter(g -> g.getTema() == tema)
+                .findFirst() // Retorna el primer grupo que coincida con el tema
+                .orElse(null); // O null si no existe
+    }
+
+    public List<GrupoEstudio> getGruposEstudio() {
+        return this.gruposEstudio; // Asegúrate de que tienes este atributo declarado
     }
 
     public List<GrupoEstudio> obtenerGruposDeEstudiante(String idEstudiante) {
