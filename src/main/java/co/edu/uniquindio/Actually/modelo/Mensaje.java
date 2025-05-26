@@ -1,12 +1,16 @@
 package co.edu.uniquindio.Actually.modelo;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Mensaje {
+public class Mensaje implements Serializable {
+    /*
+    Clase mensaje la cual se usa en la clase chat.
+     */
     private Estudiante remitente;
     private Estudiante destinatario;
     private String contenido;
-    private LocalDateTime timestamp;
+    private LocalDateTime timestamp; //Este atributo nos da la fecha y la hora por si depronto se agrega despues a los chats
 
     public Mensaje(Estudiante remitente, Estudiante destinatario, String contenido) {
         this.remitente = remitente;

@@ -24,7 +24,7 @@ public class LoginControlador {
         Usuario usuario = actually.obtenerUsuarioPorId(id);
         if (usuario != null && usuario.getContrasena().equals(contrasena)) {
             actually.setUsuarioActivo(usuario);
-            actually.loadStage("/ventanas/students/studentPage.fxml", event);
+            actually.loadStage("/ventanas/students/chats.fxml", event);
         } else {
             actually.mostrarMensaje(Alert.AlertType.ERROR, "ID o contraseña incorrectos");
         }

@@ -33,6 +33,8 @@ public class Actually {
     private final String RUTA_CONTENIDOS = "src/main/resources/serializacion/contenidos.data";
     private final String RUTA_SOLICITUDES = "src/main/resources/serializacion/solicitudes.data";
     private final String RUTA_GRUPOS = "src/main/resources/serializacion/gruposEstudio.data";
+    private final String RUTA_CHATS = "src/main/resources/serializacion/chats.data";
+
 
     public static Actually getInstance() {
         if (actually == null) {
@@ -100,6 +102,14 @@ public class Actually {
             System.out.println("No se encontraron grupos serializados. Iniciando nueva lista.");
             this.gruposEstudio = new ArrayList<>();
         }
+
+        try {
+            GestorChats.getInstance().cargarChats(RUTA_CHATS);
+            System.out.println("Chats cargados: " + GestorChats.getInstance().getChats().size());
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("No se encontraron chats serializados, iniciando con lista vacía.");
+        }
+
     }
 
     public void imprimirMiembrosGrupos(){
@@ -655,6 +665,11 @@ public class Actually {
 
     public GestorGrafos getGestorGrafos() {
         return gestorGrafos;
+    }
+
+    public void guardarChats() throws IOException {
+        GestorChats gestorChats = GestorChats.getInstance();
+        gestorChats.guardarChats(RUTA_CHATS);
     }
 
 }
