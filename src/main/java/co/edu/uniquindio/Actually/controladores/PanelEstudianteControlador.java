@@ -98,6 +98,8 @@ public class PanelEstudianteControlador {
 
     private File archivoSeleccionado;
     private Estudiante usuarioActivo;
+    private final Set<GrupoEstudio> sugerenciasMostradas = new HashSet<>();
+
 
     @FXML
     public void initialize() {
@@ -1132,25 +1134,47 @@ public class PanelEstudianteControlador {
     public void cargarSugerenciasGrupos() throws IOException {
         contenedorSugerenciasGrupos.getChildren().clear();
 
-        if (!(actually.getUsuarioActivo() instanceof Estudiante estudiante)) return;
+        if (!(actually.getUsuarioActivo() instanceof Estudiante estudiante)) {
+            return;
+        }
 
-        // 1. Generar o actualizar grupos automáticamente
-        Map<TEMA, List<GrupoEstudio>> sugerenciasGrupos = actually.getGestorGruposEstudio().generarSugerenciasGrupos();
+        // DEBUG: Verificar datos antes de generar sugerencias
+        System.out.println("[DEBUG] Grupos existentes ANTES de generar sugerencias: " +
+                actually.getGruposEstudio().size());
 
-        // 2. Obtener temas de interés del estudiante
+        actually.imprimirGrupos();
+        actually.imprimirMiembrosGrupos();
+
+        // 2. Generar sugerencias
+        Map<TEMA, List<GrupoEstudio>> sugerenciasGrupos = actually.getGestorGruposEstudio()
+                .generarSugerenciasGrupos();
+
+        // DEBUG: Verificar sugerencias generadas
+        System.out.println("[DEBUG] Total sugerencias generadas: " + sugerenciasGrupos.size());
+
+        // 3. Obtener temas de interés del estudiante
         Set<TEMA> temasInteres = estudiante.getContenidosSubidos().stream()
                 .map(ContenidoAcademico::getTema)
                 .collect(Collectors.toSet());
 
-        // 3. Mostrar sólo grupos relacionados a los temas de interés y que el estudiante no pertenezca
+        // 4. Mostrar sugerencias filtradas
         sugerenciasGrupos.entrySet().stream()
                 .filter(entry -> temasInteres.contains(entry.getKey()))
                 .forEach(entry -> {
-                    for (GrupoEstudio grupo : entry.getValue()) {
+                    entry.getValue().forEach(grupo -> {
+                        // DEBUG por grupo
+                        System.out.println("[DEBUG] Evaluando grupo: " + grupo.getNombre() +
+                                " | ¿Pertenece? " + estudiante.perteneceAGrupo(grupo));
+
+                        if (!estudiante.perteneceAGrupo(grupo) && !sugerenciasMostradas.contains(grupo)) {
+                            agregarTarjetaGrupoSugerido(grupo);
+                            sugerenciasMostradas.add(grupo); // Marcar como mostrado
+                        }
+
                         if (!estudiante.perteneceAGrupo(grupo)) {
                             agregarTarjetaGrupoSugerido(grupo);
                         }
-                    }
+                    });
                 });
     }
 

@@ -74,13 +74,14 @@ public class GrupoEstudio implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         GrupoEstudio that = (GrupoEstudio) o;
         return Objects.equals(nombre, that.nombre) &&
-                tema == that.tema; // Compara por nombre y tema
+                Objects.equals(tema, that.tema);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(nombre, tema);
     }
+
 
     // Método toString
     @Override

@@ -26,50 +26,64 @@ public class GestorGruposEstudio {
 
     // Generar sugerencias de grupos basados en intereses
     public Map<TEMA, List<GrupoEstudio>> generarSugerenciasGrupos() throws IOException {
-        Map<TEMA, List<GrupoEstudio>> sugerencias = new HashMap<>();
+        Map<TEMA, Set<GrupoEstudio>> sugerencias = new HashMap<>();
+
+        // Mapa de grupos ya existentes por tema (solo uno por tema)
         Map<TEMA, GrupoEstudio> gruposExistentesPorTema = actually.getGruposEstudio().stream()
                 .collect(Collectors.toMap(GrupoEstudio::getTema, g -> g, (g1, g2) -> g1));
 
+        // Detectar comunidades en el grafo de intereses
         Set<Set<String>> comunidadesUnicas = new HashSet<>(
-                gestorGrafos.getGrafoIntereses().detectarComunidades(0.3)
+                gestorGrafos.getGrafoIntereses().detectarComunidades(0.1)
         );
 
         for (Set<String> comunidadIds : comunidadesUnicas) {
-            List<Estudiante> miembrosPotenciales = comunidadIds.stream()  // Cambiamos el nombre para claridad
+            List<Estudiante> miembros = comunidadIds.stream()
                     .map(actually::obtenerEstudiantePorId)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
-            TEMA temaPrincipal = calcularTemaPrincipal(miembrosPotenciales);
+            List<TEMA> temasPrincipales = calcularTemasPrincipales(miembros);
 
-            if (temaPrincipal != null && miembrosPotenciales.size() >= 2) {
-                if (!gruposExistentesPorTema.containsKey(temaPrincipal)) {
+            for (TEMA tema : temasPrincipales) {
+                if (miembros.size() < 2) continue;
+
+                if (!gruposExistentesPorTema.containsKey(tema)) {
                     GrupoEstudio nuevoGrupo = new GrupoEstudio();
-                    nuevoGrupo.setNombre("Grupo de " + temaPrincipal.getName());
-                    nuevoGrupo.setTema(temaPrincipal);
-                    nuevoGrupo.setParticipantes(new ArrayList<>());  // 👈 Grupo vacío inicialmente
+                    nuevoGrupo.setNombre("Grupo de " + tema.getName());
+                    nuevoGrupo.setTema(tema);
+                    nuevoGrupo.setParticipantes(new ArrayList<>());
 
                     actually.agregarGrupo(nuevoGrupo);
-                    gruposExistentesPorTema.put(temaPrincipal, nuevoGrupo);
-
-                    // Opcional: guardar aquí si es necesario
+                    gruposExistentesPorTema.put(tema, nuevoGrupo);
                     actually.guardarGrupos();
                 }
 
-                // Añadir a sugerencias sin duplicados
-                if (!sugerencias.containsKey(temaPrincipal) ||
-                        !sugerencias.get(temaPrincipal).contains(gruposExistentesPorTema.get(temaPrincipal))) {
-                    sugerencias.computeIfAbsent(temaPrincipal, k -> new ArrayList<>())
-                            .add(gruposExistentesPorTema.get(temaPrincipal));
+                GrupoEstudio grupo = gruposExistentesPorTema.get(tema);
+                if (grupo != null) {
+                    sugerencias.computeIfAbsent(tema, k -> new HashSet<>()).add(grupo);
+                    if (!sugerencias.get(tema).contains(grupo)) {
+                        System.out.println("[DEBUG] Añadiendo grupo a sugerencia: " + grupo.getNombre());
+                        sugerencias.get(tema).add(grupo);
+                    }
                 }
             }
         }
-        return sugerencias;
+
+        // Log final de verificación
+        sugerencias.forEach((tema, grupos) -> {
+            System.out.println("[SUGERENCIA] Tema: " + tema + " | Grupos sugeridos: " +
+                    grupos.stream().map(GrupoEstudio::getNombre).collect(Collectors.joining(", ")));
+        });
+
+        Map<TEMA, List<GrupoEstudio>> resultadoFinal = new HashMap<>();
+        sugerencias.forEach((tema, grupos) -> resultadoFinal.put(tema, new ArrayList<>(grupos)));
+        return resultadoFinal;
     }
 
+
     // === MÉTODO NUEVO PARA CALCULAR EL TEMA PRINCIPAL ===
-    private TEMA calcularTemaPrincipal(List<Estudiante> miembros) {
-        // 1. Contar cuántos contenidos hay de cada tema
+    private List<TEMA> calcularTemasPrincipales(List<Estudiante> miembros) {
         Map<TEMA, Long> conteoTemas = miembros.stream()
                 .flatMap(e -> e.getContenidosSubidos().stream())
                 .collect(Collectors.groupingBy(
@@ -77,11 +91,13 @@ public class GestorGruposEstudio {
                         Collectors.counting()
                 ));
 
-        // 2. Obtener el tema con más contenidos
+        if (conteoTemas.isEmpty()) return Collections.emptyList();
+
+        long max = conteoTemas.values().stream().max(Long::compare).get();
         return conteoTemas.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
+                .filter(e -> e.getValue() == max)
                 .map(Map.Entry::getKey)
-                .orElse(null); // Retorna null si no hay contenidos
+                .collect(Collectors.toList());
     }
 
 

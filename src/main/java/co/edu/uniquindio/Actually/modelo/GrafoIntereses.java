@@ -42,11 +42,15 @@ public class GrafoIntereses implements Serializable {
         // Comparar con otros estudiantes para crear/actualizar aristas
         for (Map.Entry<String, Set<TEMA>> entry : interesesEstudiantes.entrySet()) {
             String otroId = entry.getKey();
+            if (id.equals(otroId)) {
+                System.err.println("[ERROR] Intentando crear arista reflexiva entre: " + id);
+            }
             if (!otroId.equals(id)) {
                 Set<TEMA> temasEnComun = new HashSet<>(entry.getValue());
                 temasEnComun.retainAll(temas);
 
                 if (!temasEnComun.isEmpty()) {
+
                     String edgeId = generarIdArista(id, otroId);
                     Edge edge = grafoIntereses.getEdge(edgeId);
 
@@ -92,10 +96,13 @@ public class GrafoIntereses implements Serializable {
     }
 
     private String generarIdArista(String id1, String id2) {
-        // Asegurar orden consistente para aristas no dirigidas
-        String nodoA = id1.compareTo(id2) < 0 ? id1 : id2;
-        String nodoB = id1.compareTo(id2) < 0 ? id2 : id1;
-        return nodoA + "_" + nodoB;
+        if (id1.equals(id2)) {
+            // Prevenir la creación de aristas reflexivas
+            throw new IllegalArgumentException("No se puede crear una arista entre el mismo nodo: " + id1);
+        }
+
+        // Para evitar duplicados en grafos no dirigidos
+        return (id1.compareTo(id2) < 0) ? id1 + "_" + id2 : id2 + "_" + id1;
     }
 
     public Graph getGrafo() {
@@ -152,16 +159,21 @@ public class GrafoIntereses implements Serializable {
 
                         for (Edge arista : aristasOrdenadas) {
                             Node vecino = arista.getOpposite(nodoActual);
+                            if (vecino.getId().equals(nodoActual.getId())) {
+                                continue;
+                            }
                             String idVecino = vecino.getId();
 
-                            if (!visitados.contains(idVecino)) {
-                                Set<TEMA> temasComunes = (Set<TEMA>) arista.getAttribute("temas");
-                                double similitud = (double) temasComunes.size() /
-                                        Math.max(interesesActual.size(), interesesEstudiantes.get(idVecino).size());
+                            Set<TEMA> temasComunes = (Set<TEMA>) arista.getAttribute("temas");
+                            double similitud = temasComunes.isEmpty() ? 0 :
+                                    (double) temasComunes.size() /
+                                            (interesesActual.size() + interesesEstudiantes.get(idVecino).size() - temasComunes.size());
 
-                                if (similitud >= umbralMinimo) {
-                                    pila.push(idVecino);
-                                }
+                            System.out.println("[DEBUG] Similitud entre " + idActual + " y " + idVecino +
+                                    ": " + similitud + " | Temas comunes: " + temasComunes);
+
+                            if (similitud >= umbralMinimo) {
+                                pila.push(idVecino);
                             }
                         }
                     }
