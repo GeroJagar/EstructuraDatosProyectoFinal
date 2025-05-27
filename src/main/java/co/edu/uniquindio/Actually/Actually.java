@@ -28,6 +28,7 @@ public class Actually {
     private ColaPrioridad<SolicitudAyuda> colaSolicitudes;
     private Map<String, SolicitudAyuda> solicitudesMap;
     private List<GrupoEstudio> gruposEstudio = new ArrayList<>();
+    private GestorGruposEstudio gestorGruposEstudio;
 
     public final String RUTA_USUARIOS = "src/main/resources/serializacion/usuarios.data";
     private final String RUTA_CONTENIDOS = "src/main/resources/serializacion/contenidos.data";
@@ -90,14 +91,12 @@ public class Actually {
         inicializarGrafos();
         GrafoIntereses grafoIntereses = GestorGrafos.getInstance().getGrafoIntereses();
         grafoIntereses.verificarAtributosAristas();
+        this.gestorGruposEstudio = GestorGruposEstudio.getInstance();
 
         try {
             this.gruposEstudio = (List<GrupoEstudio>) ArchivoUtilidades.deserializarObjeto(RUTA_GRUPOS);
             System.out.println("Grupos de estudio disponibles: " + imprimirGrupos());
             imprimirMiembrosGrupos();
-            if (this.gruposEstudio == null) {
-                this.gruposEstudio = new ArrayList<>(); // Inicializa si es null
-            }
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("No se encontraron grupos serializados. Iniciando nueva lista.");
             this.gruposEstudio = new ArrayList<>();
@@ -127,6 +126,10 @@ public class Actually {
         return msj.toString();
     }
 
+    public GestorGruposEstudio getGestorGruposEstudio() {
+        return gestorGruposEstudio;
+    }
+
     public GrupoEstudio obtenerGrupoPorId(String id) {
         return gruposEstudio.stream()
                 .filter(g -> g.getId().equals(id))
@@ -147,7 +150,8 @@ public class Actually {
     }
 
     public void guardarGrupos() throws IOException {
-        ArchivoUtilidades.serializarObjeto(RUTA_GRUPOS, gruposEstudio);
+        System.out.println("[DEBUG] Guardando " + this.gruposEstudio.size() + " grupos"); // Verificación
+        ArchivoUtilidades.serializarObjeto(RUTA_GRUPOS, this.gruposEstudio);
     }
 
     public void registrarEstudiante(String nombre, String id, String correo, String contrasena)
@@ -203,10 +207,12 @@ public class Actually {
     }
 
     public void agregarGrupo(GrupoEstudio grupo) {
-        if (!gruposEstudio.contains(grupo)) {
-            gruposEstudio.add(grupo);
+        if (grupo != null && !this.gruposEstudio.contains(grupo)) {
+            this.gruposEstudio.add(grupo);
+            System.out.println("[DEBUG] Grupo añadido: " + grupo.getNombre()); // Verificación
         }
     }
+
 
     public GrupoEstudio obtenerGrupoPorTema(TEMA tema) {
         return gruposEstudio.stream()

@@ -7,9 +7,11 @@ import co.edu.uniquindio.Actually.utilidades.FileUploader;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -44,11 +46,14 @@ public class PanelEstudianteControlador {
     private final Actually actually = Actually.getInstance();
     private final FileUploader fileUploader = new FileUploader();
     private final ArchivoUtilidades archivoUtil = new ArchivoUtilidades();
-    public Label nivelLabel;
-    public Label puntosLabel;
-    public ProgressBar progresoBar;
-    public Label progresoLabel;
-    public VBox panelSugerenciasGrupos;
+
+    @FXML public Label nivelLabel;
+    @FXML public Label puntosLabel;
+    @FXML public ProgressBar progresoBar;
+    @FXML public Label progresoLabel;
+    @FXML public VBox panelSugerenciasGrupos;
+    @FXML public VBox panelChats;
+    @FXML public AnchorPane chatPanel;
 
 
     @FXML private VBox contenidoPanel;
@@ -75,6 +80,9 @@ public class PanelEstudianteControlador {
     @FXML
     private ScrollPane scrollSugerencias;
 
+    @FXML
+    private ListView<Estudiante> ListAmigosChats;
+
     // Campos del formulario de metadatos
     @FXML private TextField txtTitulo;
     @FXML private ComboBox<TEMA> cbTema;
@@ -89,6 +97,7 @@ public class PanelEstudianteControlador {
     @FXML private VBox contenedorSolicitudes;
 
     private File archivoSeleccionado;
+    private Estudiante usuarioActivo;
 
     @FXML
     public void initialize() {
@@ -127,6 +136,8 @@ public class PanelEstudianteControlador {
         panelMiPerfil.setManaged(false);
         panelSugerenciasGrupos.setVisible(false);
         panelSugerenciasGrupos.setManaged(false);
+        panelChats.setVisible(false);
+        panelChats.setManaged(false);
 
         // Limpiar formulario al mostrar
         limpiarFormulario();
@@ -522,6 +533,8 @@ public class PanelEstudianteControlador {
         panelMiPerfil.setManaged(false);
         panelSugerenciasGrupos.setVisible(false);
         panelSugerenciasGrupos.setManaged(false);
+        panelChats.setVisible(false);
+        panelChats.setManaged(false);
 
         // Mostrar la vista principal
         searchHBox.setVisible(true);
@@ -548,6 +561,8 @@ public class PanelEstudianteControlador {
         panelMiPerfil.setManaged(false);
         panelSugerenciasGrupos.setVisible(false);
         panelSugerenciasGrupos.setManaged(false);
+        panelChats.setVisible(false);
+        panelChats.setManaged(false);
 
         panelAyuda.setVisible(true);
         panelAyuda.setManaged(true);
@@ -1056,6 +1071,8 @@ public class PanelEstudianteControlador {
         panelSugerencias.setManaged(false);
         panelSugerenciasGrupos.setVisible(false);
         panelSugerenciasGrupos.setManaged(false);
+        panelChats.setVisible(false);
+        panelChats.setManaged(false);
 
         panelMiPerfil.setVisible(true);
         panelMiPerfil.setManaged(true);
@@ -1093,14 +1110,17 @@ public class PanelEstudianteControlador {
     }
 
     @FXML
-    public void mostrarSugerenciasGrupos(MouseEvent event) {
-        // Ocultar otros paneles
+    public void mostrarSugerenciasGrupos(MouseEvent event) throws IOException {
+        searchHBox.setVisible(false);
+        searchHBox.setManaged(false);
         contenidoPanel.setVisible(false);
         scrollContenidos.setVisible(false);
         panelAyuda.setVisible(false);
         panelSolicitudes.setVisible(false);
         panelMiPerfil.setVisible(false);
         panelSugerencias.setVisible(false);
+        panelChats.setVisible(false);
+        panelChats.setManaged(false);
 
         // Mostrar panel de sugerencias de grupos
         panelSugerenciasGrupos.setVisible(true);
@@ -1109,26 +1129,28 @@ public class PanelEstudianteControlador {
         cargarSugerenciasGrupos();
     }
 
-    private void cargarSugerenciasGrupos() {
+    public void cargarSugerenciasGrupos() throws IOException {
         contenedorSugerenciasGrupos.getChildren().clear();
 
         if (!(actually.getUsuarioActivo() instanceof Estudiante estudiante)) return;
 
-        // 1. Obtener temas de interés del estudiante
+        // 1. Generar o actualizar grupos automáticamente
+        Map<TEMA, List<GrupoEstudio>> sugerenciasGrupos = actually.getGestorGruposEstudio().generarSugerenciasGrupos();
+
+        // 2. Obtener temas de interés del estudiante
         Set<TEMA> temasInteres = estudiante.getContenidosSubidos().stream()
                 .map(ContenidoAcademico::getTema)
                 .collect(Collectors.toSet());
 
-        // 2. Obtener grupos PERSISTENTES (no sugerencias nuevas)
-        List<GrupoEstudio> todosLosGrupos = actually.getGruposEstudio();
-
-        // 3. Filtrar y mostrar
-        todosLosGrupos.stream()
-                .filter(grupo -> temasInteres.contains(grupo.getTema()))
-                .filter(grupo -> !estudiante.perteneceAGrupo(grupo))
-                .forEach(grupo -> {
-                    System.out.println("Grupo: " + grupo.getNombre() + " | Miembros: " + grupo.getParticipantes());
-                    agregarTarjetaGrupoSugerido(grupo);
+        // 3. Mostrar sólo grupos relacionados a los temas de interés y que el estudiante no pertenezca
+        sugerenciasGrupos.entrySet().stream()
+                .filter(entry -> temasInteres.contains(entry.getKey()))
+                .forEach(entry -> {
+                    for (GrupoEstudio grupo : entry.getValue()) {
+                        if (!estudiante.perteneceAGrupo(grupo)) {
+                            agregarTarjetaGrupoSugerido(grupo);
+                        }
+                    }
                 });
     }
 
@@ -1198,5 +1220,84 @@ public class PanelEstudianteControlador {
 
         card.getChildren().addAll(nombre, tema, miembrosLabel, listaMiembros, botones);
         contenedorSugerenciasGrupos.getChildren().add(card);
+    }
+
+    @FXML
+    public void mostrarPanelChats(MouseEvent mouseEvent) {
+        searchHBox.setVisible(false);
+        searchHBox.setManaged(false);
+        scrollContenidos.setVisible(false);
+        contenidoPanel.setVisible(false);
+        panelAyuda.setVisible(false);
+        panelSolicitudes.setVisible(false);
+        panelSugerencias.setVisible(false);
+        panelMiPerfil.setVisible(false);
+        panelSugerenciasGrupos.setVisible(false);
+        panelChats.setVisible(true);
+        panelChats.setManaged(true);
+
+        cargarPanelChats();
+    }
+
+    private void cargarPanelChats(){
+        this.usuarioActivo = (Estudiante) actually.getUsuarioActivo();
+
+        if (usuarioActivo != null) {
+            cargarAmigos();
+        }
+    }
+
+    private void cargarAmigos() {
+        if (usuarioActivo != null && usuarioActivo.getAmigos() != null) {
+            // Carga la lista de amigos en la ListView
+            ListAmigosChats.getItems().setAll(usuarioActivo.getAmigos());
+
+            // Define cómo se debe mostrar cada amigo en la lista: solo su nombre
+            ListAmigosChats.setCellFactory(param -> new ListCell<>() {
+                @Override
+                protected void updateItem(Estudiante item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.getNombre());
+                    }
+                }
+            });
+        }
+    }
+
+    @FXML
+    public void abrirChat(MouseEvent mouseEvent) {
+        Estudiante amigoSeleccionado = ListAmigosChats.getSelectionModel().getSelectedItem();
+        if (amigoSeleccionado != null) {
+            // Obtiene o crea el chat entre el usuario activo y el amigo seleccionado
+            Chat chat = GestorChats.getInstance().obtenerChat(usuarioActivo, amigoSeleccionado);
+            // Carga la interfaz del chat en el panel principal
+            cargarVistaChat(chat);
+        }
+    }
+
+    private void cargarVistaChat(Chat chat) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ventanas/students/chat_view.fxml"));
+            Parent vistaChat = loader.load();
+
+            // Obtiene el controlador de la vista cargada y lo inicializa con el chat y usuario
+            VistaChatController controlador = loader.getController();
+            controlador.inicializar(chat, usuarioActivo);
+
+            // Limpia y añade la nueva vista del chat al panel principal
+            chatPanel.getChildren().setAll(vistaChat);
+
+            // Ajusta los anclajes para que la vista ocupe todo el espacio del AnchorPane
+            AnchorPane.setTopAnchor(vistaChat, 0.0);
+            AnchorPane.setBottomAnchor(vistaChat, 0.0);
+            AnchorPane.setLeftAnchor(vistaChat, 0.0);
+            AnchorPane.setRightAnchor(vistaChat, 0.0);
+
+        } catch (IOException e) {
+            e.printStackTrace(); // Imprime error si la carga de la vista falla
+        }
     }
 }

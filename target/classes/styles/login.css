@@ -411,3 +411,19 @@
     -fx-background-color: #F44336;
     -fx-text-fill: white;
 }
+
+.sendButton {
+    -fx-font-family: 'SansSerif';
+    -fx-font-size: 16px;
+    -fx-background-color: #05242F;
+    -fx-text-fill: #F5F5F5;
+    -fx-background-radius: 40;
+    -fx-padding: 6 20;
+    -fx-pref-width: 100;
+}
+
+.sendButton:hover {
+    -fx-background-color: #70919C;
+    -fx-text-fill: #000000;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 0);
+}

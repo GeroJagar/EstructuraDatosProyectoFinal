@@ -1,39 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Insets?>
 
+<?import javafx.scene.Cursor?>
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="co.edu.uniquindio.Actually.controladores.VistaChatController"
-            prefWidth="600" prefHeight="480">
+            prefWidth="600" prefHeight="480"
+            style="-fx-background-color: #F5F5F5;">
 
     <VBox spacing="10" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
-          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" prefWidth="600" prefHeight="480">
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 
         <!-- Área de mensajes con scroll -->
-        <ScrollPane fx:id="scrollPane" fitToWidth="true" VBox.vgrow="ALWAYS" prefHeight="440">
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="440" style="-fx-background-color: #F5F5F5;" VBox.vgrow="ALWAYS">
             <content>
-                <VBox fx:id="contenedorMensajes" spacing="5">
-                    <padding>
-                        <Insets top="10" right="10" bottom="10" left="10"/>
-                    </padding>
+                <VBox fx:id="contenedorMensajes" spacing="8"
+                      style="-fx-padding: 10;">
+                    <!-- Aquí se agregarán dinámicamente los mensajes -->
                 </VBox>
             </content>
         </ScrollPane>
 
-        <!-- Barra para escribir y enviar mensajes -->
-        <HBox spacing="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
-            <TextField fx:id="campoMensaje" promptText="Escribe tu mensaje aquí..." HBox.hgrow="ALWAYS"/>
-            <Button text="Enviar" onAction="#enviarMensaje"/>
+        <!-- Barra inferior para enviar mensajes -->
+        <HBox spacing="10"
+              style="-fx-padding: 10; -fx-background-color: #F5F5F5; -fx-border-color: #dddddd; -fx-border-width: 1 0 0 0;">
+            <TextField fx:id="campoMensaje"
+                       promptText="Escribe tu mensaje aquí..."
+                       HBox.hgrow="ALWAYS"
+                       style="-fx-background-radius: 20; -fx-border-radius: 20; -fx-font-family: 'SansSerif'; -fx-font-size: 18px; -fx-padding: 6 12;"/>
+            <Button text="Enviar"
+                    onAction="#enviarMensaje"
+                    styleClass="sendButton">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
         </HBox>
     </VBox>
 

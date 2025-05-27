@@ -17,103 +17,78 @@ import java.io.IOException;
 
 public class VistaChatController {
 
-    /*
-    Controller que permite visualizar y enviar mensajes de un chat seleccionado.
-    */
+    @FXML
+    private VBox contenedorMensajes;
 
     @FXML
-    private VBox contenedorMensajes; // Contenedor vertical para mostrar los mensajes en la interfaz
+    private TextField campoMensaje;
 
     @FXML
-    private TextField campoMensaje; // Campo de texto donde el usuario escribe el mensaje
+    private ScrollPane scrollPane;
 
-    @FXML
-    private ScrollPane scrollPane; // ScrollPane para permitir el scroll en la vista de mensajes
+    private Estudiante usuarioActivo;
+    private Chat chat;
 
-    private Estudiante usuarioActivo; // Estudiante que está usando la interfaz (remitente)
-    private Chat chat; // Chat actual entre dos estudiantes
-
-    /**
-     * Inicializa el controlador con el chat seleccionado y el usuario activo.
-     *
-     * @param chat Chat que se va a visualizar y administrar
-     * @param usuarioActivo Estudiante que está enviando o recibiendo mensajes
-     */
     public void inicializar(Chat chat, Estudiante usuarioActivo) {
         this.chat = chat;
         this.usuarioActivo = usuarioActivo;
-
-        // Muestra los mensajes existentes en la interfaz
         mostrarMensajes();
     }
 
-    /**
-     * Limpia el contenedor de mensajes y agrega todos los mensajes del chat actual.
-     * También ajusta el scroll para que muestre el último mensaje.
-     */
     private void mostrarMensajes() {
-        contenedorMensajes.getChildren().clear(); // Limpia mensajes previos
+        contenedorMensajes.getChildren().clear();
 
-        // Itera sobre todos los mensajes y los agrega a la vista
         for (Mensaje mensaje : chat.getMensajes()) {
             agregarMensajeAVista(mensaje);
         }
 
-        scrollPane.layout(); // Fuerza la actualización del layout de la UI
-        scrollPane.setVvalue(1.0); // Auto scroll hacia abajo para mostrar el mensaje más reciente
+        scrollPane.layout();
+        scrollPane.setVvalue(1.0);
     }
 
-    /**
-     * Crea un nodo visual (HBox con Label) para un mensaje y lo agrega al contenedor.
-     * Los mensajes del remitente activo se alinean a la derecha y con color azul,
-     * mientras que los mensajes del destinatario se alinean a la izquierda y con color gris.
-     *
-     * @param mensaje Mensaje que se desea mostrar en la interfaz
-     */
     private void agregarMensajeAVista(Mensaje mensaje) {
-        // Determina si el mensaje fue enviado por el usuario activo
         boolean esRemitente = mensaje.getRemitente().equals(usuarioActivo);
 
-        // Crea la etiqueta con el texto del mensaje
         Label labelMensaje = new Label(mensaje.getContenido());
-        labelMensaje.setWrapText(true); // Permite que el texto se ajuste en varias líneas
+        labelMensaje.setWrapText(true);
+        labelMensaje.setMaxWidth(350); // Para que no se alargue demasiado en horizontal
 
-        // Aplica estilos según si es remitente o destinatario
-        labelMensaje.setStyle("-fx-background-color: " + (esRemitente ? "#cce5ff" : "#e2e2e2") +
-                "; -fx-padding: 8px 12px; -fx-background-radius: 10;");
+        // Estilos personalizados para cada tipo de mensaje
+        String estiloFondo = esRemitente ? "#88A8BC" : "#05242F";
+        String estiloTexto = esRemitente ? "#000000" : "#f5f5f5";
 
-        // Contenedor horizontal para alinear el mensaje a derecha o izquierda
+        labelMensaje.setStyle(
+                "-fx-background-color: " + estiloFondo + ";" +
+                        "-fx-text-fill: " + estiloTexto + ";" +
+                        "-fx-padding: 10px 14px;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-font-size: 16px;" +
+                        "-fx-font-family: 'SansSerif';"
+        );
+
         HBox hbox = new HBox(labelMensaje);
-        hbox.setPadding(new Insets(5)); // Espaciado interno
-        hbox.setAlignment(esRemitente ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT); // Alineación del mensaje
+        hbox.setPadding(new Insets(5));
+        hbox.setAlignment(esRemitente ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
 
-        // Agrega el mensaje al contenedor principal de mensajes
         contenedorMensajes.getChildren().add(hbox);
     }
 
-    /**
-     * Método asociado al evento de enviar mensaje (por ejemplo, al presionar Enter o un botón).
-     * Envía el mensaje al chat, actualiza la vista y guarda los chats en disco.
-     *
-     * @throws IOException Si hay un error al guardar los chats
-     */
     @FXML
     private void enviarMensaje() throws IOException {
-        String contenido = campoMensaje.getText().trim(); // Obtiene el texto escrito y elimina espacios al inicio/final
+        String contenido = campoMensaje.getText().trim();
 
-        if (!contenido.isEmpty()) { // Solo envía si el texto no está vacío
-            chat.enviarMensaje(usuarioActivo, contenido); // Envía el mensaje al chat
+        if (!contenido.isEmpty()) {
+            chat.enviarMensaje(usuarioActivo, contenido);
 
-            // Obtiene el último mensaje enviado para agregarlo a la vista
             Mensaje ultimoMensaje = chat.getMensajes().get(chat.getMensajes().size() - 1);
             agregarMensajeAVista(ultimoMensaje);
 
-            campoMensaje.clear(); // Limpia el campo de texto
+            campoMensaje.clear();
 
-            scrollPane.layout(); // Actualiza la UI para el scroll
-            scrollPane.setVvalue(1.0); // Auto scroll para mostrar el mensaje recién enviado
+            scrollPane.layout();
+            scrollPane.setVvalue(1.0);
 
-            Actually.getInstance().guardarChats(); // Guarda los chats actualizados en disco
+            Actually.getInstance().guardarChats();
         }
     }
 }
