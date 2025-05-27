@@ -1167,11 +1167,9 @@ public class PanelEstudianteControlador {
                                 " | ¿Pertenece? " + estudiante.perteneceAGrupo(grupo));
 
                         if (!estudiante.perteneceAGrupo(grupo) && !sugerenciasMostradas.contains(grupo)) {
-                            agregarTarjetaGrupoSugerido(grupo);
                             sugerenciasMostradas.add(grupo); // Marcar como mostrado
-                        }
-
-                        if (!estudiante.perteneceAGrupo(grupo)) {
+                            agregarTarjetaGrupoSugerido(grupo);
+                        } else if (!estudiante.perteneceAGrupo(grupo)) {
                             agregarTarjetaGrupoSugerido(grupo);
                         }
                     });
