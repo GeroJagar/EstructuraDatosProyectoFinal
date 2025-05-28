@@ -3,7 +3,6 @@ package co.edu.uniquindio.Actually.aplicacion;
 import co.edu.uniquindio.Actually.Actually;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -25,7 +24,7 @@ public class ActuallyAplicacion extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/common/homepage.fxml"));
+        FXMLLoader loader = new FXMLLoader(ActuallyAplicacion.class.getResource("/ventanas/moderador/visualizacionGrafo.fxml"));
         Scene scene = new Scene(loader.load());
         scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());
         stage.setScene(scene);

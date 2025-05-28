@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.Actually.controladores.VisualizacionGrafoController">
+
+    <top>
+        <ToolBar>
+            <Button text="Actualizar Grafo" onAction="#initialize" />
+            <Button text="Volver" />
+        </ToolBar>
+    </top>
+
+    <center>
+        <StackPane fx:id="grafoContainer" />
+    </center>
+
+    <bottom>
+        <VBox spacing="5" style="-fx-padding: 10;">
+            <Label text="Leyenda:" style="-fx-font-weight: bold;" />
+            <HBox spacing="20">
+                <HBox spacing="5" alignment="CENTER_LEFT">
+                    <Rectangle width="20" height="20" fill="#4a6baf" stroke="#2c3e50" />
+                    <Label text="Estudiante" />
+                </HBox>
+                <HBox spacing="5" alignment="CENTER_LEFT">
+                    <Rectangle width="20" height="20" fill="#e74c3c" stroke="#2c3e50" />
+                    <Label text="Moderador" />
+                </HBox>
+                <HBox spacing="5" alignment="CENTER_LEFT">
+                    <Line startX="0" startY="10" endX="20" endY="10" stroke="#27ae60" strokeWidth="2" />
+                    <Label text="Intereses comunes" />
+                </HBox>
+                <HBox spacing="5" alignment="CENTER_LEFT">
+                    <Line startX="0" startY="10" endX="20" endY="10" stroke="#3498db" strokeWidth="2" />
+                    <Label text="Amistad" />
+                </HBox>
+            </HBox>
+        </VBox>
+    </bottom>
+</BorderPane>

@@ -7,11 +7,9 @@ co\edu\uniquindio\Actually\controladores\PanelEstudianteControlador.class
 co\edu\uniquindio\Actually\controladores\LoginControlador.class
 co\edu\uniquindio\Actually\controladores\HomepageController.class
 co\edu\uniquindio\Actually\modelo\GrafoAmistades.class
-co\edu\uniquindio\Actually\controladores\UsuarioCrudController.class
 co\edu\uniquindio\Actually\modelo\SolicitudAyuda$EstadoSolicitud.class
 co\edu\uniquindio\Actually\modelo\Valoracion.class
 co\edu\uniquindio\Actually\controladores\ContenidoAcademicoCrudController.class
-co\edu\uniquindio\Actually\controladores\UsuarioFormularioController.class
 co\edu\uniquindio\Actually\controladores\ContenidoAcademicoCrudController$1.class
 co\edu\uniquindio\Actually\controladores\FormularioContenidoController.class
 co\edu\uniquindio\Actually\modelo\ListaDoblementeEnlazada.class
@@ -19,6 +17,7 @@ co\edu\uniquindio\Actually\modelo\ColaPrioridad.class
 co\edu\uniquindio\Actually\utilidades\ArchivoUtilidades.class
 co\edu\uniquindio\Actually\modelo\Nodo.class
 co\edu\uniquindio\Actually\utilidades\FileUploader.class
+co\edu\uniquindio\Actually\controladores\VisualizacionGrafoController.class
 co\edu\uniquindio\Actually\modelo\NodoContenido.class
 co\edu\uniquindio\Actually\excepciones\CampoObligatorioException.class
 co\edu\uniquindio\Actually\controladores\ReportesController.class

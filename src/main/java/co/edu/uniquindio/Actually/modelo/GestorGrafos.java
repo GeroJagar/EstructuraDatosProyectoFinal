@@ -28,31 +28,25 @@ public class GestorGrafos {
         return instance;
     }
 
-    // Agrega un estudiante con sus intereses (y lo agrega a ambos grafos)
     public void agregarEstudiante(String id, Set<TEMA> intereses) {
         grafoAmistades.agregarEstudiante(id);
         grafoIntereses.agregarEstudiante(id, intereses);
     }
 
-    // Actualiza solo los intereses del estudiante
     public void actualizarIntereses(String id, Set<TEMA> nuevosIntereses) {
         grafoIntereses.actualizarIntereses(id, nuevosIntereses);
     }
 
-    // Crea una amistad entre dos estudiantes
     public void agregarAmistad(String id1, String id2) {
         grafoAmistades.agregarAmistad(id1, id2);
     }
 
-    // Elimina al estudiante de ambos grafos
     public void eliminarEstudiante(String id) {
         grafoAmistades.eliminarEstudiante(id);
         grafoIntereses.eliminarEstudiante(id);
     }
 
-    // Guardar grafos
     public void guardarGrafos() throws IOException {
-        // Grafo de amistades
         Map<String, List<String>> amistades = new HashMap<>();
         grafoAmistades.getGrafo().nodes().forEach(nodo -> {
             List<String> amigos = nodo.edges()
@@ -61,27 +55,27 @@ public class GestorGrafos {
             amistades.put(nodo.getId(), amigos);
         });
 
-        // Grafo de intereses (nodos y temas)
         Map<String, List<String>> intereses = new HashMap<>();
         grafoIntereses.getGrafo().nodes().forEach(nodo -> {
-            if (nodo.getId().startsWith("EST_")) { // Filtra solo nodos de estudiantes
+            if (nodo.getId().startsWith("EST_")) {
                 List<String> temas = nodo.edges()
                         .map(e -> e.getOpposite(nodo).getId())
                         .collect(Collectors.toList());
                 intereses.put(nodo.getId(), temas);
             }
         });
+
+        // Aquí puedes guardar usando ArchivoUtilidades si lo necesitas
     }
 
-    /*
-    Metodo para generar el grafo entero, combinando el grafo de intereses y el grafo de amistades, dando prioridad a las
-    aristas del grafo de intereses.
+    /**
+     * Genera un grafo combinado desde los grafos de intereses y amistades.
+     * Se priorizan las aristas de interés.
+     * No se agregan lazos (aristas entre el mismo nodo).
      */
-
     public Graph generarGrafoCombinado() {
         Graph grafoCombinado = new MultiGraph("GrafoCombinado");
 
-        // Añadir todos los nodos únicos (estudiantes)
         Set<String> todosLosNodos = new HashSet<>();
         grafoIntereses.getGrafo().nodes().forEach(n -> todosLosNodos.add(n.getId()));
         grafoAmistades.getGrafo().nodes().forEach(n -> todosLosNodos.add(n.getId()));
@@ -94,30 +88,38 @@ public class GestorGrafos {
 
         Set<String> aristasAgregadas = new HashSet<>();
 
-        // ➤ 1. Agregar aristas de intereses primero (prioridad)
+        // ➤ 1. Aristas de intereses
         for (Edge e : grafoIntereses.getGrafo().edges().toList()) {
             String source = e.getNode0().getId();
             String target = e.getNode1().getId();
-            String idArista = generarIdArista(source, target);
 
+            if (source.equals(target)) continue; // ❌ Evita lazo
+
+            String idArista = generarIdArista(source, target);
             if (!aristasAgregadas.contains(idArista)) {
                 Edge nueva = grafoCombinado.addEdge(idArista, source, target, false);
-                nueva.setAttribute("tipo", "interes");
-                nueva.setAttribute("tema", e.getAttribute("tema"));
-                aristasAgregadas.add(idArista);
+                if (nueva != null) {
+                    nueva.setAttribute("tipo", "interes");
+                    nueva.setAttribute("temas", e.getAttribute("temas"));
+                    aristasAgregadas.add(idArista);
+                }
             }
         }
 
-        // ➤ 2. Agregar aristas de amistad solo si no están ya
+        // ➤ 2. Aristas de amistad (solo si no existe ya)
         for (Edge e : grafoAmistades.getGrafo().edges().toList()) {
             String source = e.getNode0().getId();
             String target = e.getNode1().getId();
-            String idArista = generarIdArista(source, target);
 
+            if (source.equals(target)) continue; // ❌ Evita lazo
+
+            String idArista = generarIdArista(source, target);
             if (!aristasAgregadas.contains(idArista)) {
                 Edge nueva = grafoCombinado.addEdge(idArista, source, target, false);
-                nueva.setAttribute("tipo", "amistad");
-                aristasAgregadas.add(idArista);
+                if (nueva != null) {
+                    nueva.setAttribute("tipo", "amistad");
+                    aristasAgregadas.add(idArista);
+                }
             }
         }
 
@@ -127,7 +129,6 @@ public class GestorGrafos {
     public void sincronizarGrafosConEstudiantes(List<String> estudiantesActuales) {
         Set<String> idsActuales = new HashSet<>(estudiantesActuales);
 
-        // Eliminar nodos que no están en la lista en grafo de amistades
         Set<String> nodosAmistades = new HashSet<>();
         grafoAmistades.getGrafo().nodes().forEach(n -> nodosAmistades.add(n.getId()));
         for (String id : nodosAmistades) {
@@ -136,7 +137,6 @@ public class GestorGrafos {
             }
         }
 
-        // Eliminar nodos que no están en la lista en grafo de intereses
         Set<String> nodosIntereses = new HashSet<>();
         grafoIntereses.getGrafo().nodes().forEach(n -> nodosIntereses.add(n.getId()));
         for (String id : nodosIntereses) {
@@ -150,7 +150,6 @@ public class GestorGrafos {
         return id1.compareTo(id2) < 0 ? id1 + "_" + id2 : id2 + "_" + id1;
     }
 
-    // Accesores para los grafos
     public GrafoAmistades getGrafoAmistades() {
         return grafoAmistades;
     }
