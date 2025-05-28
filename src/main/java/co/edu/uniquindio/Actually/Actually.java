@@ -22,6 +22,7 @@ public class Actually {
     private static Actually actually;
     private Usuario usuarioActivo;
     private GestorGrafos gestorGrafos;
+    private Moderador moderador = new Moderador();
 
     private Map<String, Usuario> usuarios = new HashMap<>();
     private Map<String, ContenidoAcademico> contenidos = new HashMap<>();
@@ -262,6 +263,27 @@ public class Actually {
         ArchivoUtilidades.serializarObjeto(RUTA_CONTENIDOS, contenidos);
         ArchivoUtilidades.serializarObjeto(RUTA_USUARIOS, usuarios);
 
+    }
+
+    public void subirContenidoModerador(ContenidoAcademico contenido) throws Exception {
+        if (contenido == null || contenido.getId() == null || contenido.getId().isBlank()) {
+            throw new Exception("Contenido inválido");
+        }
+
+        if (contenidos.containsKey(contenido.getId())) {
+            throw new Exception("Ya existe contenido con ese ID");
+        }
+
+        // Asignar el autor si está vacío
+        if (contenido.getAutor() == null || contenido.getAutor().isBlank()) {
+            contenido.setAutor("Administrador");  // Usar el ID del estudiante que está subiendo el contenido
+        }
+
+        moderador.subirContenido(contenido);
+        contenidos.put(contenido.getId(), contenido);
+
+        // Persistencia
+        ArchivoUtilidades.serializarObjeto(RUTA_CONTENIDOS, contenidos);
     }
 
     public void changePassword(String estudianteId, String newPassword) throws Exception{
@@ -678,4 +700,10 @@ public class Actually {
         gestorChats.guardarChats(RUTA_CHATS);
     }
 
+    public void eliminarContenido(String idContenido) throws IOException {
+        if(contenidos.containsKey(idContenido)){
+            contenidos.remove(idContenido);
+            ArchivoUtilidades.serializarObjeto(RUTA_CONTENIDOS, contenidos);
+        }
+    }
 }

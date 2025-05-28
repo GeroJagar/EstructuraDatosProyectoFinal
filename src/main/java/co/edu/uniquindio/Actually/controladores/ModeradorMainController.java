@@ -4,34 +4,32 @@ import co.edu.uniquindio.Actually.Actually;
 import co.edu.uniquindio.Actually.excepciones.CampoObligatorioException;
 import co.edu.uniquindio.Actually.excepciones.CampoRepetidoException;
 import co.edu.uniquindio.Actually.excepciones.CampoVacioException;
-import co.edu.uniquindio.Actually.modelo.Estudiante;
-import co.edu.uniquindio.Actually.modelo.Usuario;
+import co.edu.uniquindio.Actually.modelo.*;
+import co.edu.uniquindio.Actually.utilidades.ArchivoUtilidades;
+import co.edu.uniquindio.Actually.utilidades.FileUploader;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 public class ModeradorMainController {
 
     @FXML public VBox panelUsuarios;
-    @FXML public ComboBox<String> cbTipoUsuario;
     @FXML public TextField txtBusqueda;
     @FXML public VBox agregarFormulario;
     @FXML public TextField txtNombre;
@@ -49,38 +47,98 @@ public class ModeradorMainController {
     @FXML public Button btnGuardarEdit;
     @FXML public Button btnCancelarEdit;
     @FXML public VBox eliminarFormulario;
-    public TextField txtBuscarIdEliminar;
-    public Button btnBuscarEliminar;
-    public GridPane gridDatosEliminar;
-    public TextField txtNombreEliminar;
-    public TextField txtIdEliminar;
-    public TextField txtCorreoEliminar;
-    public PasswordField txtContrasenaEliminar;
-    public HBox boxBotonesEliminar;
+    @FXML public TextField txtBuscarIdEliminar;
+    @FXML public Button btnBuscarEliminar;
+    @FXML public GridPane gridDatosEliminar;
+    @FXML public TextField txtNombreEliminar;
+    @FXML public TextField txtIdEliminar;
+    @FXML public TextField txtCorreoEliminar;
+    @FXML public PasswordField txtContrasenaEliminar;
+    @FXML public HBox boxBotonesEliminar;
     @FXML public TableColumn<Estudiante, String> colPuntaje;
+    @FXML public VBox panelContenidos;
+    @FXML public TableView<ContenidoAcademico> tablaContenidos;
+    @FXML public TableColumn<ContenidoAcademico, String> colTituloContenido;
+    @FXML public TableColumn<ContenidoAcademico, String> colTipoContenido;
+    @FXML public TableColumn<ContenidoAcademico, String> colAutorContenido;
+    @FXML public TableColumn<ContenidoAcademico, String> colTemaContenido;
+    @FXML public TableColumn<ContenidoAcademico, Double> colPuntajeContenido;
+    @FXML public TextField txtBusquedaContenido;
+    @FXML public HBox boxBotonesCrud;
+    @FXML public VBox contenidoPanel;
+    @FXML public TextField txtTitulo;
+    @FXML public ComboBox<TEMA> cbTema;
+    @FXML public ComboBox<TIPOCONTENIDO> cbTipoContenido;
+    @FXML public TextField txtAutor;
     @FXML private TableView<Usuario> tablaUsuarios;
     @FXML public TableColumn<Usuario, String> colNombre;
     @FXML public TableColumn<Usuario, String> colId;
     @FXML public TableColumn<Usuario, String> colCorreo;
-    @FXML public TableColumn<Usuario, String> colTipo;
     @FXML public TableColumn<Usuario, String> colDetalle;
     @FXML public TableColumn<Usuario, String> colParticipacion;
-    @FXML private Text titulo;
-    @FXML private Button btnContenidos;
-    @FXML private Button btnUsuarios;
-    @FXML private Button btnReportes;
-    @FXML private Button btnGrafos;
-    @FXML private Button cerrarSesion;
 
     Map<String, Usuario> mapaUsuarios = Actually.getInstance().getUsuarios();
+    Map<String, ContenidoAcademico> mapaContenidos = Actually.getInstance().getContenidos();
     Actually actually = Actually.getInstance();
+    private File archivoSeleccionado;
+    private final FileUploader fileUploader = new FileUploader();
+    private final ArchivoUtilidades archivoUtil = new ArchivoUtilidades();
 
     @FXML
     public void initialize() {
-        configurarTabla();
+        configurarTablaUsuarios();
+        configurarTablaContenidos();
+
+        tablaContenidos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            boolean haySeleccion = newSelection != null;
+            boxBotonesCrud.setVisible(true);
+            boxBotonesCrud.setManaged(true);
+        });
     }
 
-    private void configurarTabla() {
+    private void configurarTablaContenidos() {
+        // Configurar columnas
+        colTituloContenido.setCellValueFactory(new PropertyValueFactory<>("titulo"));
+        colTemaContenido.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTema().getName()));
+        colAutorContenido.setCellValueFactory(new PropertyValueFactory<>("autor"));
+        colTipoContenido.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTipoContenido().name()));
+        colPuntajeContenido.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().calcularPuntuacion()).asObject());
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        // Formatear columna de puntaje
+        colPuntajeContenido.setCellFactory(tc -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : String.format("%.2f", item));
+            }
+        });
+
+        ObservableList<ContenidoAcademico> listaContenidos = FXCollections.observableArrayList(mapaContenidos.values());
+        tablaContenidos.setItems(listaContenidos);
+    }
+
+    private void configurarTablaContenidos(FilteredList<ContenidoAcademico> listaContenidos) {
+        // Configurar columnas
+        colTituloContenido.setCellValueFactory(new PropertyValueFactory<>("titulo"));
+        colTemaContenido.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTema().getName()));
+        colAutorContenido.setCellValueFactory(new PropertyValueFactory<>("autor"));
+        colTipoContenido.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTipoContenido().name()));
+        colPuntajeContenido.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().calcularPuntuacion()).asObject());
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        // Formatear columna de puntaje
+        colPuntajeContenido.setCellFactory(tc -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : String.format("%.2f", item));
+            }
+        });
+        tablaContenidos.setItems(listaContenidos);
+    }
+
+    private void configurarTablaUsuarios() {
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
@@ -102,12 +160,11 @@ public class ModeradorMainController {
         tablaUsuarios.setItems(listaUsuarios);
     }
 
-    private void configurarTabla(FilteredList<Usuario> listaUsuarios) {
+    private void configurarTablaUsuarios(FilteredList<Usuario> listaUsuarios) {
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
 
-        // Ya no se verifica si es Estudiante, se asume que todos lo son
         colDetalle.setCellValueFactory(cellData -> {
             Estudiante est = (Estudiante) cellData.getValue();
             return new SimpleStringProperty(
@@ -121,21 +178,32 @@ public class ModeradorMainController {
 
     @FXML
     public void limpiarBusqueda(ActionEvent event) {
-        cbTipoUsuario.getSelectionModel().selectFirst();
         txtBusqueda.clear();
         ObservableList<Usuario> listaUsuarios = FXCollections.observableArrayList(mapaUsuarios.values());
         tablaUsuarios.setItems(listaUsuarios);
     }
 
     @FXML
-    public void performSearch(){
+    public void performSearch(KeyEvent keyEvent){
         String searchText = txtBusqueda.getText().toLowerCase();
         if(searchText.isEmpty()){
-            configurarTabla();
+            configurarTablaUsuarios();
         } else {
             ObservableList<Usuario> listaUsuarios = FXCollections.observableArrayList(mapaUsuarios.values());
             FilteredList<Usuario> usuariosFiltrados = listaUsuarios.filtered(event -> event.getNombre().toLowerCase().contains(searchText));
-            configurarTabla(usuariosFiltrados);
+            configurarTablaUsuarios(usuariosFiltrados);
+        }
+    }
+
+    @FXML
+    public void performSearchContenido(KeyEvent keyEvent) {
+        String searchText = txtBusquedaContenido.getText().toLowerCase();
+        if(searchText.isEmpty()){
+            configurarTablaContenidos();
+        } else {
+            ObservableList<ContenidoAcademico> listaContenidos = FXCollections.observableArrayList(mapaContenidos.values());
+            FilteredList<ContenidoAcademico> contenidosFiltrados = listaContenidos.filtered(event -> event.getTema().getName().toLowerCase().contains(searchText));
+            configurarTablaContenidos(contenidosFiltrados);
         }
     }
 
@@ -145,6 +213,7 @@ public class ModeradorMainController {
         agregarFormulario.setManaged(false);
         editarFormulario.setVisible(false);
         editarFormulario.setManaged(false);
+        panelContenidos.setVisible(false);
         panelUsuarios.setVisible(true);
         panelUsuarios.setManaged(true);
     }
@@ -175,7 +244,7 @@ public class ModeradorMainController {
             actually.mostrarMensaje(Alert.AlertType.ERROR, "Error inesperado: " + e.getMessage());  // Mostrar alerta de error inesperado
         } finally {
             limpiarCampos();
-            configurarTabla();
+            configurarTablaUsuarios();
         }
     }
 
@@ -268,7 +337,7 @@ public class ModeradorMainController {
     public void cerrarEliminacion(ActionEvent actionEvent) {
         panelUsuarios.setVisible(true);
         panelUsuarios.setManaged(true);
-        configurarTabla();
+        configurarTablaUsuarios();
         agregarFormulario.setVisible(false);
         agregarFormulario.setManaged(false);
         editarFormulario.setVisible(false);
@@ -292,6 +361,142 @@ public class ModeradorMainController {
     @FXML
     public void cerrarSesion(ActionEvent actionEvent) {
         actually.loadStage("/ventanas/common/homepage.fxml", actionEvent);
+    }
+
+    @FXML
+    public void abrirPanelContenidos(ActionEvent actionEvent) {
+        panelUsuarios.setVisible(false);
+        agregarFormulario.setVisible(false);
+        editarFormulario.setVisible(false);
+        eliminarFormulario.setVisible(false);
+        contenidoPanel.setVisible(false);
+        
+        panelContenidos.setVisible(true);
+        panelContenidos.setManaged(true);
+    }
+
+    @FXML
+    public void vistaFormularioContenido(ActionEvent actionEvent) {
+        panelUsuarios.setVisible(false);
+        agregarFormulario.setVisible(false);
+        editarFormulario.setVisible(false);
+        eliminarFormulario.setVisible(false);
+        panelContenidos.setVisible(false);
+
+        contenidoPanel.setVisible(true);
+        contenidoPanel.setManaged(true);
+
+        cbTema.getItems().setAll(TEMA.values());
+        cbTipoContenido.getItems().setAll(TIPOCONTENIDO.values());
+    }
+
+    @FXML
+    public void DeleteContenido(ActionEvent actionEvent) throws IOException {
+        // Obtener el contenido seleccionado en la tabla
+        ContenidoAcademico contenidoSeleccionado = tablaContenidos.getSelectionModel().getSelectedItem();
+
+        if (contenidoSeleccionado != null) {
+            // Mostrar confirmación antes de eliminar
+            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacion.setTitle("Confirmar eliminación");
+            confirmacion.setHeaderText("¿Eliminar el contenido '" + contenidoSeleccionado.getTitulo() + "'?");
+            confirmacion.setContentText("Esta acción no se puede deshacer.");
+
+            Optional<ButtonType> resultado = confirmacion.showAndWait();
+
+            if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+                // Llamar al método de eliminación en tu capa de negocio/servicio
+                actually.eliminarContenido(contenidoSeleccionado.getId()); // Asume que tienes un método similar a deleteStudent
+
+                // Mostrar mensaje de éxito
+                mostrarMensaje(Alert.AlertType.INFORMATION,
+                        "El contenido '" + contenidoSeleccionado.getTitulo() + "' ha sido eliminado.");
+
+                // Actualizar la tabla (opcional: recargar datos o remover el item)
+                tablaContenidos.getItems().remove(contenidoSeleccionado);
+            }
+        } else {
+            mostrarMensaje(Alert.AlertType.WARNING, "Selecciona un contenido de la tabla primero.");
+        }
+    }
+
+    @FXML
+    public void seleccionarArchivo(ActionEvent actionEvent) {
+        if (!validarCampos()) {
+            mostrarMensaje(Alert.AlertType.WARNING, "Por favor complete todos los campos obligatorios");
+            return;
+        }
+
+        Stage stage = (Stage) contenidoPanel.getScene().getWindow();
+        archivoSeleccionado = fileUploader.abrirSelectorDeArchivo(
+                stage,
+                cbTipoContenido.getValue().toString().toLowerCase()
+        );
+
+        if (archivoSeleccionado != null) {
+            subirContenido();
+        }
+    }
+
+    private void subirContenido() {
+        try {
+            // Crear el objeto contenido con los metadatos
+            ContenidoAcademico contenido = new ContenidoAcademico();
+            contenido.setTitulo(txtTitulo.getText());
+            contenido.setTema(cbTema.getValue());
+            contenido.setAutor(txtAutor.getText());
+            contenido.setTipoContenido(cbTipoContenido.getValue());
+            contenido.setId(archivoUtil.generarId());
+
+            // Procesar el archivo según su tipo
+            switch (contenido.getTipoContenido()) {
+                case TEXTO:
+                    contenido.setContenido(archivoUtil.leerArchivoComoTexto(archivoSeleccionado));
+                    break;
+                case PDF:
+                    contenido.setContenido("PDF:" + archivoSeleccionado.getAbsolutePath());
+                    break;
+                case VIDEO:
+                    contenido.setContenido("VIDEO:" + archivoSeleccionado.getAbsolutePath());
+                    break;
+            }
+
+            // Guardar el contenido en el sistema
+            actually.subirContenidoModerador(contenido);
+            mostrarMensaje(Alert.AlertType.INFORMATION, "Contenido subido correctamente");
+
+            // Limpiar y actualizar la vista
+            limpiarFormulario();
+            abrirPanelContenidos(null);
+            configurarTablaContenidos();
+            cbTema.getItems().setAll(TEMA.values());
+            cbTipoContenido.getItems().setAll(TIPOCONTENIDO.values());
+
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error al subir el contenido: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void limpiarFormulario() {
+        txtTitulo.clear();
+        cbTema.getSelectionModel().clearSelection();
+        cbTipoContenido.getSelectionModel().clearSelection();
+        archivoSeleccionado = null;
+        cbTema.getItems().setAll(TEMA.values());
+        cbTipoContenido.getItems().setAll(TIPOCONTENIDO.values());
+    }
+
+    private boolean validarCampos() {
+        return txtTitulo.getText() != null && !txtTitulo.getText().isBlank() &&
+                cbTema.getValue() != null &&
+                cbTipoContenido.getValue() != null;
+    }
+
+    @FXML
+    public void onCancelarButtonClick(ActionEvent actionEvent) {
+        abrirPanelContenidos(null);
+        configurarTablaContenidos();
     }
 }
 

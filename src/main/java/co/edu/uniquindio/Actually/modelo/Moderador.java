@@ -1,5 +1,19 @@
 package co.edu.uniquindio.Actually.modelo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Moderador extends Usuario {
-    // Métodos administrativos serán añadidos aquí más adelante
+
+    private List<ContenidoAcademico> contenidosSubidos;
+
+    public Moderador() {
+        this.contenidosSubidos = new ArrayList<>();
+    }
+
+    public void subirContenido(ContenidoAcademico contenido) {
+        if (contenido != null && !contenidosSubidos.contains(contenido)) {
+            contenidosSubidos.add(contenido);
+        }
+    }
 }

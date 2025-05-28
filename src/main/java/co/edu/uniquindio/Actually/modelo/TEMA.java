@@ -1,5 +1,8 @@
 package co.edu.uniquindio.Actually.modelo;
 
+import java.util.Collection;
+import java.util.Collections;
+
 public enum TEMA {
     MATEMATICAS("Matematicas"),
     PROGRAMACION("Programacion"),
